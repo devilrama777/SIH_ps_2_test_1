@@ -4,19 +4,27 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 BACKEND_DIR = Path(__file__).resolve().parent
 
-UPLOADS_DIR = BASE_DIR / "uploads"
-OUTPUTS_DIR = BASE_DIR / "outputs"
-REPORTS_DIR = OUTPUTS_DIR / "reports"
-PROMPTS_DIR = BACKEND_DIR / "prompts"
-REPORTED_DATA_DIR = BASE_DIR / "reported_data"
-PROCESSED_OUTPUT_DIR = BASE_DIR / "processed_output"
+if os.getenv("VERCEL") == "1" or os.getenv("VERCEL_ENV"):
+    WORK_DIR = Path("/tmp")
+    UPLOADS_DIR = WORK_DIR / "uploads"
+    OUTPUTS_DIR = WORK_DIR / "outputs"
+    REPORTS_DIR = OUTPUTS_DIR / "reports"
+    REPORTED_DATA_DIR = WORK_DIR / "reported_data"
+    PROCESSED_OUTPUT_DIR = WORK_DIR / "processed_output"
+else:
+    UPLOADS_DIR = BASE_DIR / "uploads"
+    OUTPUTS_DIR = BASE_DIR / "outputs"
+    REPORTS_DIR = OUTPUTS_DIR / "reports"
+    REPORTED_DATA_DIR = BASE_DIR / "reported_data"
+    PROCESSED_OUTPUT_DIR = BASE_DIR / "processed_output"
 
-UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
-OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
-REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-PROMPTS_DIR.mkdir(parents=True, exist_ok=True)
-REPORTED_DATA_DIR.mkdir(parents=True, exist_ok=True)
-PROCESSED_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+PROMPTS_DIR = BACKEND_DIR / "prompts"
+
+for d in (UPLOADS_DIR, OUTPUTS_DIR, REPORTS_DIR, REPORTED_DATA_DIR, PROCESSED_OUTPUT_DIR):
+    try:
+        d.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
 
 # Ollama & Model configurations
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
