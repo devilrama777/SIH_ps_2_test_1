@@ -1,0 +1,5 @@
+Region,Quarter,Units_Sold,Unit_Price,Revenue
+North,Q1,120,45.0,5400.0
+South,Q1,85,45.0,3825.0
+East,Q1,140,50.0,7000.0
+West,Q1,95,50.0,4750.0
