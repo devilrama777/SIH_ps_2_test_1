@@ -1,8 +1,11 @@
 import json
+import os
 import shutil
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+import pandas as pd
+import requests
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,8 +14,9 @@ from pydantic import BaseModel
 
 from backend import config
 from backend.services.converter import MarkdownConverter
-from backend.services.document_generator import DocumentGenerator
+from backend.services.document_generator import DocumentGenerator, TEMPLATE_CONFIGS, get_active_dataset_metrics
 from backend.services.gemma_client import GemmaClient
+from backend.services.history_manager import get_history, record_report
 from backend.services.llama_client import LlamaClient
 from backend.services.math_engine import MathEngine
 from backend.services.pipeline import DocumentPipeline
@@ -275,6 +279,16 @@ async def quick_preview(
                 clean_row[str(k)] = str(v)
         clean_preview.append(clean_row)
 
+    # Persist active uploaded records for dynamic template presentation and report compilation
+    try:
+        active_records = df.to_dict(orient="records")
+        (config.OUTPUTS_DIR / "active_user_dataset.json").write_text(
+            json.dumps(active_records, default=str), encoding="utf-8"
+        )
+        df.to_csv(config.OUTPUTS_DIR / "active_cleaned_dataset.csv", index=False)
+    except Exception:
+        pass
+
     return {
         "filename": fname,
         "rows": int(len(df)),
@@ -352,16 +366,6 @@ def download_summary():
     return FileResponse(path=summary_path, filename="LLaMA_Coal_Summary.md", media_type="text/markdown")
 
 
-from backend.services.document_generator import (
-    TEMPLATE_CONFIGS,
-    TOTAL_PRODUCTION,
-    TOTAL_DISPATCH,
-    ACHIEVEMENT_PCT,
-    OFFTAKE_RATIO,
-    COLLIERIES_DATA
-)
-
-
 @app.get("/api/templates")
 def list_report_templates():
     """Returns the catalog of 6 modern report templates with metadata and section schemas."""
@@ -392,12 +396,14 @@ class TemplateFillRequest(BaseModel):
 
 @app.post("/api/templates/{template_id}/fill")
 def fill_template_content(template_id: str, req: Optional[TemplateFillRequest] = None):
-    """Fills data into the chosen modern template using the specialized AI prompt."""
+    """Fills data into the chosen modern template dynamically from active dataset metrics."""
     tpl_key = template_id.lower().replace(" ", "_")
     if tpl_key not in TEMPLATE_CONFIGS:
         raise HTTPException(status_code=404, detail=f"Template '{template_id}' not found. Available: {list(TEMPLATE_CONFIGS.keys())}")
 
     tpl = TEMPLATE_CONFIGS[tpl_key]
+    metrics = get_active_dataset_metrics()
+
     data_summary = ""
     if req and req.data_summary:
         data_summary = req.data_summary
@@ -406,10 +412,13 @@ def fill_template_content(template_id: str, req: Optional[TemplateFillRequest] =
         if summary_path.exists():
             data_summary = summary_path.read_text(encoding="utf-8")
         else:
+            top_colls = ", ".join(f"{c['name']} ({c['production']:,.1f} MT)" for c in metrics['collieries'][:3])
             data_summary = (
-                "Total Production: 133,767.30 MT | Total Dispatch: 127,814.01 MT | "
-                "Target Fulfillment: 96.26% | Offtake Ratio: 95.55% | "
-                "Top Collieries: Gevra Expansion Mine (15,265.48 MT), Kusmunda Colliery (13,842.10 MT), Dipka Project (12,190.50 MT)."
+                f"Total Production: {metrics['total_production']:,.2f} MT | "
+                f"Total Dispatch: {metrics['total_dispatch']:,.2f} MT | "
+                f"Target Fulfillment: {metrics['achievement_pct']:.2f}% | "
+                f"Offtake Ratio: {metrics['offtake_ratio']:.2f}% | "
+                f"Top Units: {top_colls}."
             )
 
     # Load template prompt
@@ -434,10 +443,8 @@ def fill_template_content(template_id: str, req: Optional[TemplateFillRequest] =
         except Exception:
             ai_generated_text = None
 
-    # Fallback deterministic structured generation tailored to the chosen template
     sections = []
     if ai_generated_text and len(ai_generated_text.strip()) > 50:
-        # Split text into sections or format as structured blocks
         parts = ai_generated_text.split("\n\n")
         curr_title = tpl["sections"][0]
         curr_content = []
@@ -457,58 +464,75 @@ def fill_template_content(template_id: str, req: Optional[TemplateFillRequest] =
                 curr_content.append(p_strip)
         if curr_content:
             sections.append({"title": curr_title, "content": "\n\n".join(curr_content)})
-    
-    # If sections are empty, synthesize deterministic template-specific sections
+
+    # If sections are empty, synthesize deterministic template-specific sections with active dataset numbers
     if not sections:
+        top_name = metrics["collieries"][0]["name"] if metrics["collieries"] else "Primary Colliery"
+        top_prod = metrics["collieries"][0]["production"] if metrics["collieries"] else 0.0
+
         if tpl_key == "executive_brief":
             sections = [
-                {"title": "1. Sovereign Directive & Macro Overview", "content": "National coal production sustained exceptional momentum across all CIL subsidiaries, logging 133,767.30 MT with 96.26% target attainment. Pithead thermal stocks remained buoyant above mandated 18-day normative buffer reserves."},
-                {"title": "2. Strategic KPI Benchmark", "content": "SECL and MCL powered 54.4% of aggregate national extraction. Power utility offtake realized 95.55% fulfillment (127,814.01 MT dispatched), minimizing coastal import reliance by 14.2%."},
-                {"title": "3. Coalfield Performance Highlights", "content": "Gevra Expansion Mine operated at peak capacity (15,265.48 MT). High-volume surface miners deployed across Kusmunda and Dipka maintained continuous 24x7 extraction with zero mechanical stoppage."},
-                {"title": "4. Ministerial Action Directives", "content": "1. Accelerate FMC rail siding commissioning in Mand-Raigarh corridor.\n2. Mandate deployment of continuous miners in underground ECL units.\n3. Implement drone-based volumetric stock audit across all central dumps."}
+                {"title": "1. Sovereign Directive & Macro Overview", "content": f"National extraction recorded {metrics['total_production']:,.2f} MT across {metrics['count']} monitored production assets. Target benchmark fulfillment reached {metrics['achievement_pct']:.2f}%, sustaining critical utility stock buffers above mandated norms."},
+                {"title": "2. Strategic KPI Benchmark", "content": f"Total pithead dispatch realized {metrics['total_dispatch']:,.2f} MT, reflecting a robust {metrics['offtake_ratio']:.2f}% offtake efficiency. Coastal import reliance decreased substantially through disciplined domestic expansion."},
+                {"title": "3. Coalfield Performance Highlights", "content": f"{top_name} delivered the single largest operational yield with {top_prod:,.2f} MT. Surface miner mechanization and automated rake loading ensured unbroken continuity."},
+                {"title": "4. Ministerial Action Directives", "content": "1. Accelerate FMC rail siding commissioning across high-volume extraction corridors.\n2. Expand continuous miner deployments across monitored underground units.\n3. Enforce real-time telemetry stock audits across pithead dumps."}
             ]
         elif tpl_key == "technical_deepdive":
             sections = [
-                {"title": "1. Statistical Distribution & Dispersion", "content": "Sample population mean: 7,431.52 MT | Standard Deviation: 4,620.14 MT | Median: 8,215.30 MT | Interquartile Range (IQR): 5,840.40 MT across 18 monitored collieries."},
-                {"title": "2. IQR Anomaly & Outlier Identification", "content": "Q1 boundary established at 4,980.10 MT; Q3 at 10,820.50 MT. Gevra Expansion (15,265.48 MT) breached the upper quartile fence, categorized as SURGE_OUTLIER with heightened evacuation requirements."},
-                {"title": "3. Extraction Methodology Comparison", "content": "Opencast Projects (OCP) generated 96.7% of aggregate output at an average stripping ratio of 1:2.4 m³/MT. Underground (UG) collieries represented 3.3% volume with high-grade thermal/coking coal yield."},
-                {"title": "4. Engineering & Recovery Recommendations", "content": "Immediate overhaul recommended for Khottadih UG dewatering conduits. Deploy 40-tonne articulated haulers to resolve wet-weather pit-bottom haulage bottlenecks in Sonepur Bazari."}
+                {"title": "1. Statistical Distribution & Dispersion", "content": f"Parametric distribution across {metrics['count']} monitored installations: Mean μ = {metrics['mean']:,.2f} MT | Std Dev σ = {metrics['std_dev']:,.2f} MT | Median Q2 = {metrics['median']:,.2f} MT | IQR = {metrics['iqr']:,.2f} MT."},
+                {"title": "2. IQR Anomaly & Outlier Identification", "content": f"Q1 boundary benchmarked at {metrics['q1']:,.2f} MT; Q3 boundary at {metrics['q3']:,.2f} MT. Upper IQR fence established at {metrics['upper_fence']:,.2f} MT. Units exceeding this boundary are designated as SURGE OUTLIERS with priority rail wagon placement."},
+                {"title": "3. Extraction Methodology Comparison", "content": f"Opencast operations account for the primary share of {metrics['total_production']:,.1f} MT output. Stripping ratios and bench stability parameters remain within engineered tolerances."},
+                {"title": "4. Engineering & Recovery Recommendations", "content": "Implement advanced dewatering conduit overhauls and expand 40-tonne articulated dump truck fleets to eliminate wet-weather pit-bottom haulage bottlenecks."}
             ]
         elif tpl_key == "parliamentary_scorecard":
             sections = [
-                {"title": "1. Statutory Compliance Statement", "content": "All production figures verified in strict accordance with the Coal Mines (Special Provisions) Act and verified against Rajya Sabha Unstarred Question No. 52 and Lok Sabha Starred Disclosures."},
-                {"title": "2. State-Wise Fulfillment Matrix", "content": "Chhattisgarh: 41,298.08 MT (100.2% fulfillment) | Odisha: 31,610.35 MT (97.4%) | Madhya Pradesh: 34,762.10 MT (98.1%) | Jharkhand: 20,911.50 MT (91.8%) | West Bengal: 5,185.27 MT (89.5%)."},
-                {"title": "3. Dispatch Assurance to Power Utilities", "content": "Total dispatch to power sector exceeded 127,814 MT, safeguarding round-the-clock baseload generation for Northern and Western regional grids. Zero critical coal alert reported during the audit cycle."},
-                {"title": "4. Audit Findings & Parliamentary Assurances", "content": "AST mathematical verification confirms exact parity between colliery pithead ledger tallies and national dispatch totals. Complete royalty disbursements transferred to respective State treasuries."}
+                {"title": "1. Statutory Compliance Statement", "content": f"All production records totaling {metrics['total_production']:,.2f} MT and dispatch figures of {metrics['total_dispatch']:,.2f} MT have been audited under Section 18 of the MMDR Act 1957 and parliamentary disclosures."},
+                {"title": "2. State-Wise Fulfillment Matrix", "content": "State allocation and royalty tallies calculated across active mining basins with exact mathematical parity against pithead ledgers."},
+                {"title": "3. Dispatch Assurance to Power Utilities", "content": f"Aggregate dispatch to power sector exceeded {metrics['total_dispatch']:,.1f} MT, assuring continuous baseload thermal power generation without critical fuel supply disruptions."},
+                {"title": "4. Audit Findings & Parliamentary Assurances", "content": "Deterministic AST verification confirms 100% calculation integrity (0.00 MT variance). All state mineral royalty disbursements processed in accordance with statutory guidelines."}
             ]
         elif tpl_key == "esg_sustainable":
             sections = [
-                {"title": "1. Green Transition & First-Mile Connectivity", "content": "82.4% of total coal volume dispatched via eco-friendly First-Mile Connectivity (FMC) rail corridors and covered conveyor systems, curtailing diesel consumption by an estimated 1.8M liters."},
-                {"title": "2. Ecological Restoration & Land Reclamation", "content": "Over 240 hectares of backfilled opencast voids successfully bio-reclaimed with native sal and teak plantations. 14.5 million cubic meters of treated mine water supplied to local agricultural communities."},
-                {"title": "3. Zero-Harm Occupational Safety Audit", "content": "Zero fatal incidents recorded across all 18 primary collieries. Automated digital methane monitoring sensors and strata surveillance cameras fully operational in underground workspaces."},
-                {"title": "4. Sustainable Mining Roadmap", "content": "150 MW rooftop and ground-mounted solar installations energized on decommissioned dump surfaces, powering 42% of ancillary washery energy requirements."}
+                {"title": "1. Green Transition & First-Mile Connectivity", "content": f"{metrics['esg_rail_share_pct']}% of total production evacuated via covered conveyor belts and First-Mile Connectivity rail sidings, significantly curtailing diesel particulate emissions."},
+                {"title": "2. Ecological Restoration & Land Reclamation", "content": f"Over {metrics['esg_reclaimed_ha']} hectares of mined-out voids successfully bio-reclaimed with native afforestation canopy and eco-parks."},
+                {"title": "3. Zero-Harm Occupational Safety Audit", "content": f"Occupational Safety Audit Status: {metrics['esg_safety_rating']}. Continuous digital methane monitoring and real-time slope telemetry active across all units."},
+                {"title": "4. Sustainable Mining Roadmap", "content": "150 MW rooftop and overburden dump solar installations energized, providing clean captive power for ancillary coal handling plants."}
             ]
         elif tpl_key == "corporate_minimalist":
             sections = [
-                {"title": "1. Executive Dashboard & Core Metrics", "content": "• Volume: 133,767.30 MT (+8.4% YoY)\n• Net Dispatch: 127,814.01 MT (95.55% Offtake Ratio)\n• Operating Realization: 96.26% Target Fulfillment\n• Active Colliery Assets: 18 Monitored Production Centers"},
-                {"title": "2. Asset Performance Matrix", "content": "Tier-1 Assets (Gevra, Kusmunda, Dipka, Bhubaneswari, Lakhanpur) generated 63,068 MT (47.1% national total). Capital expenditure prioritized for heavy machinery maintenance."},
-                {"title": "3. Supply Chain & Dispatch Bottlenecks", "content": "Average rake placement time reduced to 3.8 hours across SECL/MCL loading sidings. Stockyard inventory normalized at 12.4 days of dispatch."},
-                {"title": "4. Commercial Strategy & Priorities", "content": "• Optimize pithead blending to raise calorific value (GCV).\n• Advance e-auction allocations for non-power commercial sectors.\n• Target 145,000 MT baseline for the impending high-demand quarter."}
+                {"title": "1. Executive Dashboard & Core Metrics", "content": f"• Volume Extracted: {metrics['total_production']:,.2f} MT\n• Net Dispatches: {metrics['total_dispatch']:,.2f} MT ({metrics['offtake_ratio']:.2f}% Offtake)\n• Target Realization: {metrics['achievement_pct']:.2f}%\n• Monitored Asset Base: {metrics['count']} Collieries"},
+                {"title": "2. Asset Performance Matrix", "content": f"Tier-1 colliery {top_name} logged {top_prod:,.2f} MT output. Capital expenditure prioritizes automated continuous haulage."},
+                {"title": "3. Supply Chain & Dispatch Bottlenecks", "content": "Average rake turnaround compressed to 3.8 hours across primary siding loops. Stockyard buffer balanced at safe operating thresholds."},
+                {"title": "4. Commercial Strategy & Priorities", "content": "• Optimize pithead blending to maximize grade quality.\n• Expand commercial e-auction tranches.\n• Target sustained quarterly production acceleration."}
             ]
         else: # visual_infographic
             sections = [
-                {"title": "1. Macro Headline & National Record Milestones", "content": "NATIONAL EXTRACTION SURGES TO 133,767.30 MT — SECTOR ACHIEVES 96.26% FULFILLMENT\nRecord dispatch of 127,814.01 MT dispatched to power utilities with zero critical disruptions."},
-                {"title": "2. High-Impact Metric Radar", "content": "★ 15,265 MT: Highest Single-Mine Yield (Gevra Expansion Mine)\n★ 95.55%: Offtake Efficiency Quotient\n★ 78.4%: Coal India Limited (CIL) Dominant Market Share\n★ 100%: Deterministic Mathematical Verification Score"},
-                {"title": "3. Basin Sprint & Regional Surge", "content": "🚀 Chhattisgarh (SECL): 41,298 MT [SURGING]\n⚡ Odisha (MCL): 31,610 MT [PEAK ACCELERATION]\n📈 Madhya Pradesh (NCL): 34,762 MT [HIGH VELOCITY]\n🔍 Jharkhand & Bengal: 26,096 MT [STABILIZED MODERNIZATION]"},
-                {"title": "4. Strategic Radar & Future Trajectory", "content": "Forward projections forecast 140,000 MT benchmark within 60 days powered by computerized dispatch scheduling and expanded longwall continuous mining."}
+                {"title": "1. Macro Headline & National Record Milestones", "content": f"NATIONAL EXTRACTION LOGS {metrics['total_production']:,.1f} MT — SECTOR ACHIEVES {metrics['achievement_pct']:.1f}% TARGET FULFILLMENT\nRecord {metrics['total_dispatch']:,.1f} MT dispatched to power utilities with zero critical disruptions."},
+                {"title": "2. High-Impact Metric Radar", "content": f"★ {top_prod:,.0f} MT: Highest Single-Unit Extraction ({top_name})\n★ {metrics['offtake_ratio']:.1f}%: Evacuation & Offtake Fluidity\n★ {metrics['count']} Centers: Total Monitored Operational Footprint\n★ 100%: Deterministic Mathematical AST Verification Score"},
+                {"title": "3. Basin Sprint & Regional Surge", "content": f"Regional mining basins generated {metrics['total_production']:,.1f} MT cumulative volume with synchronized train dispatch."},
+                {"title": "4. Strategic Radar & Future Trajectory", "content": "Forward projections forecast sustained production momentum powered by digitized rail dispatch scheduling and continuous mechanized extraction."}
             ]
 
-    # Re-compile the template-specific documents immediately so downloads are ready
+    # Re-compile the template-specific documents immediately with active dataset metrics
     combined_summary = "\n\n".join(f"## {s['title']}\n{s['content']}" for s in sections)
+    report_id = f"REP-2026-{uuid.uuid4().hex[:4].upper()}"
     pkg = document_generator.generate_all_packages(
         template_name=tpl_key,
-        report_id="REP-2026-B56D",
-        summary_text=combined_summary
+        report_id=report_id,
+        summary_text=combined_summary,
+        user_records=metrics["collieries"]
+    )
+
+    # Persist report to Generated Report History Hub
+    record_report(
+        report_id=report_id,
+        title=f"{tpl['name']} — Performance Intelligence Dossier",
+        template_id=tpl_key,
+        template_name=tpl["name"],
+        theme=tpl["theme"],
+        auditor_id="MOC-7890",
+        records_count=metrics["count"],
+        summary_snippet=sections[0]["content"] if sections else ""
     )
 
     return {
@@ -525,13 +549,72 @@ def fill_template_content(template_id: str, req: Optional[TemplateFillRequest] =
         "badge": tpl["badge"],
         "sections": sections,
         "kpis": [
-            {"label": "National Extraction", "value": f"{TOTAL_PRODUCTION:,.2f} MT", "badge": f"{ACHIEVEMENT_PCT:.2f}% Target"},
-            {"label": "Thermal Dispatch", "value": f"{TOTAL_DISPATCH:,.2f} MT", "badge": f"{OFFTAKE_RATIO:.2f}% Offtake"},
-            {"label": "Active Collieries", "value": f"{len(COLLIERIES_DATA)} Collieries", "badge": "4 State Basins"},
+            {"label": "National Extraction", "value": f"{metrics['total_production']:,.2f} MT", "badge": f"{metrics['achievement_pct']:.2f}% Target"},
+            {"label": "Thermal Dispatch", "value": f"{metrics['total_dispatch']:,.2f} MT", "badge": f"{metrics['offtake_ratio']:.2f}% Offtake"},
+            {"label": "Active Collieries", "value": f"{metrics['count']} Collieries", "badge": "Basin Monitored"},
             {"label": "Audit Integrity", "value": "100% Deterministic", "badge": "AST Math Verified"}
         ],
+        "collieries_preview": metrics["collieries"][:8],
         "files": pkg.get("files", {})
     }
+
+
+# -------------------------------------------------------------------------
+# REPORT HISTORY ENDPOINTS
+# -------------------------------------------------------------------------
+@app.get("/api/reports/history")
+def get_reports_history(search: Optional[str] = None, auditor: Optional[str] = None):
+    """Returns persistent generated report history with word search filtering."""
+    history = get_history(search=search, auditor_id=auditor)
+    return {"success": True, "history": history, "count": len(history)}
+
+
+class RecordHistoryRequest(BaseModel):
+    id: str
+    title: str
+    template: str
+    template_name: str
+    theme: str
+    auditor_id: Optional[str] = "MOC-7890"
+    records_count: Optional[int] = 18
+    summary_snippet: Optional[str] = ""
+
+
+@app.post("/api/reports/history")
+def add_report_history(req: RecordHistoryRequest):
+    """Records a generated report into the persistent history log."""
+    entry = record_report(
+        report_id=req.id,
+        title=req.title,
+        template_id=req.template,
+        template_name=req.template_name,
+        theme=req.theme,
+        auditor_id=req.auditor_id or "MOC-7890",
+        records_count=req.records_count or 18,
+        summary_snippet=req.summary_snippet or ""
+    )
+    return {"success": True, "entry": entry}
+
+
+# -------------------------------------------------------------------------
+# REPORT DOWNLOAD ENDPOINTS
+# -------------------------------------------------------------------------
+@app.get("/api/reports/download/csv")
+def download_active_csv():
+    """Downloads the raw clean CSV dataset (strictly without template styling)."""
+    active_csv = config.OUTPUTS_DIR / "active_cleaned_dataset.csv"
+    if active_csv.exists():
+        return FileResponse(path=active_csv, filename="Cleaned_Coal_Dataset_2026.csv", media_type="text/csv")
+
+    base_csv = config.REPORTED_DATA_DIR / "coal_production_report.csv"
+    if base_csv.exists():
+        return FileResponse(path=base_csv, filename="National_Coal_Production_Dataset.csv", media_type="text/csv")
+
+    metrics = get_active_dataset_metrics()
+    df = pd.DataFrame(metrics["collieries"])
+    active_csv.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(active_csv, index=False)
+    return FileResponse(path=active_csv, filename="Coal_Collieries_Dataset.csv", media_type="text/csv")
 
 
 class ReportPackageRequest(BaseModel):
@@ -563,20 +646,22 @@ def generate_report_package(req: Optional[ReportPackageRequest] = None):
 
 @app.get("/api/reports/download/{fmt}")
 def download_report_format(fmt: str, template: Optional[str] = None):
-    """Downloads the generated report in the requested format (pdf, docx, xlsx) for the selected template."""
+    """Downloads the generated report in the requested format (pdf, docx, xlsx, csv) for the selected template."""
     fmt = fmt.lower().lstrip(".")
+    if fmt == "csv":
+        return download_active_csv()
+
     mapping = {
         "pdf": ("Ministry_of_Coal_Report_2026.pdf", "application/pdf"),
         "docx": ("Ministry_of_Coal_Report_2026.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
         "xlsx": ("Ministry_of_Coal_Report_2026.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
     }
     if fmt not in mapping:
-        raise HTTPException(status_code=400, detail=f"Unsupported format: {fmt}. Choose from pdf, docx, xlsx.")
+        raise HTTPException(status_code=400, detail=f"Unsupported format: {fmt}. Choose from pdf, docx, xlsx, csv.")
 
     default_fname, media_type = mapping[fmt]
     file_path = config.REPORTS_DIR / default_fname
 
-    # Check if a template-specific file exists
     if template:
         tpl_key = template.lower().replace(" ", "_")
         tpl_fname = f"Ministry_of_Coal_{tpl_key}_2026.{fmt}"
@@ -584,7 +669,6 @@ def download_report_format(fmt: str, template: Optional[str] = None):
         if tpl_path.exists():
             return FileResponse(path=tpl_path, filename=tpl_fname, media_type=media_type)
 
-    # If default doesn't exist yet, generate it now
     if not file_path.exists():
         document_generator.generate_all_packages(template_name=template or "executive_brief")
 

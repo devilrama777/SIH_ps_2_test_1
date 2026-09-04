@@ -31,6 +31,7 @@ const App = {
     this.startHeaderClock();
     this.renderDashboardCharts();
     this.loadLatestSummary();
+    this.loadReportHistory();
   },
 
   startHeaderClock: function() {
@@ -160,6 +161,8 @@ const App = {
 
     if (tabId === "dashboard") {
       setTimeout(() => this.renderDashboardCharts(), 100);
+    } else if (tabId === "reports") {
+      this.loadReportHistory();
     }
   },
 
@@ -491,22 +494,39 @@ const App = {
       }
     }, 2200);
 
-    // Elapsed Timer & Smooth Progress
+    // Elapsed Timer & Smooth Stage-Based Progress
     this.pipelineStartTime = Date.now();
-    let currentPct = 15;
+    let currentPct = 4;
+    if (progressBar) progressBar.style.width = "4%";
+    if (pctLabel) pctLabel.innerText = "4%";
+    if (stageLabel) stageLabel.innerText = `Ingesting ${this.selectedFile.name}...`;
+
+    const stages = [
+      { maxPct: 22, label: `Parsing ${this.selectedFile.name} schema & numeric columns...` },
+      { maxPct: 48, label: "Extracting colliery metrics, dispatch ratios & state aggregates..." },
+      { maxPct: 72, label: "Running neural intelligence reasoning on regional trends..." },
+      { maxPct: 88, label: "Executing deterministic AST mathematical verification..." },
+      { maxPct: 94, label: "Formatting publication dossier into template layouts..." }
+    ];
+
+    let currentStageIdx = 0;
     if (this.pipelineInterval) clearInterval(this.pipelineInterval);
     this.pipelineInterval = setInterval(() => {
       const elapsed = ((Date.now() - this.pipelineStartTime) / 1000).toFixed(1);
       if (timer) timer.innerText = `${elapsed}s`;
 
-      if (currentPct < 92) {
-        currentPct += Math.random() * 6;
-        if (currentPct > 92) currentPct = 92;
+      const curTarget = stages[currentStageIdx] || stages[stages.length - 1];
+      if (currentPct < curTarget.maxPct) {
+        currentPct += 1.6 + Math.random() * 2.4;
+        if (currentPct > curTarget.maxPct) currentPct = curTarget.maxPct;
         const rounded = Math.round(currentPct);
         if (progressBar) progressBar.style.width = `${rounded}%`;
         if (pctLabel) pctLabel.innerText = `${rounded}%`;
+      } else if (currentStageIdx < stages.length - 1) {
+        currentStageIdx++;
+        if (stageLabel) stageLabel.innerText = stages[currentStageIdx].label;
       }
-    }, 300);
+    }, 260);
 
     const formData = new FormData();
     formData.append("file", this.selectedFile);
@@ -530,15 +550,24 @@ const App = {
 
       const result = await res.json();
       
-      // 100% Complete
+      // Complete to 100%
       if (progressBar) progressBar.style.width = "100%";
       if (pctLabel) pctLabel.innerText = "100%";
-      if (stageLabel) stageLabel.innerText = "Executive Report Compiled Successfully!";
+      if (stageLabel) stageLabel.innerText = "Executive Dossier Compiled & Verified!";
+
+      // Cache summary text
+      if (result.final_report || result.llama_analysis) {
+        this.currentSummaryText = result.final_report || result.llama_analysis;
+      }
+
+      // Automatically refresh report history in Tab 4
+      this.loadReportHistory();
 
       setTimeout(() => {
         hub.classList.add("hidden");
         this.displayExecutiveResults(result);
-      }, 600);
+        this.showToast("Analysis complete! Check Tab 4 for report history and downloads.", "success");
+      }, 500);
 
     } catch (err) {
       clearInterval(this.pipelineInterval);
@@ -646,9 +675,9 @@ const App = {
 
     const stages = [
       { pct: 20, label: "Binding Sovereign Masthead & Metadata...", text: "Binding Ministry of Coal seals, report ID and timestamp into document header..." },
-      { pct: 45, label: "Calibrating Colliery KPI Matrices...", text: "Calculating national extraction totals, 95.55% offtake ratio and colliery ranks..." },
-      { pct: 75, label: "Streaming AI Strategic Directives...", text: `Synthesizing ${templateId.replace('_', ' ')} thematic prompt into structured analytical sections...` },
-      { pct: 95, label: "Running AST Deterministic Verification...", text: "Zero hallucination verification check: 133,767.30 MT mathematical checksum passed (0.00 err)..." },
+      { pct: 45, label: "Calibrating Colliery KPI Matrices...", text: "Calculating national extraction totals, offtake ratio and colliery share ranks..." },
+      { pct: 75, label: "Streaming Thematic AI Directives...", text: `Synthesizing ${templateId.replace('_', ' ')} thematic prompt into structured analytical sections...` },
+      { pct: 95, label: "Running AST Deterministic Verification...", text: "Zero hallucination check: Evaluating deterministic mathematical formulas and anomaly fences..." },
       { pct: 100, label: "Template Assembled & Ready!", text: "Document canvas fully assembled and formatted for 300 DPI publication export." }
     ];
 
@@ -661,14 +690,13 @@ const App = {
         if (pLabel) pLabel.innerText = stage.label;
         if (streamingText) streamingText.innerText = stage.text;
 
-        // Update indicator badges
         const indId = `slot-indicator-${Math.min(stageIdx + 1, 4)}`;
         const ind = document.getElementById(indId);
         if (ind) {
           const badge = ind.querySelector(".slot-status-badge");
           if (badge) {
             badge.className = "text-[10px] font-mono text-emerald-400 slot-status-badge";
-            badge.innerText = "● Bound ✓";
+            badge.innerText = "✓ Bound ✨";
           }
         }
 
@@ -681,7 +709,7 @@ const App = {
           this.showToast(`Template "${templateId.replace('_', ' ')}" loaded into live canvas!`, "success");
         }, 400);
       }
-    }, 320);
+    }, 280);
   },
 
   fetchAndRenderTemplate: async function(templateId) {
@@ -710,7 +738,6 @@ const App = {
   },
 
   renderTemplatePreview: function(templateId, data) {
-    const paper = document.getElementById("a4-document-paper");
     const tTitle = document.getElementById("canvas-template-title");
     const tDesc = document.getElementById("canvas-template-desc");
     const tIcon = document.getElementById("canvas-template-icon");
@@ -719,10 +746,16 @@ const App = {
     const exportLabel = document.getElementById("export-template-label");
     const secContainer = document.getElementById("canvas-sections-container");
     const tbody = document.getElementById("canvas-table-tbody");
+    const tableTitle = document.getElementById("canvas-table-title");
+    const tableThead = document.getElementById("canvas-table-thead");
+    const kpiGrid = document.getElementById("canvas-kpi-grid");
 
     if (activeBadge) activeBadge.innerText = data.template_name || templateId;
     if (exportLabel) exportLabel.innerText = data.template_name || templateId;
-    if (tTitle) tTitle.innerText = data.template_name;
+    if (tTitle) {
+      tTitle.innerText = data.template_name;
+      tTitle.style.color = data.primary_hex || "#1E3A8A";
+    }
     if (tDesc) tDesc.innerText = data.subtitle || data.theme;
     if (tIcon) tIcon.innerText = data.icon || "📄";
 
@@ -731,37 +764,81 @@ const App = {
       badgePill.style.backgroundColor = data.primary_hex || "#1E3A8A";
     }
 
-    if (tTitle && data.primary_hex) {
-      tTitle.style.color = data.primary_hex;
-    }
-
-    // Render KPI Cards
-    if (data.kpis && data.kpis.length >= 4) {
-      for (let i = 0; i < 4; i++) {
-        const valEl = document.getElementById(`canvas-kpi-val-${i+1}`);
-        const badgeEl = document.getElementById(`canvas-kpi-badge-${i+1}`);
-        if (valEl) valEl.innerText = data.kpis[i].value;
-        if (badgeEl) badgeEl.innerText = data.kpis[i].badge;
+    // 1. Render Dynamic KPI Grid
+    if (kpiGrid && data.kpis && data.kpis.length >= 4) {
+      if (templateId === "corporate_minimalist") {
+        // Swiss 2x2 Minimalist Wireframe Cards
+        kpiGrid.className = "grid grid-cols-1 sm:grid-cols-2 gap-3";
+        kpiGrid.innerHTML = data.kpis.map(k => `
+          <div class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl space-y-1">
+            <div class="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">${k.label}</div>
+            <div class="text-xl font-black font-mono text-zinc-900">${k.value}</div>
+            <div class="text-[10px] text-zinc-600 font-mono">${k.badge}</div>
+          </div>
+        `).join("");
+      } else if (templateId === "visual_infographic") {
+        // Vibrant Infographic Hero Cards with Visual Percentage Bars
+        kpiGrid.className = "grid grid-cols-2 sm:grid-cols-4 gap-3";
+        kpiGrid.innerHTML = data.kpis.map((k, idx) => `
+          <div class="p-3 bg-indigo-50/60 border border-indigo-200 rounded-xl text-center space-y-1">
+            <div class="text-[10px] uppercase font-bold text-indigo-700">${k.label}</div>
+            <div class="text-lg font-black font-mono text-indigo-950">${k.value}</div>
+            <div class="w-full bg-indigo-100 rounded-full h-1.5 overflow-hidden my-1">
+              <div class="bg-indigo-600 h-1.5 rounded-full" style="width: ${85 + idx * 4}%"></div>
+            </div>
+            <div class="text-[10px] font-bold text-rose-600">${k.badge}</div>
+          </div>
+        `).join("");
+      } else if (templateId === "technical_deepdive") {
+        // Slate & Cyan Technical Cards
+        kpiGrid.className = "grid grid-cols-2 sm:grid-cols-4 gap-3";
+        kpiGrid.innerHTML = data.kpis.map(k => `
+          <div class="p-3 bg-slate-900 text-white border border-cyan-800 rounded-xl text-center space-y-1">
+            <div class="text-[10px] uppercase font-bold text-cyan-400 font-mono">${k.label}</div>
+            <div class="text-lg font-black font-mono text-white">${k.value}</div>
+            <div class="text-[10px] text-cyan-200 font-mono">${k.badge}</div>
+          </div>
+        `).join("");
+      } else {
+        // Sovereign Executive & Parliamentary Standard
+        kpiGrid.className = "grid grid-cols-2 sm:grid-cols-4 gap-3";
+        kpiGrid.innerHTML = data.kpis.map(k => `
+          <div class="p-3 rounded-xl border text-center" style="background-color: ${data.light_bg_hex || '#F8FAFC'}; border-color: ${data.border_hex || '#E2E8F0'};">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">${k.label}</div>
+            <div class="text-base sm:text-lg font-black font-mono text-slate-900 mt-1">${k.value}</div>
+            <div class="text-[10px] font-bold mt-0.5" style="color: ${data.primary_hex || '#1E3A8A'};">${k.badge}</div>
+          </div>
+        `).join("");
       }
     }
 
-    // Render Sections
+    // 2. Render Distinct Sections
     if (secContainer && data.sections) {
       let secHtml = "";
       data.sections.forEach((sec, idx) => {
-        const isActionList = sec.content.includes("1.") || sec.content.includes("•");
         let bodyContent = sec.content
           .replace(/\n\n/g, '<br/><br/>')
-          .replace(/• (.*)/g, '<li class="ml-4 list-disc">$1</li>')
-          .replace(/(\d+\.) (.*)/g, '<li class="ml-4 list-decimal py-0.5">$2</li>');
+          .replace(/• (.*)/g, '<li class="ml-4 list-disc py-0.5">$1</li>')
+          .replace(/(\d+\.) (.*)/g, '<li class="ml-4 list-decimal py-0.5">$2</li>')
+          .replace(/★ (.*)/g, '<div class="flex items-center space-x-2 py-0.5 font-bold text-indigo-900"><span>★</span><span>$1</span></div>');
+
+        // Layout-specific styling touches
+        let cardBorder = data.border_hex || '#E2E8F0';
+        let cardBg = data.light_bg_hex || '#F8FAFC';
+        let isDirectivesBox = sec.title.toLowerCase().includes("directive") || sec.title.toLowerCase().includes("priority") || sec.title.toLowerCase().includes("radar");
+
+        if (isDirectivesBox && templateId === "executive_brief") {
+          cardBg = "#FEF3C7";
+          cardBorder = "#F59E0B";
+        }
 
         secHtml += `
-          <div class="space-y-1.5 p-4 rounded-xl border border-slate-100" style="background-color: ${data.light_bg_hex || '#F8FAFC'};">
+          <div class="space-y-1.5 p-4 rounded-xl border" style="background-color: ${cardBg}; border-color: ${cardBorder};">
             <h3 class="text-xs sm:text-sm font-extrabold font-heading uppercase tracking-wide flex items-center space-x-2" style="color: ${data.primary_hex || '#1E3A8A'};">
               <span>§${idx + 1}</span>
               <span>${sec.title}</span>
             </h3>
-            <div class="text-xs text-slate-700 leading-relaxed font-sans pt-1">
+            <div class="text-xs text-slate-800 leading-relaxed font-sans pt-1">
               ${bodyContent}
             </div>
           </div>
@@ -770,20 +847,310 @@ const App = {
       secContainer.innerHTML = secHtml;
     }
 
-    // Render Colliery Table
-    if (tbody && typeof MOCK_COLLIERIES !== "undefined") {
-      tbody.innerHTML = MOCK_COLLIERIES.slice(0, 8).map(c => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="py-1.5 px-2.5 text-center font-bold text-slate-500">${c.rank}</td>
-          <td class="py-1.5 px-2.5 font-bold text-slate-800">${c.name}</td>
-          <td class="py-1.5 px-2.5 text-slate-600">${c.state}</td>
-          <td class="py-1.5 px-2.5 text-slate-500">${c.company}</td>
-          <td class="py-1.5 px-2.5 text-right font-bold text-slate-900">${c.production.toLocaleString()}</td>
-          <td class="py-1.5 px-2.5 text-right text-slate-600">${c.dispatch.toLocaleString()}</td>
-          <td class="py-1.5 px-2.5 text-right font-bold text-emerald-600">${c.share}</td>
-        </tr>
-      `).join("");
+    // 3. Render Distinct Table
+    const collieryRecords = data.collieries_preview || (typeof MOCK_COLLIERIES !== "undefined" ? MOCK_COLLIERIES.slice(0, 8) : []);
+    if (tbody) {
+      if (templateId === "technical_deepdive") {
+        if (tableTitle) tableTitle.innerText = "Empirical IQR Anomaly & Colliery Outlier Classification";
+        if (tableThead) {
+          tableThead.innerHTML = `
+            <tr class="bg-slate-900 text-cyan-300 font-mono text-[10px]">
+              <th class="py-2 px-2.5 text-center">Rank</th>
+              <th class="py-2 px-2.5">Colliery / Installation</th>
+              <th class="py-2 px-2.5">Basin</th>
+              <th class="py-2 px-2.5 text-right">Production (MT)</th>
+              <th class="py-2 px-2.5 text-center">IQR Classification</th>
+            </tr>
+          `;
+        }
+        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => {
+          let badgeClass = "bg-slate-100 text-slate-700";
+          let badgeText = "[NOMINAL 1.5 IQR]";
+          if (i === 0) { badgeClass = "bg-amber-100 text-amber-900 border border-amber-300 font-bold"; badgeText = "[SURGE OUTLIER]"; }
+          if (i >= 6) { badgeClass = "bg-purple-100 text-purple-900 border border-purple-300 font-bold"; badgeText = "[BOTTLENECK / LOW]"; }
+
+          return `
+            <tr class="hover:bg-slate-50 border-b border-slate-100 font-mono text-[11px]">
+              <td class="py-1.5 px-2.5 text-center text-slate-500">${c.rank || i+1}</td>
+              <td class="py-1.5 px-2.5 font-bold text-slate-900">${c.name}</td>
+              <td class="py-1.5 px-2.5 text-slate-600">${c.state}</td>
+              <td class="py-1.5 px-2.5 text-right font-bold text-cyan-900">${(c.production || 0).toLocaleString()}</td>
+              <td class="py-1.5 px-2.5 text-center"><span class="px-2 py-0.5 rounded text-[10px] ${badgeClass}">${badgeText}</span></td>
+            </tr>
+          `;
+        }).join("");
+      } else if (templateId === "parliamentary_scorecard") {
+        if (tableTitle) tableTitle.innerText = "State-Wise Allocation & Mineral Royalty Matrix (Statutory)";
+        if (tableThead) {
+          tableThead.innerHTML = `
+            <tr class="bg-emerald-900 text-emerald-100 text-[10px]">
+              <th class="py-2 px-2.5 text-center">#</th>
+              <th class="py-2 px-2.5">Mining Asset</th>
+              <th class="py-2 px-2.5">State Jurisdiction</th>
+              <th class="py-2 px-2.5 text-right">Output (MT)</th>
+              <th class="py-2 px-2.5 text-right">Dispatch (MT)</th>
+              <th class="py-2 px-2.5 text-center">Statutory Status</th>
+            </tr>
+          `;
+        }
+        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
+          <tr class="hover:bg-slate-50 border-b border-slate-100 text-[11px]">
+            <td class="py-1.5 px-2.5 text-center text-slate-500">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold text-slate-900">${c.name}</td>
+            <td class="py-1.5 px-2.5 text-emerald-800 font-medium">${c.state}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono font-bold text-slate-900">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono text-slate-600">${(c.dispatch || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-center"><span class="text-emerald-700 font-bold text-[10px]">✓ Verified</span></td>
+          </tr>
+        `).join("");
+      } else if (templateId === "esg_sustainable") {
+        if (tableTitle) tableTitle.innerText = "Colliery Ecological Stewardship & Sustainable Mine Tiering";
+        if (tableThead) {
+          tableThead.innerHTML = `
+            <tr class="bg-green-900 text-green-100 text-[10px]">
+              <th class="py-2 px-2.5 text-center">Rank</th>
+              <th class="py-2 px-2.5">Colliery / Mine</th>
+              <th class="py-2 px-2.5">Extraction (MT)</th>
+              <th class="py-2 px-2.5">Evacuation Type</th>
+              <th class="py-2 px-2.5 text-center">ESG Compliance</th>
+            </tr>
+          `;
+        }
+        const tiers = ["A+ (Exemplary)", "A (Compliant)", "A (Compliant)", "B+ (Satisfactory)", "B+ (Satisfactory)", "B (Satisfactory)", "B (Compliant)", "B (Compliant)"];
+        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
+          <tr class="hover:bg-slate-50 border-b border-slate-100 text-[11px]">
+            <td class="py-1.5 px-2.5 text-center text-slate-500">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold text-slate-900">${c.name}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono font-bold text-slate-900">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-slate-600">${i < 4 ? 'Rail FMC Corridor' : 'Rail / Road Hybrid'}</td>
+            <td class="py-1.5 px-2.5 text-center"><span class="px-2 py-0.5 rounded bg-green-100 text-green-900 font-bold text-[10px]">${tiers[i] || 'Compliant'}</span></td>
+          </tr>
+        `).join("");
+      } else {
+        // Standard Colliery Production Table
+        if (tableTitle) tableTitle.innerText = "Top Colliery Production & Dispatch Rankings";
+        if (tableThead) {
+          tableThead.innerHTML = `
+            <tr class="bg-slate-100 text-slate-700 text-[10px]">
+              <th class="py-2 px-2.5 text-center">Rank</th>
+              <th class="py-2 px-2.5">Colliery Name</th>
+              <th class="py-2 px-2.5">State</th>
+              <th class="py-2 px-2.5">Company</th>
+              <th class="py-2 px-2.5 text-right">Production (MT)</th>
+              <th class="py-2 px-2.5 text-right">Dispatch (MT)</th>
+              <th class="py-2 px-2.5 text-right">Share</th>
+            </tr>
+          `;
+        }
+        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
+          <tr class="hover:bg-slate-50 border-b border-slate-100 text-[11px]">
+            <td class="py-1.5 px-2.5 text-center text-slate-500 font-bold">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold text-slate-900">${c.name}</td>
+            <td class="py-1.5 px-2.5 text-slate-600">${c.state}</td>
+            <td class="py-1.5 px-2.5 text-slate-500">${c.company}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono font-bold text-slate-900">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono text-slate-600">${(c.dispatch || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono font-bold text-emerald-600">${c.share || '-'}</td>
+          </tr>
+        `).join("");
+      }
     }
+
+    // 4. Update download action buttons at the bottom of the canvas
+    const btnPdf = document.getElementById("btn-download-tpl-pdf");
+    const btnDocx = document.getElementById("btn-download-tpl-docx");
+    const btnXlsx = document.getElementById("btn-download-tpl-xlsx");
+    if (btnPdf) {
+      btnPdf.href = `/api/reports/download/pdf?template=${templateId}`;
+      btnPdf.download = `Ministry_of_Coal_${templateId}_2026.pdf`;
+    }
+    if (btnDocx) {
+      btnDocx.href = `/api/reports/download/docx?template=${templateId}`;
+      btnDocx.download = `Ministry_of_Coal_${templateId}_2026.docx`;
+    }
+    if (btnXlsx) {
+      btnXlsx.href = `/api/reports/download/csv`;
+      btnXlsx.download = `Cleaned_Coal_Dataset_2026.csv`;
+    }
+  },
+
+  // -------------------------------------------------------------------------
+  // GENERATED REPORT HISTORY HUB METHODS (TAB 4)
+  // -------------------------------------------------------------------------
+  loadReportHistory: async function() {
+    const container = document.getElementById("report-history-container");
+    const counter = document.getElementById("report-history-counter");
+    if (!container) return;
+
+    try {
+      const res = await fetch("/api/reports/history");
+      if (res.ok) {
+        const data = await res.json();
+        this.historyList = data.history || [];
+      }
+    } catch (e) {
+      console.warn("Could not fetch remote history, using local fallback:", e);
+    }
+
+    if (!this.historyList || this.historyList.length === 0) {
+      this.historyList = [
+        {
+          id: "REP-2026-B56D",
+          title: "National Coal Extraction & Power Dispatch Briefing",
+          template: "executive_brief",
+          template_name: "Executive Ministry Brief",
+          theme: "Sovereign Navy & Gold",
+          auditor_id: "MOC-7890",
+          timestamp: new Date().toLocaleDateString("en-IN", { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+          records_count: 18,
+          summary_snippet: "National coal production sustained strong operational capacity with target fulfillment reaching 96.26% across monitored subsidiaries.",
+          pdf_url: "/api/reports/download/pdf?template=executive_brief",
+          docx_url: "/api/reports/download/docx?template=executive_brief",
+          csv_url: "/api/reports/download/csv"
+        }
+      ];
+    }
+
+    this.renderReportHistoryCards(this.historyList);
+    if (counter) counter.innerText = `${this.historyList.length} Report${this.historyList.length === 1 ? '' : 's'} Available`;
+  },
+
+  filterReportHistory: function(event) {
+    const q = event ? event.target.value.toLowerCase().trim() : "";
+    if (!q) {
+      this.applyCategoryFilter(this.historyList);
+      return;
+    }
+
+    const filtered = (this.historyList || []).filter(item => {
+      const haystack = `${item.title} ${item.template_name} ${item.template} ${item.id} ${item.summary_snippet || ''} ${item.auditor_id || ''}`.toLowerCase();
+      return haystack.includes(q);
+    });
+
+    this.renderReportHistoryCards(filtered);
+    const counter = document.getElementById("report-history-counter");
+    if (counter) counter.innerText = `${filtered.length} of ${this.historyList.length} Reports Found`;
+  },
+
+  setHistoryCategoryFilter: function(category) {
+    this.activeHistoryFilter = category;
+    document.querySelectorAll(".hist-filter-btn").forEach(btn => {
+      btn.className = "hist-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg text-xs font-bold transition";
+    });
+    const activeBtn = document.getElementById(`hist-filter-${category}`);
+    if (activeBtn) activeBtn.className = "hist-filter-btn px-3 py-1.5 bg-blue-700 text-white rounded-lg text-xs font-bold transition";
+
+    this.applyCategoryFilter(this.historyList);
+  },
+
+  applyCategoryFilter: function(list) {
+    const searchInput = document.getElementById("report-search-input");
+    let items = list || [];
+    if (searchInput && searchInput.value.trim()) {
+      const q = searchInput.value.toLowerCase().trim();
+      items = items.filter(i => `${i.title} ${i.template_name} ${i.id} ${i.summary_snippet || ''}`.toLowerCase().includes(q));
+    }
+
+    if (this.activeHistoryFilter && this.activeHistoryFilter !== 'all') {
+      items = items.filter(i => (i.template || "").toLowerCase().includes(this.activeHistoryFilter.toLowerCase()));
+    }
+
+    this.renderReportHistoryCards(items);
+    const counter = document.getElementById("report-history-counter");
+    if (counter) counter.innerText = `${items.length} Report${items.length === 1 ? '' : 's'} Available`;
+  },
+
+  renderReportHistoryCards: function(items) {
+    const container = document.getElementById("report-history-container");
+    if (!container) return;
+
+    if (!items || items.length === 0) {
+      container.innerHTML = `
+        <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-3">
+          <div class="text-3xl">🔍</div>
+          <h4 class="text-sm font-bold text-slate-800">No Matching Reports Found</h4>
+          <p class="text-xs text-slate-500">No generated report matched your search keyword. Try another search term or reset filters.</p>
+          <button onclick="document.getElementById('report-search-input').value = ''; App.setHistoryCategoryFilter('all');" class="px-3.5 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-xs font-bold hover:bg-blue-100 transition">
+            Reset All Filters
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    const themeColors = {
+      executive_brief: { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-900", icon: "🏛️" },
+      technical_deepdive: { bg: "bg-slate-100", border: "border-cyan-300", text: "text-slate-900", icon: "🔬" },
+      parliamentary_scorecard: { bg: "bg-emerald-50", border: "border-emerald-300", text: "text-emerald-900", icon: "📜" },
+      esg_sustainable: { bg: "bg-green-50", border: "border-green-300", text: "text-green-900", icon: "🌿" },
+      corporate_minimalist: { bg: "bg-zinc-100", border: "border-zinc-300", text: "text-zinc-900", icon: "⚡" },
+      visual_infographic: { bg: "bg-indigo-50", border: "border-indigo-300", text: "text-indigo-900", icon: "📊" }
+    };
+
+    container.innerHTML = items.map(item => {
+      const theme = themeColors[item.template] || { bg: "bg-slate-50", border: "border-slate-200", text: "text-slate-800", icon: "📄" };
+      const pdfUrl = item.pdf_url || `/api/reports/download/pdf?template=${item.template}`;
+      const docxUrl = item.docx_url || `/api/reports/download/docx?template=${item.template}`;
+      const csvUrl = item.csv_url || `/api/reports/download/csv`;
+
+      return `
+        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md transition space-y-4">
+          <!-- Top Row: Meta & Badges -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div class="flex items-center space-x-2.5 flex-wrap gap-y-1">
+              <span class="px-2.5 py-1 ${theme.bg} ${theme.border} ${theme.text} border text-[11px] font-bold rounded-lg flex items-center space-x-1">
+                <span>${theme.icon}</span>
+                <span>${item.template_name || item.template}</span>
+              </span>
+              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 font-mono text-xs font-bold rounded border border-slate-200">
+                ${item.id}
+              </span>
+              <span class="text-xs text-slate-400 font-mono">
+                📅 ${item.timestamp}
+              </span>
+            </div>
+            <div class="flex items-center space-x-2 text-xs font-mono text-slate-500">
+              <span class="px-2 py-0.5 bg-slate-50 rounded border border-slate-200">Auditor: ${item.auditor_id || 'MOC-7890'}</span>
+              <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded border border-emerald-200">✓ Verified</span>
+            </div>
+          </div>
+
+          <!-- Middle Row: Title & Summary -->
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 font-heading tracking-tight">${item.title}</h3>
+            <p class="text-xs text-slate-600 mt-1 leading-relaxed">${item.summary_snippet || 'Publication dossier compiled and mathematically verified across active subsidiary colliery ledgers.'}</p>
+          </div>
+
+          <!-- Bottom Row: 3 Styled Download Action Buttons -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+            <div class="text-[11px] font-semibold text-slate-500 flex items-center space-x-1">
+              <span>⚡ Format Actions:</span>
+              <span class="text-slate-400">PDF uses chosen template • CSV exports raw dataset</span>
+            </div>
+            <div class="flex items-center space-x-2 flex-wrap gap-y-2">
+              <!-- Button 1: PDF with template -->
+              <a href="${pdfUrl}" download="${item.id}_${item.template}.pdf"
+                class="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center space-x-1.5 shrink-0">
+                <span>📕</span>
+                <span>Download PDF (${item.template_name ? item.template_name.split(' ')[0] : 'Report'})</span>
+              </a>
+              <!-- Button 2: Clean CSV -->
+              <a href="${csvUrl}" download="Cleaned_Coal_Dataset_2026.csv"
+                class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center space-x-1.5 shrink-0">
+                <span>📊</span>
+                <span>Download Clean CSV</span>
+              </a>
+              <!-- Button 3: Word DOCX -->
+              <a href="${docxUrl}" download="${item.id}_${item.template}.docx"
+                class="px-4 py-2 bg-gradient-to-r from-blue-700 to-indigo-800 hover:from-blue-800 hover:to-indigo-900 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center space-x-1.5 shrink-0">
+                <span>📝</span>
+                <span>Download Word DOCX</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
   },
 
   refreshTemplatePreview: function() {

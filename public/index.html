@@ -859,14 +859,10 @@
                   <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Live Document Canvas (Simulated 300 DPI A4 Page)</span>
                 </div>
                 <div class="flex items-center space-x-2">
-                  <button onclick="App.refreshTemplatePreview()" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold shadow-xs transition flex items-center space-x-1.5">
-                    <span>🔄</span>
-                    <span>Re-Synthesize</span>
-                  </button>
-                  <button onclick="window.print()" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold shadow-xs transition flex items-center space-x-1.5">
-                    <span>🖨️</span>
-                    <span>Print Canvas</span>
-                  </button>
+                  <span class="px-3 py-1.5 bg-blue-50 text-blue-900 border border-blue-200 rounded-lg text-xs font-bold shadow-xs flex items-center space-x-1.5">
+                    <span>📄</span>
+                    <span>Template Scope: PDF & Live Canvas</span>
+                  </span>
                 </div>
               </div>
 
@@ -1094,84 +1090,64 @@
                 <span>West Bengal (ECL)</span>
                 <span>5,185.2 MT (4.0%)</span>
               </div>
-              <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                <div class="bg-purple-600 h-2.5 rounded-full" style="width: 4.0%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- ========================================== -->
-      <!-- TAB 4: EXECUTIVE REPORT STUDIO             -->
+                 <!-- ========================================== -->
+      <!-- TAB 4: EXECUTIVE REPORT STUDIO & HISTORY   -->
       <!-- ========================================== -->
       <div id="view-reports" class="space-y-6 hidden">
-        <div>
-          <h2 class="text-2xl font-extrabold text-slate-900 font-heading">Executive Report Studio & Export Hub</h2>
-          <p class="text-sm text-slate-500 mt-0.5">Publication-grade documents formatted according to Ministry of Coal and parliamentary guidelines.</p>
+        <!-- Section Masthead -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-blue-50 text-blue-900 border border-blue-200 rounded-full text-xs font-bold mb-1">
+              <span>📚</span>
+              <span>Audit Session Archive • MOC-7890</span>
+            </div>
+            <h2 class="text-2xl font-extrabold text-slate-900 font-heading">Generated Report History & Export Hub</h2>
+            <p class="text-sm text-slate-500 mt-0.5">Searchable intelligence repository of all compiled publication dossiers and raw verified datasets.</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <a href="/api/reports/download/csv" download="Cleaned_Coal_Dataset_2026.csv"
+              class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-2">
+              <span>📊</span>
+              <span>Download Clean CSV</span>
+            </a>
+            <button onclick="App.loadReportHistory()" class="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold shadow-xs transition flex items-center space-x-2">
+              <span>🔄</span>
+              <span>Refresh History</span>
+            </button>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Format 1: PDF -->
-          <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs hover-card flex flex-col justify-between space-y-4">
-            <div>
-              <div class="w-12 h-12 rounded-xl bg-red-100 text-red-700 flex items-center justify-center text-2xl mb-3">
-                📕
+        <!-- Interactive Word Search & Filter Bar -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4">
+          <div class="flex flex-col md:flex-row gap-3">
+            <div class="relative flex-1">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">
+                🔍
               </div>
-              <h3 class="text-base font-bold text-slate-900 font-heading">Official Executive PDF Report</h3>
-              <p class="text-xs text-slate-500 mt-1">High-resolution 300 DPI vector document with official Ministry letterhead, colliery rankings, and statistical audit charts.</p>
-              <div class="mt-4 inline-flex items-center space-x-2 text-[11px] font-mono text-slate-600 bg-slate-100 px-3 py-1 rounded-lg">
-                <span>Format: PDF</span>
-                <span>•</span>
-                <span>Resolution: 300 DPI</span>
-              </div>
+              <input type="text" id="report-search-input" oninput="App.filterReportHistory(event)"
+                placeholder="Search report titles, headings, topics, collieries, or keywords (e.g., Gevra, Target, Statutory, ESG)..."
+                class="block w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition" />
             </div>
-            <a href="/api/reports/download/pdf" download="Ministry_of_Coal_Report_2026.pdf"
-              class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center justify-center space-x-2">
-              <span>📥 Download PDF Report</span>
-            </a>
+            <div class="flex items-center space-x-2 shrink-0">
+              <span class="text-xs font-bold text-slate-500">Filter:</span>
+              <button onclick="App.setHistoryCategoryFilter('all')" id="hist-filter-all" class="hist-filter-btn px-3 py-1.5 bg-blue-700 text-white rounded-lg text-xs font-bold transition">All Reports</button>
+              <button onclick="App.setHistoryCategoryFilter('executive')" id="hist-filter-executive" class="hist-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg text-xs font-bold transition">Executive</button>
+              <button onclick="App.setHistoryCategoryFilter('technical')" id="hist-filter-technical" class="hist-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg text-xs font-bold transition">Technical</button>
+              <button onclick="App.setHistoryCategoryFilter('parliamentary')" id="hist-filter-parliamentary" class="hist-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg text-xs font-bold transition">Parliamentary</button>
+            </div>
           </div>
+          <div class="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">
+            <div class="flex items-center space-x-2">
+              <span id="report-history-counter" class="font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">Loading History...</span>
+              <span>• Template styling applies strictly to PDF reports & preview canvas</span>
+            </div>
+            <span class="font-mono text-slate-400">Auditor: MOC-7890</span>
+          </div>
+        </div>
 
-          <!-- Format 2: Excel -->
-          <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs hover-card flex flex-col justify-between space-y-4">
-            <div>
-              <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl mb-3">
-                📊
-              </div>
-              <h3 class="text-base font-bold text-slate-900 font-heading">7-Sheet Excel Analytics Workbook</h3>
-              <p class="text-xs text-slate-500 mt-1">Raw tabular spreadsheets with dynamic formulas, subsidiary rollups, quartile analysis, and pivot-ready data.</p>
-              <div class="mt-4 inline-flex items-center space-x-2 text-[11px] font-mono text-slate-600 bg-slate-100 px-3 py-1 rounded-lg">
-                <span>Format: XLSX</span>
-                <span>•</span>
-                <span>Multi-Sheet Workbook</span>
-              </div>
-            </div>
-            <a href="/api/reports/download/xlsx" download="Ministry_of_Coal_Report_2026.xlsx"
-              class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center justify-center space-x-2">
-              <span>📥 Download Excel Workbook</span>
-            </a>
-          </div>
-
-          <!-- Format 3: Word DOCX -->
-          <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs hover-card flex flex-col justify-between space-y-4">
-            <div>
-              <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-2xl mb-3">
-                📘
-              </div>
-              <h3 class="text-base font-bold text-slate-900 font-heading">Word Executive Briefing (DOCX)</h3>
-              <p class="text-xs text-slate-500 mt-1">Fully editable Microsoft Word document formatted for executive annotation, committee briefings, and policy memos.</p>
-              <div class="mt-4 inline-flex items-center space-x-2 text-[11px] font-mono text-slate-600 bg-slate-100 px-3 py-1 rounded-lg">
-                <span>Format: DOCX</span>
-                <span>•</span>
-                <span>Editable Document</span>
-              </div>
-            </div>
-            <a href="/api/reports/download/docx" download="Ministry_of_Coal_Report_2026.docx"
-              class="w-full py-2.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center justify-center space-x-2">
-              <span>📥 Download Word Briefing</span>
-            </a>
-          </div>
+        <!-- Live Generated Reports Cards List -->
+        <div id="report-history-container" class="space-y-4">
+          <!-- Populated dynamically by App.loadReportHistory() -->
         </div>
       </div>
 

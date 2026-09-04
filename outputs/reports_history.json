@@ -1,0 +1,30 @@
+[
+  {
+    "id": "REP-2026-1322",
+    "title": "Technical Colliery Deep-Dive \u2014 Performance Intelligence Dossier",
+    "template": "technical_deepdive",
+    "template_name": "Technical Colliery Deep-Dive",
+    "theme": "Deep Slate & Electric Cyan",
+    "auditor_id": "MOC-7890",
+    "timestamp": "04 Sep 2026, 05:36 PM",
+    "records_count": 18,
+    "summary_snippet": "Parametric distribution across 18 monitored installations: Mean \u03bc = 7,311.61 MT | Std Dev \u03c3 = 4,620.14 MT | Median Q2 = 8,450.30 MT | IQR = 9,079.70 MT.",
+    "pdf_url": "/api/reports/download/pdf?template=technical_deepdive",
+    "docx_url": "/api/reports/download/docx?template=technical_deepdive",
+    "csv_url": "/api/reports/download/csv"
+  },
+  {
+    "id": "REP-2026-B56D",
+    "title": "National Coal Extraction & Power Dispatch Briefing",
+    "template": "executive_brief",
+    "template_name": "Executive Ministry Brief",
+    "theme": "Sovereign Navy & Gold",
+    "auditor_id": "MOC-7890",
+    "timestamp": "04 Sep 2026, 05:36 PM",
+    "records_count": 18,
+    "summary_snippet": "National extraction logged 133,767.30 MT with 96.26% target fulfillment and 95.55% offtake ratio.",
+    "pdf_url": "/api/reports/download/pdf?template=executive_brief",
+    "docx_url": "/api/reports/download/docx?template=executive_brief",
+    "csv_url": "/api/reports/download/csv"
+  }
+]
