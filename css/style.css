@@ -382,3 +382,33 @@ h1, h2, h3, h4, .font-heading {
     radial-gradient(at 85% 25%, rgba(6, 182, 212, 0.4) 0px, transparent 50%),
     radial-gradient(at 50% 85%, rgba(37, 99, 235, 0.45) 0px, transparent 50%);
 }
+
+/* ==========================================================================
+   EXECUTIVE DARK THEME LOGIN FORM (HIGH CONTRAST)
+   ========================================================================== */
+#view-login {
+  background-color: #070B14 !important;
+}
+
+#view-login input[type="text"],
+#view-login input[type="password"] {
+  background-color: #080D1A !important;
+  color: #FFFFFF !important;
+  border-color: #334155 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 700 !important;
+}
+
+#view-login input[type="text"]:focus,
+#view-login input[type="password"]:focus {
+  background-color: #0B1426 !important;
+  color: #FFFFFF !important;
+  border-color: #38BDF8 !important;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.4) !important;
+}
+
+#view-login label {
+  color: #E2E8F0 !important;
+  letter-spacing: 0.05em !important;
+}
+
