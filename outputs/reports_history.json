@@ -1,5 +1,19 @@
 [
   {
+    "id": "REP-2026-2BC4",
+    "title": "Bento Modular Grid \u2014 Performance Intelligence Dossier",
+    "template": "bento_grid",
+    "template_name": "Bento Modular Grid",
+    "theme": "Gamma Bento Tech",
+    "auditor_id": "MOC-7890",
+    "timestamp": "04 Sep 2026, 11:50 PM",
+    "records_count": 18,
+    "summary_snippet": "National coal extraction recorded 131,608.90 MT across 18 monitored production assets. Target benchmark fulfillment reached 96.72%, sustaining critical utility stock buffers above ...",
+    "pdf_url": "/api/reports/download/pdf?template=bento_grid",
+    "docx_url": "/api/reports/download/docx?template=bento_grid",
+    "csv_url": "/api/reports/download/csv"
+  },
+  {
     "id": "REP-2026-1322",
     "title": "Technical Colliery Deep-Dive \u2014 Performance Intelligence Dossier",
     "template": "technical_deepdive",

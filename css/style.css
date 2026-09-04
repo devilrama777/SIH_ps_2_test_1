@@ -202,6 +202,7 @@ h1, h2, h3, h4, .font-heading {
 [data-theme="light"] #rankings-tbody .text-white,
 [data-theme="light"] #view-datasets .font-heading.text-white,
 [data-theme="light"] #view-analytics .font-heading.text-white,
+[data-theme="light"] #view-trend .font-heading.text-white,
 [data-theme="light"] #view-reports .font-heading.text-white {
   color: #0F172A !important;
 }
