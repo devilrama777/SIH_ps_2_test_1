@@ -352,35 +352,38 @@
         </div>
 
         <!-- TOP COLLIERIES LEAGUE TABLE -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
-          <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+        <!-- TOP COLLIERIES LEAGUE TABLE (HIGH-CONTRAST DARK THEME) -->
+        <div class="bg-slate-900 rounded-2xl border border-slate-700/80 p-6 shadow-md">
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
             <div>
-              <h3 class="text-base font-bold text-slate-900 font-heading">Top Colliery Production Rankings</h3>
-              <p class="text-xs text-slate-500">Highest yielding operational units ranked by month-to-date extraction</p>
+              <h3 class="text-base font-bold text-white font-heading">Top Colliery Production Rankings</h3>
+              <p class="text-xs text-slate-400">Highest yielding operational units ranked by month-to-date extraction</p>
             </div>
-            <span class="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-              Verified Production Records
+            <span class="inline-flex items-center space-x-1.5 text-xs font-mono font-bold text-emerald-400 bg-emerald-500/15 px-3.5 py-1 rounded-full border border-emerald-500/30 shadow-xs">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Verified Production Records</span>
             </span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-              <thead class="text-xs uppercase text-slate-400 border-b border-slate-100 bg-slate-50/50">
+              <thead class="text-xs uppercase text-slate-300 font-bold border-b border-slate-700/80 bg-slate-950/70 tracking-wider">
                 <tr>
-                  <th class="py-3 px-3">Rank</th>
-                  <th class="py-3 px-3">Colliery Name</th>
-                  <th class="py-3 px-3">State Basin</th>
-                  <th class="py-3 px-3">Subsidiary</th>
-                  <th class="py-3 px-3 text-right">Production (MT)</th>
-                  <th class="py-3 px-3 text-right">Target Fulfillment</th>
-                  <th class="py-3 px-3 text-right">National Share</th>
+                  <th class="py-3 px-3.5 text-slate-300">Rank</th>
+                  <th class="py-3 px-3.5 text-slate-200">Colliery Name</th>
+                  <th class="py-3 px-3.5 text-slate-300">State Basin</th>
+                  <th class="py-3 px-3.5 text-slate-300">Subsidiary</th>
+                  <th class="py-3 px-3.5 text-right text-slate-200">Production (MT)</th>
+                  <th class="py-3 px-3.5 text-right text-slate-200">Target Fulfillment</th>
+                  <th class="py-3 px-3.5 text-right text-cyan-300">National Share</th>
                 </tr>
               </thead>
-              <tbody id="rankings-tbody" class="divide-y divide-slate-100 text-slate-700 text-xs">
+              <tbody id="rankings-tbody" class="divide-y divide-slate-800 text-slate-200 text-xs">
                 <!-- Dynamically populated from js/app.js -->
               </tbody>
             </table>
           </div>
         </div>
+
       </div>
 
 

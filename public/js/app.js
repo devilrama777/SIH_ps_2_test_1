@@ -171,32 +171,33 @@ const App = {
     if (!tbody || typeof MOCK_COLLIERIES === "undefined") return;
 
     tbody.innerHTML = MOCK_COLLIERIES.slice(0, 7).map(c => {
-      let medal = `#${c.rank}`;
-      if (c.rank === 1) medal = `<span class="px-2 py-0.5 bg-amber-100 text-amber-800 font-bold rounded-md">🥇 #1</span>`;
-      if (c.rank === 2) medal = `<span class="px-2 py-0.5 bg-slate-200 text-slate-700 font-bold rounded-md">🥈 #2</span>`;
-      if (c.rank === 3) medal = `<span class="px-2 py-0.5 bg-orange-100 text-orange-800 font-bold rounded-md">🥉 #3</span>`;
+      let medal = `<span class="px-2 py-0.5 bg-slate-800 text-slate-400 border border-slate-700 font-bold rounded-md font-mono text-xs">#${c.rank}</span>`;
+      if (c.rank === 1) medal = `<span class="px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold rounded-md font-mono text-xs">🥇 #1</span>`;
+      if (c.rank === 2) medal = `<span class="px-2 py-0.5 bg-slate-700/60 text-slate-200 border border-slate-600 font-bold rounded-md font-mono text-xs">🥈 #2</span>`;
+      if (c.rank === 3) medal = `<span class="px-2 py-0.5 bg-amber-700/30 text-amber-200 border border-amber-600/40 font-bold rounded-md font-mono text-xs">🥉 #3</span>`;
 
       const pct = Math.min(100, Math.round((c.production / c.target) * 100));
 
       return `
-        <tr class="hover:bg-slate-50/80 transition">
-          <td class="py-3 px-3 font-bold">${medal}</td>
-          <td class="py-3 px-3 font-semibold text-slate-900">${c.name}</td>
-          <td class="py-3 px-3 text-slate-600">${c.state}</td>
-          <td class="py-3 px-3"><span class="px-2.5 py-0.5 bg-blue-50 text-blue-800 border border-blue-200 rounded-full text-[11px] font-bold">${c.company}</span></td>
-          <td class="py-3 px-3 text-right font-bold text-slate-900 mono">${c.production.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
-          <td class="py-3 px-3 text-right">
-            <div class="flex items-center justify-end space-x-2">
-              <span class="text-xs font-bold text-slate-700 mono">${pct}%</span>
-              <div class="w-16 bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                <div class="bg-emerald-500 h-1.5 rounded-full" style="width: ${pct}%"></div>
+        <tr class="hover:bg-slate-800/60 transition border-b border-slate-800/80">
+          <td class="py-3 px-3.5">${medal}</td>
+          <td class="py-3 px-3.5 font-bold text-white">${c.name}</td>
+          <td class="py-3 px-3.5 text-slate-300 font-medium">${c.state}</td>
+          <td class="py-3 px-3.5"><span class="px-2.5 py-0.5 bg-blue-950 text-cyan-300 border border-cyan-500/40 rounded-full text-[11px] font-bold font-mono">${c.company}</span></td>
+          <td class="py-3 px-3.5 text-right font-bold text-white mono text-sm">${c.production.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+          <td class="py-3 px-3.5 text-right">
+            <div class="flex items-center justify-end space-x-2.5">
+              <span class="text-xs font-bold text-emerald-400 mono">${pct}%</span>
+              <div class="w-16 bg-slate-800 border border-slate-700 rounded-full h-2 overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-2 rounded-full" style="width: ${pct}%"></div>
               </div>
             </div>
           </td>
-          <td class="py-3 px-3 text-right text-blue-700 font-bold mono">${c.share}</td>
+          <td class="py-3 px-3.5 text-right text-cyan-300 font-bold mono text-sm">${c.share}</td>
         </tr>
       `;
     }).join("");
+
   },
 
   renderDashboardCharts: function() {
