@@ -308,41 +308,6 @@ def get_latest_summary():
     return {"success": False, "summary": ""}
 
 
-@app.get("/api/reports/{job_id}")
-def get_report(job_id: str):
-    """Retrieves all generated artifacts and reports for a given job."""
-    job_dir = config.OUTPUTS_DIR / job_id
-    if not job_dir.exists():
-        raise HTTPException(status_code=404, detail="Job ID not found.")
-
-    def read_artifact(fname: str) -> Optional[str]:
-        p = job_dir / fname
-        return p.read_text(encoding="utf-8") if p.exists() else None
-
-    meta_file = job_dir / "metadata.json"
-    metadata = json.loads(meta_file.read_text(encoding="utf-8")) if meta_file.exists() else {}
-
-    return {
-        "job_id": job_id,
-        "metadata": metadata,
-        "raw_markdown": read_artifact("01_raw_converted.md"),
-        "llama_analysis": read_artifact("02_llama_analysis.md"),
-        "math_audit": json.loads(read_artifact("03_math_audit.json") or "{}"),
-        "final_report": read_artifact("04_final_systematic_report.md")
-    }
-
-
-@app.get("/api/reports/{job_id}/download")
-def download_final_report(job_id: str):
-    """Downloads the final systematic Markdown report file."""
-    report_path = config.OUTPUTS_DIR / job_id / "04_final_systematic_report.md"
-    if not report_path.exists():
-        raise HTTPException(status_code=404, detail="Final report not found.")
-    return FileResponse(
-        path=report_path,
-        filename=f"Report_{job_id}.md",
-        media_type="text/markdown"
-    )
 
 
 @app.get("/api/reports/latest-summary")
@@ -676,6 +641,44 @@ def download_report_format(fmt: str, template: Optional[str] = None):
         raise HTTPException(status_code=404, detail=f"Report file {default_fname} not found.")
 
     return FileResponse(path=file_path, filename=default_fname, media_type=media_type)
+
+
+@app.get("/api/reports/{job_id}")
+def get_report(job_id: str):
+    """Retrieves all generated artifacts and reports for a given job."""
+    job_dir = config.OUTPUTS_DIR / job_id
+    if not job_dir.exists():
+        raise HTTPException(status_code=404, detail="Job ID not found.")
+
+    def read_artifact(fname: str) -> Optional[str]:
+        p = job_dir / fname
+        return p.read_text(encoding="utf-8") if p.exists() else None
+
+    meta_file = job_dir / "metadata.json"
+    metadata = json.loads(meta_file.read_text(encoding="utf-8")) if meta_file.exists() else {}
+
+    return {
+        "job_id": job_id,
+        "metadata": metadata,
+        "raw_markdown": read_artifact("01_raw_converted.md"),
+        "llama_analysis": read_artifact("02_llama_analysis.md"),
+        "math_audit": json.loads(read_artifact("03_math_audit.json") or "{}"),
+        "final_report": read_artifact("04_final_systematic_report.md")
+    }
+
+
+@app.get("/api/reports/{job_id}/download")
+def download_final_report(job_id: str):
+    """Downloads the final systematic Markdown report file."""
+    report_path = config.OUTPUTS_DIR / job_id / "04_final_systematic_report.md"
+    if not report_path.exists():
+        raise HTTPException(status_code=404, detail="Final report not found.")
+    return FileResponse(
+        path=report_path,
+        filename=f"Report_{job_id}.md",
+        media_type="text/markdown"
+    )
+
 
 
 @app.post("/api/pipeline/run-dataset-audit")
