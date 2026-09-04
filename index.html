@@ -1136,16 +1136,19 @@
                 </div>
                 <div class="flex flex-wrap gap-2.5 items-center">
                   <a id="btn-download-tpl-pdf" href="/api/reports/download/pdf?template=executive_brief" download="Ministry_of_Coal_Report_2026.pdf"
+                    onclick="App.handleTplPdfDownload(event)"
                     class="btn-pdf-prominent">
                     <span>📕</span>
                     <span>Download Styled PDF</span>
                   </a>
                   <a id="btn-download-tpl-csv" href="/api/reports/download/csv" download="Cleaned_Coal_Dataset_2026.csv"
+                    onclick="App.handleTplCsvDownload(event)"
                     class="btn-csv-prominent">
                     <span>📥</span>
                     <span>Download Clean CSV (No Template)</span>
                   </a>
                   <a id="btn-download-tpl-docx" href="/api/reports/download/docx?template=executive_brief" download="Ministry_of_Coal_Report_2026.docx"
+                    onclick="App.handleTplDocxDownload(event)"
                     class="btn-docx-prominent">
                     <span>📘</span>
                     <span>Download Word DOCX</span>

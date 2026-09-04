@@ -1704,14 +1704,17 @@ const App = {
     if (pdfBtn) {
       pdfBtn.href = `/api/reports/download/pdf?template=${templateId}`;
       pdfBtn.download = `Ministry_of_Coal_${templateId}_2026.pdf`;
+      pdfBtn.onclick = (e) => this.handleTplPdfDownload(e);
     }
     if (docxBtn) {
       docxBtn.href = `/api/reports/download/docx?template=${templateId}`;
       docxBtn.download = `Ministry_of_Coal_${templateId}_2026.docx`;
+      docxBtn.onclick = (e) => this.handleTplDocxDownload(e);
     }
     if (csvBtn) {
       csvBtn.href = `/api/reports/download/csv`;
       csvBtn.download = `Cleaned_Coal_Dataset_2026.csv`;
+      csvBtn.onclick = (e) => this.handleTplCsvDownload(e);
     }
 
     if (shouldAnimate) {
@@ -2366,14 +2369,17 @@ const App = {
     if (btnPdf) {
       btnPdf.href = `/api/reports/download/pdf?template=${templateId}`;
       btnPdf.download = `Ministry_of_Coal_${templateId}_2026.pdf`;
+      btnPdf.onclick = (e) => this.handleTplPdfDownload(e);
     }
     if (btnDocx) {
       btnDocx.href = `/api/reports/download/docx?template=${templateId}`;
       btnDocx.download = `Ministry_of_Coal_${templateId}_2026.docx`;
+      btnDocx.onclick = (e) => this.handleTplDocxDownload(e);
     }
     if (btnXlsx) {
       btnXlsx.href = `/api/reports/download/csv`;
       btnXlsx.download = `Cleaned_Coal_Dataset_2026.csv`;
+      btnXlsx.onclick = (e) => this.handleTplCsvDownload(e);
     }
   },
 
@@ -2563,18 +2569,21 @@ const App = {
               </button>
               <!-- Button 1: PDF with template -->
               <a href="${pdfUrl}" download="${item.id}_${item.template}.pdf"
+                onclick="App.downloadFileSafely(event, '${pdfUrl}', '${item.id}_${item.template}.pdf')"
                 class="btn-pdf-prominent">
                 <span>📕</span>
                 <span>Download PDF (${item.template_name ? item.template_name.split(' ')[0] : 'Report'})</span>
               </a>
               <!-- Button 2: Clean CSV -->
               <a href="${csvUrl}" download="Cleaned_Coal_Dataset_2026.csv"
+                onclick="App.downloadFileSafely(event, '${csvUrl}', 'Cleaned_Coal_Dataset_2026.csv')"
                 class="btn-csv-prominent">
                 <span>📥</span>
                 <span>Download Clean CSV (No Template)</span>
               </a>
               <!-- Button 3: Word DOCX -->
               <a href="${docxUrl}" download="${item.id}_${item.template}.docx"
+                onclick="App.downloadFileSafely(event, '${docxUrl}', '${item.id}_${item.template}.docx')"
                 class="btn-docx-prominent">
                 <span>📘</span>
                 <span>Download Word DOCX</span>
@@ -2625,8 +2634,11 @@ const App = {
     if (mBadge) mBadge.innerText = item.template_name || item.template;
     if (mMeta) mMeta.innerText = `Dossier: ${item.id} • ${item.timestamp} • Auditor: ${item.auditor_id || 'MOC-7890'}`;
     if (mPdfBtn) {
-      mPdfBtn.href = item.pdf_url || `/api/reports/download/pdf?template=${item.template}`;
-      mPdfBtn.setAttribute("download", `${item.id}_${item.template}.pdf`);
+      const pdfUrl = item.pdf_url || `/api/reports/download/pdf?template=${item.template}`;
+      const fname = `${item.id}_${item.template}.pdf`;
+      mPdfBtn.href = pdfUrl;
+      mPdfBtn.setAttribute("download", fname);
+      mPdfBtn.onclick = (e) => this.downloadFileSafely(e, pdfUrl, fname);
     }
 
     if (canvas) {
@@ -2849,6 +2861,81 @@ const App = {
     this.closeEditReportModal();
     this.openReportPreviewModal(item.id);
     this.showToast("Report successfully revised with Gemma 4!", "success");
+  },
+
+  downloadFileSafely: async function(e, url, defaultFilename) {
+    if (e && e.preventDefault) e.preventDefault();
+    this.showToast(`Preparing download for ${defaultFilename}...`, "info");
+
+    const tpl = (this.currentTemplate || "bento_grid").toLowerCase().replace(/ /g, "_");
+    const candidates = [
+      url,
+      `/reports/${defaultFilename}`,
+      `/reports/Ministry_of_Coal_${tpl}_2026.pdf`,
+      `/reports/Ministry_of_Coal_Report_2026.pdf`
+    ];
+
+    for (const fetchUrl of candidates) {
+      if (!fetchUrl) continue;
+      try {
+        const resp = await fetch(fetchUrl);
+        if (resp.ok) {
+          const blob = await resp.blob();
+          if (blob && blob.size > 0) {
+            const blobUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.style.display = "none";
+            a.href = blobUrl;
+            a.download = defaultFilename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+              window.URL.revokeObjectURL(blobUrl);
+              a.remove();
+            }, 1000);
+            this.showToast(`✓ Downloaded ${defaultFilename}`, "success");
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn(`Download candidate fetch failed for ${fetchUrl}:`, err);
+      }
+    }
+
+    // Ultra-reliable fallback: If PDF and server couldn't deliver, export from live client canvas via print
+    if (defaultFilename && defaultFilename.endsWith(".pdf")) {
+      this.showToast("Exporting high-fidelity canvas view directly to PDF...", "info");
+      setTimeout(() => {
+        window.print();
+      }, 300);
+      return;
+    }
+
+    // Direct navigation fallback
+    window.location.href = url;
+  },
+
+  handleTplPdfDownload: function(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const tpl = this.currentTemplate || "bento_grid";
+    const filename = `Ministry_of_Coal_${tpl}_2026.pdf`;
+    const url = `/api/reports/download/pdf?template=${tpl}`;
+    this.downloadFileSafely(e, url, filename);
+  },
+
+  handleTplDocxDownload: function(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const tpl = this.currentTemplate || "bento_grid";
+    const filename = `Ministry_of_Coal_${tpl}_2026.docx`;
+    const url = `/api/reports/download/docx?template=${tpl}`;
+    this.downloadFileSafely(e, url, filename);
+  },
+
+  handleTplCsvDownload: function(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const filename = `Cleaned_Coal_Dataset_2026.csv`;
+    const url = `/api/reports/download/csv`;
+    this.downloadFileSafely(e, url, filename);
   },
 
   showToast: function(message, type = "info") {

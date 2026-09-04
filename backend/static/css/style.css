@@ -858,3 +858,27 @@ a.bg-emerald-600 *,
   letter-spacing: 0.05em !important;
 }
 
+/* ==========================================================================
+   CLEAN A4 PRINT & PDF EXPORT STYLES
+   ========================================================================== */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+  }
+  header, nav, #header-clock, #universal-search-container, #toast-container,
+  #view-login, .sidebar-nav, .theme-toggle, button, a[download] {
+    display: none !important;
+  }
+  #template-live-paper {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 10mm !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
+

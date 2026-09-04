@@ -18,13 +18,25 @@ else:
     REPORTED_DATA_DIR = BASE_DIR / "reported_data"
     PROCESSED_OUTPUT_DIR = BASE_DIR / "processed_output"
 
-PROMPTS_DIR = BACKEND_DIR / "prompts"
+STATIC_REPORTS_DIR = BASE_DIR / "outputs" / "reports"
+PUBLIC_REPORTS_DIR = BASE_DIR / "public" / "reports"
 
 for d in (UPLOADS_DIR, OUTPUTS_DIR, REPORTS_DIR, REPORTED_DATA_DIR, PROCESSED_OUTPUT_DIR):
     try:
         d.mkdir(parents=True, exist_ok=True)
     except OSError:
         pass
+
+# Seed pre-generated template reports to /tmp/outputs/reports on Vercel
+if STATIC_REPORTS_DIR.exists() and STATIC_REPORTS_DIR != REPORTS_DIR:
+    import shutil
+    for item in STATIC_REPORTS_DIR.glob("*"):
+        dest = REPORTS_DIR / item.name
+        if not dest.exists() and item.is_file():
+            try:
+                shutil.copy2(item, dest)
+            except Exception:
+                pass
 
 # Ollama & Model configurations
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")

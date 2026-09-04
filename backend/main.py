@@ -746,22 +746,57 @@ def download_report_format(fmt: str, template: Optional[str] = None):
         raise HTTPException(status_code=400, detail=f"Unsupported format: {fmt}. Choose from pdf, docx, xlsx, csv.")
 
     default_fname, media_type = mapping[fmt]
-    file_path = config.REPORTS_DIR / default_fname
+    tpl_key = (template or "bento_grid").lower().replace(" ", "_")
+    target_fname = f"Ministry_of_Coal_{tpl_key}_2026.{fmt}" if template else default_fname
 
-    if template:
-        tpl_key = template.lower().replace(" ", "_")
-        tpl_fname = f"Ministry_of_Coal_{tpl_key}_2026.{fmt}"
-        tpl_path = config.REPORTS_DIR / tpl_fname
-        if tpl_path.exists():
-            return FileResponse(path=tpl_path, filename=tpl_fname, media_type=media_type)
+    # Search candidates in priority order: REPORTS_DIR, STATIC_REPORTS_DIR, PUBLIC_REPORTS_DIR
+    search_dirs = [config.REPORTS_DIR, getattr(config, "STATIC_REPORTS_DIR", None), getattr(config, "PUBLIC_REPORTS_DIR", None)]
+    search_dirs = [d for d in search_dirs if d is not None and d.exists()]
 
-    if not file_path.exists():
-        document_generator.generate_all_packages(template_name=template or "executive_brief")
+    for d in search_dirs:
+        candidate = d / target_fname
+        if candidate.exists() and candidate.stat().st_size > 0:
+            return FileResponse(
+                path=candidate,
+                filename=target_fname,
+                media_type=media_type,
+                headers={"Content-Disposition": f'attachment; filename="{target_fname}"'}
+            )
 
-    if not file_path.exists():
-        raise HTTPException(status_code=404, detail=f"Report file {default_fname} not found.")
+    # If specific template not found yet, generate on-the-fly
+    try:
+        if fmt == "pdf":
+            document_generator.generate_pdf_report(template_name=tpl_key)
+        elif fmt == "docx":
+            document_generator.generate_docx_report(template_name=tpl_key)
+        elif fmt == "xlsx":
+            document_generator.generate_excel_workbook(template_name=tpl_key)
+    except Exception:
+        pass
 
-    return FileResponse(path=file_path, filename=default_fname, media_type=media_type)
+    # Check again after generation
+    for d in search_dirs:
+        candidate = d / target_fname
+        if candidate.exists() and candidate.stat().st_size > 0:
+            return FileResponse(
+                path=candidate,
+                filename=target_fname,
+                media_type=media_type,
+                headers={"Content-Disposition": f'attachment; filename="{target_fname}"'}
+            )
+
+    # Fallback to default format file
+    for d in search_dirs:
+        candidate = d / default_fname
+        if candidate.exists() and candidate.stat().st_size > 0:
+            return FileResponse(
+                path=candidate,
+                filename=target_fname,
+                media_type=media_type,
+                headers={"Content-Disposition": f'attachment; filename="{target_fname}"'}
+            )
+
+    raise HTTPException(status_code=404, detail=f"Report file {target_fname} not found.")
 
 
 @app.get("/api/reports/{job_id}")
