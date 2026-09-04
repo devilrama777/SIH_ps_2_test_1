@@ -1243,6 +1243,126 @@
     </footer>
   </div>
 
+  <!-- MODAL 1: HIGH-FIDELITY REPORT PREVIEW MODAL (WITHOUT DOWNLOADING) -->
+  <div id="modal-report-preview" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+      <!-- Modal Header Bar -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/70">
+        <div class="flex items-center space-x-3 min-w-0">
+          <span class="text-xl">📄</span>
+          <div class="min-w-0">
+            <div class="flex items-center space-x-2">
+              <h3 id="preview-modal-title" class="text-base font-extrabold text-slate-900 dark:text-white truncate font-heading">Executive Ministry Brief</h3>
+              <span id="preview-modal-template-badge" class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300 rounded-md text-[10px] font-bold uppercase shrink-0">Bento Modular Grid</span>
+            </div>
+            <p id="preview-modal-meta" class="text-xs text-slate-500 dark:text-slate-400 font-mono">Dossier: REP-2026-B56D • 04-Sep-2026 • Auditor: MOC-7890</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2 shrink-0">
+          <button type="button" onclick="App.openEditReportFromPreview()" class="px-3 py-1.5 bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-800 hover:to-indigo-800 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-xs">
+            <span>✏️</span>
+            <span>Edit with Gemma 4</span>
+          </button>
+          <a id="preview-modal-pdf-btn" href="/api/reports/download/pdf" download="Report.pdf" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 shadow-xs">
+            <span>📥</span>
+            <span>Download PDF</span>
+          </a>
+          <button type="button" onclick="App.closeReportPreviewModal()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition text-lg font-bold">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body (High-Resolution Scrollable A4 Document View) -->
+      <div id="preview-modal-body" class="p-6 overflow-y-auto bg-slate-100 dark:bg-slate-950 flex justify-center">
+        <!-- Rendered Report Document Canvas -->
+        <div id="preview-modal-canvas" class="w-full max-w-4xl bg-white text-slate-900 rounded-2xl shadow-xl p-8 sm:p-12 border border-slate-200 space-y-6">
+          <!-- Dynamically populated by App.openReportPreviewModal -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: GEMMA 4 REPORT EDIT & REVISION MODAL -->
+  <div id="modal-edit-report" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/70">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white text-lg shadow-md shadow-purple-600/20">
+            🤖
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 class="text-base font-extrabold text-slate-900 dark:text-white font-heading">Edit Report with Gemma 4</h3>
+              <span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 rounded-md text-[10px] font-bold uppercase">LLM Synthesis Engine</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400" id="edit-modal-subtitle">Provide prompt instructions to reshape, refine, or re-synthesize this report</p>
+          </div>
+        </div>
+        <button type="button" onclick="App.closeEditReportModal()" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 transition text-lg font-bold">
+          ✕
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-5 overflow-y-auto">
+        <!-- Target Report Info Card -->
+        <div class="p-4 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center justify-between">
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Target Dossier</p>
+            <h4 id="edit-modal-report-title" class="text-sm font-bold text-slate-900 dark:text-white mt-0.5">National Coal Extraction & Power Dispatch Briefing</h4>
+            <p id="edit-modal-report-id" class="text-xs font-mono text-cyan-500 mt-0.5">ID: REP-2026-B56D</p>
+          </div>
+          <span id="edit-modal-tpl-pill" class="px-2.5 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 rounded-xl text-xs font-bold">Bento Grid</span>
+        </div>
+
+        <!-- Revision Directive Input -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+            What changes would you like Gemma 4 to make?
+          </label>
+          <textarea id="edit-report-prompt-input" rows="4"
+            class="w-full px-4 py-3 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:focus:bg-slate-900 font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 transition"
+            placeholder="e.g., The summary is too dense. Please simplify the executive directives for Union Cabinet review, elaborate on SECL Gevra's target variance, and emphasize rail rake turnaround logistics."></textarea>
+        </div>
+
+        <!-- Quick Revision Directive Chips -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Quick AI Modification Presets:</span>
+          <div class="flex items-center flex-wrap gap-1.5 text-[11px]">
+            <button type="button" onclick="App.applyEditPreset('simplify')" class="px-2.5 py-1 bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 dark:hover:bg-purple-900 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 rounded-full font-semibold transition">
+              ⚡ Simplify for Cabinet Review
+            </button>
+            <button type="button" onclick="App.applyEditPreset('high_yield')" class="px-2.5 py-1 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 rounded-full font-semibold transition">
+              ⛏️ Focus on High-Yield Mines
+            </button>
+            <button type="button" onclick="App.applyEditPreset('rail_dispatch')" class="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 rounded-full font-semibold transition">
+              🚂 Expand Rail Rake Logistics
+            </button>
+            <button type="button" onclick="App.applyEditPreset('esg_safety')" class="px-2.5 py-1 bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 rounded-full font-semibold transition">
+              🌿 Highlight Zero-Harm & ESG
+            </button>
+            <button type="button" onclick="App.applyEditPreset('bullet_actions')" class="px-2.5 py-1 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 rounded-full font-semibold transition">
+              📋 Add 5 Immediate Action Items
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer Action Bar -->
+      <div class="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/70">
+        <button type="button" onclick="App.closeEditReportModal()" class="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition">
+          Cancel
+        </button>
+        <button type="button" id="btn-submit-edit-report" onclick="App.submitReportRevision()" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-700 hover:to-indigo-800 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-600/25 transition flex items-center space-x-2 cursor-pointer">
+          <span id="edit-submit-icon">✨</span>
+          <span id="edit-submit-text">Revise Report with Gemma 4</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- FLOATING NOTIFICATION TOAST -->
   <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none"></div>
 

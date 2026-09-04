@@ -354,16 +354,45 @@ async def auto_generate_prompt(
 
 
 
-@app.get("/api/reports/latest-summary")
-@app.get("/api/summary/latest")
-def get_latest_summary():
-    """Returns the latest summarized executive report text."""
+class ReportRevisionRequest(BaseModel):
+    report_id: Optional[str] = None
+    template: Optional[str] = "bento_grid"
+    current_content: Optional[str] = None
+    revision_prompt: str
+    gemma_model: Optional[str] = None
+
+
+@app.post("/api/reports/revise")
+async def revise_report_with_gemma(req: ReportRevisionRequest):
+    """Revises a compiled report using Gemma 4 according to user feedback directives."""
     summary_path = config.PROCESSED_OUTPUT_DIR / "llama_summary.md"
-    if summary_path.exists():
-        return {"success": True, "summary": summary_path.read_text(encoding="utf-8")}
-    return {"success": False, "summary": ""}
+    current_md = req.current_content or ""
+    if not current_md and summary_path.exists():
+        current_md = summary_path.read_text(encoding="utf-8")
 
+    result = gemma_client.revise_report(
+        current_report_markdown=current_md,
+        user_revision_prompt=req.revision_prompt,
+        model_override=req.gemma_model,
+        template=req.template
+    )
 
+    revised_text = result.get("revised_report", "")
+    if revised_text:
+        try:
+            summary_path.write_text(revised_text, encoding="utf-8")
+        except Exception:
+            pass
+
+    return {
+        "success": True,
+        "report_id": req.report_id or "REP-2026-REV",
+        "template": req.template,
+        "model_used": result.get("model_used", "gemma-4"),
+        "revised_content": revised_text,
+        "revision_prompt": req.revision_prompt,
+        "message": "Report revised successfully by Gemma 4."
+    }
 
 
 @app.get("/api/reports/latest-summary")
