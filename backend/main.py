@@ -419,19 +419,20 @@ def fill_template_content(template_id: str, req: Optional[TemplateFillRequest] =
     if req and req.custom_focus:
         full_prompt += f"\n\nADDITIONAL FOCUS DIRECTIVE:\n{req.custom_focus}"
 
-    # Check if Ollama is accessible
+    # Check if Ollama is accessible (skip on Vercel to respond instantly)
     ai_generated_text = None
-    try:
-        ollama_model = req.model if req and req.model else config.LLAMA_MODEL
-        resp = requests.post(
-            f"{config.OLLAMA_BASE_URL}/api/generate",
-            json={"model": ollama_model, "prompt": full_prompt, "stream": False},
-            timeout=8
-        )
-        if resp.status_code == 200:
-            ai_generated_text = resp.json().get("response")
-    except Exception:
-        ai_generated_text = None
+    if not (os.getenv("VERCEL") == "1" or os.getenv("VERCEL_ENV")):
+        try:
+            ollama_model = req.model if req and req.model else config.LLAMA_MODEL
+            resp = requests.post(
+                f"{config.OLLAMA_BASE_URL}/api/generate",
+                json={"model": ollama_model, "prompt": full_prompt, "stream": False},
+                timeout=1.5
+            )
+            if resp.status_code == 200:
+                ai_generated_text = resp.json().get("response")
+        except Exception:
+            ai_generated_text = None
 
     # Fallback deterministic structured generation tailored to the chosen template
     sections = []
