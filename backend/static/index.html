@@ -462,16 +462,19 @@
               </div>
             </div>
             
-            <div id="dataset-result-actions" class="hidden pt-4 border-t border-slate-100 mt-4 space-y-2">
-              <a href="/api/reports/download/pdf" download="Ministry_of_Coal_Report_2026.pdf"
-                class="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 shadow-sm transition">
-                <span>📕 Download Summarized PDF Report</span>
-              </a>
-              <a href="/api/reports/download/xlsx" download="Ministry_of_Coal_Report_2026.xlsx"
-                class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 shadow-sm transition">
-                <span>📊 Download 7-Sheet Excel Workbook</span>
+            <div id="dataset-result-actions" class="hidden pt-4 border-t border-slate-700/80 mt-4 space-y-2.5">
+              <button type="button" onclick="App.scrollToTemplateStudio()"
+                class="w-full py-3 px-4 btn-primary-glow rounded-xl text-xs font-bold flex items-center justify-center space-x-2 transition">
+                <span>🎨</span>
+                <span>Proceed to Step 2: Choose Template & Export PDF</span>
+              </button>
+              <a href="/api/reports/download/csv" download="Cleaned_Coal_Dataset_2026.csv"
+                class="w-full py-2.5 px-4 btn-csv-prominent rounded-xl text-xs font-bold flex items-center justify-center space-x-2 transition">
+                <span>📥</span>
+                <span>Download Clean CSV (Raw Data • No Template)</span>
               </a>
             </div>
+
           </div>
         </div>
 
@@ -587,20 +590,20 @@
               <p class="text-xs text-slate-500 mt-1">Official synthesis for Ministry Leadership, Parliamentary Review & Stakeholder Briefings</p>
             </div>
             
-            <!-- Quick Download Buttons -->
-            <div class="flex flex-wrap gap-2.5">
-              <a href="/api/reports/download/pdf" download="Ministry_of_Coal_Report_2026.pdf"
-                class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-2">
-                <span>📕</span>
-                <span>Download PDF Report</span>
+            <!-- Quick Download & Next Step Actions -->
+            <div class="flex flex-wrap gap-2.5 items-center">
+              <a href="/api/reports/download/csv" download="Cleaned_Coal_Dataset_2026.csv"
+                class="btn-csv-prominent">
+                <span>📥</span>
+                <span>Download Clean CSV (No Template)</span>
               </a>
-              <a href="/api/reports/download/xlsx" download="Ministry_of_Coal_Report_2026.xlsx"
-                class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-2">
-                <span>📊</span>
-                <span>Download Excel</span>
-              </a>
+              <button type="button" onclick="App.scrollToTemplateStudio()"
+                class="btn-primary-glow px-4 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-2">
+                <span>🎨</span>
+                <span>Proceed to Step 2: Choose Template (PDF) →</span>
+              </button>
               <a href="/api/reports/download/docx" download="Ministry_of_Coal_Report_2026.docx"
-                class="px-4 py-2.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-2">
+                class="btn-docx-prominent">
                 <span>📘</span>
                 <span>Download Word</span>
               </a>
@@ -608,19 +611,23 @@
           </div>
 
           <!-- High-Level Findings Card -->
-          <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 text-slate-800 leading-relaxed font-sans text-sm max-h-[500px] overflow-y-auto" id="executive-summary-content">
+          <div class="p-6 bg-slate-900/90 rounded-2xl border border-slate-700/80 text-slate-100 leading-relaxed font-sans text-sm max-h-[500px] overflow-y-auto" id="executive-summary-content">
             <!-- Formatted summary inserted dynamically -->
           </div>
 
-          <!-- Quick Action to Open Modern Template Studio -->
-          <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <h4 class="text-sm font-bold text-slate-900 font-heading">Choose a Modern Report Template</h4>
-              <p class="text-xs text-slate-500">Preview and customize your summarized findings across 6 publication-grade template layouts</p>
+          <!-- PROMINENT STEP 2 CALLOUT (GEMMA 4 TEMPLATE SYNTHESIS) -->
+          <div class="p-6 bg-gradient-to-r from-blue-950/90 via-slate-900 to-indigo-950/90 rounded-2xl border-2 border-cyan-500/40 shadow-xl shadow-cyan-950/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="inline-flex items-center space-x-2 px-3 py-1 bg-cyan-500/20 text-cyan-300 text-xs font-extrabold rounded-full border border-cyan-400/40 uppercase tracking-wider">
+                <span>⚡ STEP 2</span>
+                <span>Choose Template for PDF Export (Powered by Gemma 4)</span>
+              </div>
+              <h4 class="text-lg font-black text-white font-heading">Slot Summarized Data into a Modern Publication Template</h4>
+              <p class="text-xs text-slate-300">Gemma 4 dynamically synthesizes your LLaMA 3.1 findings into your selected template design for instant PDF download.</p>
             </div>
-            <button onclick="App.scrollToTemplateStudio()" class="px-5 py-2.5 bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 hover:from-blue-800 hover:to-indigo-950 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center space-x-2">
+            <button type="button" onclick="App.scrollToTemplateStudio()" class="px-6 py-3 btn-primary-glow rounded-xl text-xs font-black uppercase tracking-wider flex items-center space-x-2 shrink-0">
               <span>🎨</span>
-              <span>Open Modern Template Studio & Preview</span>
+              <span>Open Template Studio (6 Layouts) ↓</span>
             </button>
           </div>
         </div>
@@ -629,21 +636,40 @@
         <!-- MODERN REPORT TEMPLATE STUDIO & LIVE INTERACTIVE A4 DOCUMENT CANVAS     -->
         <!-- ====================================================================== -->
         <div id="template-studio-section" class="space-y-6 pt-4">
-          <!-- Section Title -->
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
-            <div>
-              <div class="inline-flex items-center space-x-2 px-3 py-1 bg-blue-50 text-blue-800 text-xs font-bold rounded-full mb-1.5 border border-blue-200">
-                <span>🎨</span>
-                <span>Interactive Multi-Template Studio</span>
+          <!-- Section Title & 3-Model Pipeline Flow -->
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-700/80 shadow-md space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div class="inline-flex items-center space-x-2 px-3 py-1 bg-cyan-500/15 text-cyan-300 text-xs font-bold rounded-full mb-1.5 border border-cyan-500/30">
+                  <span>🎨 STEP 2</span>
+                  <span>Interactive Multi-Template Studio</span>
+                </div>
+                <h3 class="text-2xl font-black text-white font-heading">Select Modern Report Template for PDF Export</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Choose your preferred publication format below. Gemma 4 slots the LLaMA 3.1 summary into your selected template with live preview.</p>
               </div>
-              <h3 class="text-2xl font-black text-slate-900 font-heading">Select Modern Report Template</h3>
-              <p class="text-xs text-slate-500 mt-0.5">Choose how your data is formatted. Our AI automatically adapts structure, headings, and styling without you having to write any prompt.</p>
+              <div class="flex items-center space-x-3 shrink-0">
+                <span class="text-xs font-semibold text-slate-400">Active Template:</span>
+                <span id="active-template-badge" class="px-3.5 py-1.5 bg-blue-900/60 text-cyan-300 text-xs font-bold rounded-xl border border-cyan-500/40 font-mono">Executive Ministry Brief</span>
+              </div>
             </div>
-            <div class="flex items-center space-x-3">
-              <span class="text-xs font-semibold text-slate-500">Active Template:</span>
-              <span id="active-template-badge" class="px-3.5 py-1.5 bg-blue-100 text-blue-900 text-xs font-bold rounded-xl border border-blue-300 font-mono">Executive Ministry Brief</span>
+
+            <!-- 3-Model Pipeline Status Strip -->
+            <div class="pt-3 border-t border-slate-800 flex items-center space-x-2 flex-wrap gap-y-2">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">Pipeline Architecture:</span>
+              <span class="model-chip active">
+                <span class="text-emerald-400">✓</span> 1. Marker Markdown Model (CSV/PDF → MD)
+              </span>
+              <span class="text-slate-600 text-xs">➔</span>
+              <span class="model-chip active">
+                <span class="text-emerald-400">✓</span> 2. LLaMA 3.1 8B (Executive Synthesis)
+              </span>
+              <span class="text-slate-600 text-xs">➔</span>
+              <span class="model-chip active animate-pulse">
+                <span class="text-cyan-400">⚡</span> 3. Gemma 4 Engine (AI Template Synthesis into PDF)
+              </span>
             </div>
           </div>
+
 
           <!-- 6 TEMPLATE SELECTION CARDS GALLERY -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="template-cards-gallery">
@@ -960,29 +986,30 @@
               </div>
 
               <!-- Export Bar for Selected Template -->
-              <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="bg-slate-900 p-5 rounded-2xl border border-slate-700/80 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
-                  <div class="text-xs font-bold text-slate-800 uppercase tracking-wider">Export Document in Selected Template</div>
-                  <p class="text-xs text-slate-500 mt-0.5">Files are pre-compiled and formatted matching <span class="font-bold text-slate-800" id="export-template-label">Executive Ministry Brief</span></p>
+                  <div class="text-xs font-bold text-slate-200 uppercase tracking-wider">Export Document in Selected Template</div>
+                  <p class="text-xs text-slate-400 mt-0.5">PDF uses styling of <span class="font-bold text-cyan-400" id="export-template-label">Executive Ministry Brief</span> • CSV exports raw dataset</p>
                 </div>
-                <div class="flex flex-wrap gap-2.5">
+                <div class="flex flex-wrap gap-2.5 items-center">
                   <a id="btn-download-tpl-pdf" href="/api/reports/download/pdf?template=executive_brief" download="Ministry_of_Coal_Report_2026.pdf"
-                    class="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-2">
+                    class="btn-pdf-prominent">
                     <span>📕</span>
                     <span>Download Styled PDF</span>
                   </a>
-                  <a id="btn-download-tpl-docx" href="/api/reports/download/docx?template=executive_brief" download="Ministry_of_Coal_Report_2026.docx"
-                    class="px-4 py-2.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-2">
-                    <span>📘</span>
-                    <span>Download Styled DOCX</span>
+                  <a id="btn-download-tpl-csv" href="/api/reports/download/csv" download="Cleaned_Coal_Dataset_2026.csv"
+                    class="btn-csv-prominent">
+                    <span>📥</span>
+                    <span>Download Clean CSV (No Template)</span>
                   </a>
-                  <a id="btn-download-tpl-xlsx" href="/api/reports/download/xlsx?template=executive_brief" download="Ministry_of_Coal_Report_2026.xlsx"
-                    class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-2">
-                    <span>📊</span>
-                    <span>Download 7-Sheet Excel</span>
+                  <a id="btn-download-tpl-docx" href="/api/reports/download/docx?template=executive_brief" download="Ministry_of_Coal_Report_2026.docx"
+                    class="btn-docx-prominent">
+                    <span>📘</span>
+                    <span>Download Word DOCX</span>
                   </a>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -1106,15 +1133,16 @@
           </div>
           <div class="flex items-center space-x-3">
             <a href="/api/reports/download/csv" download="Cleaned_Coal_Dataset_2026.csv"
-              class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-2">
-              <span>📊</span>
-              <span>Download Clean CSV</span>
+              class="btn-csv-prominent">
+              <span>📥</span>
+              <span>Download Clean CSV (No Template)</span>
             </a>
-            <button onclick="App.loadReportHistory()" class="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold shadow-xs transition flex items-center space-x-2">
+            <button onclick="App.loadReportHistory()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold shadow-xs transition flex items-center space-x-2">
               <span>🔄</span>
               <span>Refresh History</span>
             </button>
           </div>
+
         </div>
 
         <!-- Interactive Word Search & Filter Bar -->

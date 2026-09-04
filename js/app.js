@@ -502,12 +502,13 @@ const App = {
     if (stageLabel) stageLabel.innerText = `Ingesting ${this.selectedFile.name}...`;
 
     const stages = [
-      { maxPct: 22, label: `Parsing ${this.selectedFile.name} schema & numeric columns...` },
-      { maxPct: 48, label: "Extracting colliery metrics, dispatch ratios & state aggregates..." },
-      { maxPct: 72, label: "Running neural intelligence reasoning on regional trends..." },
-      { maxPct: 88, label: "Executing deterministic AST mathematical verification..." },
-      { maxPct: 94, label: "Formatting publication dossier into template layouts..." }
+      { maxPct: 22, label: "Stage 1 (Marker Markdown Model): Parsing CSV/PDF into clean structured Markdown..." },
+      { maxPct: 48, label: "Stage 2 (LLaMA 3.1 8B Model): Synthesizing multi-colliery statistical intelligence..." },
+      { maxPct: 72, label: "Stage 2 (LLaMA 3.1 8B Model): Computing target deviations & regional offtake trends..." },
+      { maxPct: 88, label: "Deterministic AST Verification: Verifying mathematical integrity (0.00 MT delta)..." },
+      { maxPct: 94, label: "Stage 3 (Gemma 4 Engine): Pre-allocating structural template slots for PDF synthesis..." }
     ];
+
 
     let currentStageIdx = 0;
     if (this.pipelineInterval) clearInterval(this.pipelineInterval);
@@ -611,10 +612,15 @@ const App = {
 
     this.currentSummaryText = rawText;
     showcase.scrollIntoView({ behavior: "smooth" });
-    this.showToast("Executive Report Ready! PDF & Excel Available for Download.", "success");
+    this.showToast("Analysis complete! Select your modern report template below.", "success");
 
     // Automatically initialize the modern template studio with the default template
     this.selectTemplate("executive_brief", false);
+
+    // Guide user to Step 2 Template Selection
+    setTimeout(() => {
+      this.scrollToTemplateStudio();
+    }, 700);
   },
 
   currentTemplate: "executive_brief",
@@ -624,7 +630,7 @@ const App = {
   scrollToTemplateStudio: function() {
     const sec = document.getElementById("template-studio-section");
     if (sec) {
-      sec.scrollIntoView({ behavior: "smooth" });
+      sec.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   },
 
@@ -644,10 +650,19 @@ const App = {
     // Update download buttons href immediately
     const pdfBtn = document.getElementById("btn-download-tpl-pdf");
     const docxBtn = document.getElementById("btn-download-tpl-docx");
-    const xlsxBtn = document.getElementById("btn-download-tpl-xlsx");
-    if (pdfBtn) pdfBtn.href = `/api/reports/download/pdf?template=${templateId}`;
-    if (docxBtn) docxBtn.href = `/api/reports/download/docx?template=${templateId}`;
-    if (xlsxBtn) xlsxBtn.href = `/api/reports/download/xlsx?template=${templateId}`;
+    const csvBtn = document.getElementById("btn-download-tpl-csv") || document.getElementById("btn-download-tpl-xlsx");
+    if (pdfBtn) {
+      pdfBtn.href = `/api/reports/download/pdf?template=${templateId}`;
+      pdfBtn.download = `Ministry_of_Coal_${templateId}_2026.pdf`;
+    }
+    if (docxBtn) {
+      docxBtn.href = `/api/reports/download/docx?template=${templateId}`;
+      docxBtn.download = `Ministry_of_Coal_${templateId}_2026.docx`;
+    }
+    if (csvBtn) {
+      csvBtn.href = `/api/reports/download/csv`;
+      csvBtn.download = `Cleaned_Coal_Dataset_2026.csv`;
+    }
 
     if (shouldAnimate) {
       this.animateTemplateFilling(templateId, async () => {
@@ -657,6 +672,7 @@ const App = {
       await this.fetchAndRenderTemplate(templateId);
     }
   },
+
 
   animateTemplateFilling: function(templateId, onComplete) {
     const hub = document.getElementById("template-filling-hub");
@@ -673,13 +689,24 @@ const App = {
     hub.classList.remove("hidden");
     hub.scrollIntoView({ behavior: "smooth" });
 
+    const tplNames = {
+      executive_brief: "Executive Ministry Brief",
+      technical_deepdive: "Technical Colliery Deep-Dive",
+      parliamentary_scorecard: "Parliamentary & Audit Scorecard",
+      esg_sustainable: "ESG & Sustainable Mining Report",
+      corporate_minimalist: "Modern Corporate Minimalist",
+      visual_infographic: "High-Density Visual Infographic"
+    };
+    const tplName = tplNames[templateId] || templateId;
+
     const stages = [
-      { pct: 20, label: "Binding Sovereign Masthead & Metadata...", text: "Binding Ministry of Coal seals, report ID and timestamp into document header..." },
-      { pct: 45, label: "Calibrating Colliery KPI Matrices...", text: "Calculating national extraction totals, offtake ratio and colliery share ranks..." },
-      { pct: 75, label: "Streaming Thematic AI Directives...", text: `Synthesizing ${templateId.replace('_', ' ')} thematic prompt into structured analytical sections...` },
-      { pct: 95, label: "Running AST Deterministic Verification...", text: "Zero hallucination check: Evaluating deterministic mathematical formulas and anomaly fences..." },
-      { pct: 100, label: "Template Assembled & Ready!", text: "Document canvas fully assembled and formatted for 300 DPI publication export." }
+      { pct: 20, label: `Stage 3: Gemma 4 Binding ${tplName} Schema...`, text: `Gemma 4 model binding sovereign seals, metadata and template schema for ${tplName}...` },
+      { pct: 45, label: "Stage 3: Gemma 4 Injecting Real Colliery Metrics...", text: "Gemma 4 calculating active user dataset totals, dispatch ratios, and colliery share rankings..." },
+      { pct: 75, label: "Stage 3: Gemma 4 Synthesizing Thematic Directives...", text: `Gemma 4 transforming LLaMA 3.1 summary into publication-grade sections matching ${tplName}...` },
+      { pct: 95, label: "AST Verification & Layout Formatting...", text: "Checking math consistency across user records and preparing 300 DPI vector layout..." },
+      { pct: 100, label: "Template Assembled! Ready for PDF Export", text: `${tplName} assembled! Preview below or download official PDF report.` }
     ];
+
 
     let stageIdx = 0;
     const intervalId = setInterval(() => {
@@ -1130,26 +1157,27 @@ const App = {
             <div class="flex items-center space-x-2 flex-wrap gap-y-2">
               <!-- Button 1: PDF with template -->
               <a href="${pdfUrl}" download="${item.id}_${item.template}.pdf"
-                class="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center space-x-1.5 shrink-0">
+                class="btn-pdf-prominent">
                 <span>📕</span>
                 <span>Download PDF (${item.template_name ? item.template_name.split(' ')[0] : 'Report'})</span>
               </a>
               <!-- Button 2: Clean CSV -->
               <a href="${csvUrl}" download="Cleaned_Coal_Dataset_2026.csv"
-                class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center space-x-1.5 shrink-0">
-                <span>📊</span>
-                <span>Download Clean CSV</span>
+                class="btn-csv-prominent">
+                <span>📥</span>
+                <span>Download Clean CSV (No Template)</span>
               </a>
               <!-- Button 3: Word DOCX -->
               <a href="${docxUrl}" download="${item.id}_${item.template}.docx"
-                class="px-4 py-2 bg-gradient-to-r from-blue-700 to-indigo-800 hover:from-blue-800 hover:to-indigo-900 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center space-x-1.5 shrink-0">
-                <span>📝</span>
+                class="btn-docx-prominent">
+                <span>📘</span>
                 <span>Download Word DOCX</span>
               </a>
             </div>
           </div>
         </div>
       `;
+
     }).join("");
   },
 
