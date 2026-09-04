@@ -746,11 +746,21 @@ def download_report_format(fmt: str, template: Optional[str] = None):
         raise HTTPException(status_code=400, detail=f"Unsupported format: {fmt}. Choose from pdf, docx, xlsx, csv.")
 
     default_fname, media_type = mapping[fmt]
-    tpl_key = (template or "bento_grid").lower().replace(" ", "_")
+
+    TEMPLATE_ALIASES = {
+        "executive_brief": "bento_grid",
+        "corporate_minimalist": "editorial_canvas",
+        "technical_deepdive": "obsidian_deck",
+        "visual_infographic": "aurora_gradient",
+        "parliamentary_scorecard": "nordic_ocean",
+        "esg_sustainable": "warm_sandstone",
+    }
+    raw_key = (template or "bento_grid").lower().replace(" ", "_")
+    tpl_key = TEMPLATE_ALIASES.get(raw_key, raw_key)
     target_fname = f"Ministry_of_Coal_{tpl_key}_2026.{fmt}" if template else default_fname
 
-    # Search candidates in priority order: REPORTS_DIR, STATIC_REPORTS_DIR, PUBLIC_REPORTS_DIR
-    search_dirs = [config.REPORTS_DIR, getattr(config, "STATIC_REPORTS_DIR", None), getattr(config, "PUBLIC_REPORTS_DIR", None)]
+    # Search candidates in priority order: REPORTS_DIR, PUBLIC_REPORTS_DIR, STATIC_REPORTS_DIR
+    search_dirs = [config.REPORTS_DIR, getattr(config, "PUBLIC_REPORTS_DIR", None), getattr(config, "STATIC_REPORTS_DIR", None)]
     search_dirs = [d for d in search_dirs if d is not None and d.exists()]
 
     for d in search_dirs:
@@ -763,7 +773,7 @@ def download_report_format(fmt: str, template: Optional[str] = None):
                 headers={"Content-Disposition": f'attachment; filename="{target_fname}"'}
             )
 
-    # If specific template not found yet, generate on-the-fly
+    # If specific template not found yet, attempt on-the-fly generation
     try:
         if fmt == "pdf":
             document_generator.generate_pdf_report(template_name=tpl_key)
@@ -796,7 +806,9 @@ def download_report_format(fmt: str, template: Optional[str] = None):
                 headers={"Content-Disposition": f'attachment; filename="{target_fname}"'}
             )
 
-    raise HTTPException(status_code=404, detail=f"Report file {target_fname} not found.")
+    # On serverless (Vercel), static pre-generated files are hosted at /reports/ on Vercel CDN
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url=f"/reports/{target_fname}", status_code=307)
 
 
 @app.get("/api/reports/{job_id}")

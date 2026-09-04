@@ -1,0 +1,14 @@
+outputs/
+backend/static/reports/
+uploads/
+sih_mining_repo/
+.git/
+__pycache__/
+*.pyc
+venv/
+.venv/
+default_data_backup/
+reported_data/
+processed_output/
+*.bak
+test_*.py

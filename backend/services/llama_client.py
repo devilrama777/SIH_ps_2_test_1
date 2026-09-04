@@ -18,7 +18,9 @@ class LlamaClient:
     def is_available(self) -> bool:
         """Check if local Ollama server is reachable."""
         try:
-            res = requests.get(f"{self.base_url}/api/tags", timeout=5)
+            import os
+            timeout = 0.8 if (os.getenv("VERCEL") or os.getenv("VERCEL_ENV")) else 2.5
+            res = requests.get(f"{self.base_url}/api/tags", timeout=timeout)
             return res.status_code == 200
         except Exception:
             return False
@@ -26,7 +28,9 @@ class LlamaClient:
     def list_installed_models(self) -> list:
         """List all models installed locally in Ollama."""
         try:
-            res = requests.get(f"{self.base_url}/api/tags", timeout=5)
+            import os
+            timeout = 0.8 if (os.getenv("VERCEL") or os.getenv("VERCEL_ENV")) else 2.5
+            res = requests.get(f"{self.base_url}/api/tags", timeout=timeout)
             if res.status_code == 200:
                 data = res.json()
                 return [m.get("name") for m in data.get("models", [])]

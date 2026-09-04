@@ -27,16 +27,7 @@ for d in (UPLOADS_DIR, OUTPUTS_DIR, REPORTS_DIR, REPORTED_DATA_DIR, PROCESSED_OU
     except OSError:
         pass
 
-# Seed pre-generated template reports to /tmp/outputs/reports on Vercel
-if STATIC_REPORTS_DIR.exists() and STATIC_REPORTS_DIR != REPORTS_DIR:
-    import shutil
-    for item in STATIC_REPORTS_DIR.glob("*"):
-        dest = REPORTS_DIR / item.name
-        if not dest.exists() and item.is_file():
-            try:
-                shutil.copy2(item, dest)
-            except Exception:
-                pass
+# Note: On serverless (Vercel), reports are served via public/reports CDN or on-demand to avoid cold start delays
 
 # Ollama & Model configurations
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")

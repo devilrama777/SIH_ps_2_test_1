@@ -429,7 +429,6 @@ class DocumentGenerator:
             self.output_dir / "extracted_media",
             config.OUTPUTS_DIR / "reports" / "extracted_media",
             Path("public/reports/extracted_media"),
-            Path("backend/static/reports/extracted_media"),
             Path("outputs/reports/extracted_media"),
         ]
         discovered = []
@@ -438,15 +437,16 @@ class DocumentGenerator:
 
         for d in candidate_dirs:
             if d.exists():
-                discovered.extend([str(p.resolve()) for p in d.glob("*.png")] + [str(p.resolve()) for p in d.glob("*.jpg")])
+                discovered.extend([str(p.resolve()) for p in d.glob("*.jpg")])
+                discovered.extend([str(p.resolve()) for p in d.glob("*.png")])
 
-        # Deduplicate while preserving order
+        # Deduplicate by stem so .jpg takes priority over .png
         unique_imgs = []
-        seen_names = set()
+        seen_stems = set()
         for p in discovered:
             p_obj = Path(p)
-            if p_obj.name not in seen_names and p_obj.exists():
-                seen_names.add(p_obj.name)
+            if p_obj.stem not in seen_stems and p_obj.exists():
+                seen_stems.add(p_obj.stem)
                 unique_imgs.append(str(p_obj.resolve()))
 
         # Prefer specific pages if available
@@ -536,19 +536,18 @@ class DocumentGenerator:
                 self.output_dir / "extracted_media",
                 config.OUTPUTS_DIR / "reports" / "extracted_media",
                 Path("public/reports/extracted_media"),
-                Path("backend/static/reports/extracted_media"),
                 Path("outputs/reports/extracted_media"),
             ]
             discovered = []
             for d in candidate_dirs:
                 if d.exists():
-                    discovered.extend(list(d.glob("*.png")) + list(d.glob("*.jpg")))
+                    discovered.extend(list(d.glob("*.jpg")) + list(d.glob("*.png")))
             if discovered:
-                seen = set()
+                seen_stems = set()
                 images = []
-                for img_p in sorted(discovered, key=lambda p: p.stat().st_size, reverse=True):
-                    if img_p.name not in seen:
-                        seen.add(img_p.name)
+                for img_p in discovered:
+                    if img_p.stem not in seen_stems and img_p.exists():
+                        seen_stems.add(img_p.stem)
                         images.append(str(img_p.resolve()))
 
         # Auto-discover summary text if not passed
@@ -585,9 +584,7 @@ class DocumentGenerator:
             tpl_pdf_path,
             Path("c:/Rama/Ministry_of_Coal_aurora_gradient_2026.pdf") if tpl_key in ("aurora_gradient", "visual_infographic") else None,
             Path(f"public/reports/Ministry_of_Coal_{tpl_key}_2026.pdf"),
-            Path(f"backend/static/reports/Ministry_of_Coal_{tpl_key}_2026.pdf"),
-            Path("public/reports/Ministry_of_Coal_Report_2026.pdf"),
-            Path("backend/static/reports/Ministry_of_Coal_Report_2026.pdf")
+            Path("public/reports/Ministry_of_Coal_Report_2026.pdf")
         ]
         for dp in dest_paths:
             if dp:
@@ -1005,19 +1002,18 @@ class DocumentGenerator:
                 self.output_dir / "extracted_media",
                 config.OUTPUTS_DIR / "reports" / "extracted_media",
                 Path("public/reports/extracted_media"),
-                Path("backend/static/reports/extracted_media"),
                 Path("outputs/reports/extracted_media"),
             ]
             discovered = []
             for d in candidate_dirs:
                 if d.exists():
-                    discovered.extend(list(d.glob("*.png")) + list(d.glob("*.jpg")))
+                    discovered.extend(list(d.glob("*.jpg")) + list(d.glob("*.png")))
             if discovered:
-                seen = set()
+                seen_stems = set()
                 images = []
-                for img_p in sorted(discovered, key=lambda p: p.stat().st_size, reverse=True):
-                    if img_p.name not in seen:
-                        seen.add(img_p.name)
+                for img_p in discovered:
+                    if img_p.stem not in seen_stems and img_p.exists():
+                        seen_stems.add(img_p.stem)
                         images.append(str(img_p.resolve()))
 
         # Auto-discover summary text if not passed
