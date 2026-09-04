@@ -611,6 +611,384 @@
           <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 text-slate-800 leading-relaxed font-sans text-sm max-h-[500px] overflow-y-auto" id="executive-summary-content">
             <!-- Formatted summary inserted dynamically -->
           </div>
+
+          <!-- Quick Action to Open Modern Template Studio -->
+          <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <h4 class="text-sm font-bold text-slate-900 font-heading">Choose a Modern Report Template</h4>
+              <p class="text-xs text-slate-500">Preview and customize your summarized findings across 6 publication-grade template layouts</p>
+            </div>
+            <button onclick="App.scrollToTemplateStudio()" class="px-5 py-2.5 bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 hover:from-blue-800 hover:to-indigo-950 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center space-x-2">
+              <span>🎨</span>
+              <span>Open Modern Template Studio & Preview</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ====================================================================== -->
+        <!-- MODERN REPORT TEMPLATE STUDIO & LIVE INTERACTIVE A4 DOCUMENT CANVAS     -->
+        <!-- ====================================================================== -->
+        <div id="template-studio-section" class="space-y-6 pt-4">
+          <!-- Section Title -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div>
+              <div class="inline-flex items-center space-x-2 px-3 py-1 bg-blue-50 text-blue-800 text-xs font-bold rounded-full mb-1.5 border border-blue-200">
+                <span>🎨</span>
+                <span>Interactive Multi-Template Studio</span>
+              </div>
+              <h3 class="text-2xl font-black text-slate-900 font-heading">Select Modern Report Template</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Choose how your data is formatted. Our AI automatically adapts structure, headings, and styling without you having to write any prompt.</p>
+            </div>
+            <div class="flex items-center space-x-3">
+              <span class="text-xs font-semibold text-slate-500">Active Template:</span>
+              <span id="active-template-badge" class="px-3.5 py-1.5 bg-blue-100 text-blue-900 text-xs font-bold rounded-xl border border-blue-300 font-mono">Executive Ministry Brief</span>
+            </div>
+          </div>
+
+          <!-- 6 TEMPLATE SELECTION CARDS GALLERY -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="template-cards-gallery">
+            <!-- 1. Executive Ministry Brief -->
+            <div onclick="App.selectTemplate('executive_brief')" id="tpl-card-executive_brief"
+              class="template-selector-card active bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs hover-card flex flex-col justify-between space-y-3.5">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-2xl">🏛️</span>
+                  <span class="px-2.5 py-0.5 bg-blue-100 text-blue-800 text-[10px] font-extrabold rounded-full uppercase tracking-wider">Official Sovereign</span>
+                </div>
+                <h4 class="text-base font-extrabold text-slate-900 mt-2.5 font-heading">Executive Ministry Brief</h4>
+                <p class="text-xs text-slate-500 mt-1 leading-normal">High-level strategic briefing prepared for Ministry leadership and Cabinet review with national KPI cards and policy directives.</p>
+              </div>
+              <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div class="flex items-center space-x-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#1E3A8A] inline-block border border-white shadow-xs" title="Primary: Sovereign Navy"></span>
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#D97706] inline-block border border-white shadow-xs" title="Accent: Gold"></span>
+                  <span class="text-[11px] font-semibold text-slate-600 ml-1">Sovereign Navy & Gold</span>
+                </div>
+                <span class="text-xs font-bold text-blue-700">Preview Layout →</span>
+              </div>
+            </div>
+
+            <!-- 2. Technical Colliery Deep-Dive -->
+            <div onclick="App.selectTemplate('technical_deepdive')" id="tpl-card-technical_deepdive"
+              class="template-selector-card bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs hover-card flex flex-col justify-between space-y-3.5">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-2xl">🔬</span>
+                  <span class="px-2.5 py-0.5 bg-cyan-100 text-cyan-800 text-[10px] font-extrabold rounded-full uppercase tracking-wider">Engineering & Stats</span>
+                </div>
+                <h4 class="text-base font-extrabold text-slate-900 mt-2.5 font-heading">Technical Colliery Deep-Dive</h4>
+                <p class="text-xs text-slate-500 mt-1 leading-normal">Rigorous statistical analysis featuring IQR anomaly fences, descriptive dispersion metrics, and extraction engineering breakdowns.</p>
+              </div>
+              <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div class="flex items-center space-x-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#0F172A] inline-block border border-white shadow-xs" title="Primary: Slate"></span>
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#0891B2] inline-block border border-white shadow-xs" title="Accent: Cyan"></span>
+                  <span class="text-[11px] font-semibold text-slate-600 ml-1">Deep Slate & Electric Cyan</span>
+                </div>
+                <span class="text-xs font-bold text-slate-600">Preview Layout →</span>
+              </div>
+            </div>
+
+            <!-- 3. Parliamentary & Audit Scorecard -->
+            <div onclick="App.selectTemplate('parliamentary_scorecard')" id="tpl-card-parliamentary_scorecard"
+              class="template-selector-card bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs hover-card flex flex-col justify-between space-y-3.5">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-2xl">📜</span>
+                  <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold rounded-full uppercase tracking-wider">Public Audit Ready</span>
+                </div>
+                <h4 class="text-base font-extrabold text-slate-900 mt-2.5 font-heading">Parliamentary & Audit Scorecard</h4>
+                <p class="text-xs text-slate-500 mt-1 leading-normal">Statutory audit format focusing on union budget fulfillment, state allocation matrices, and public accounts accountability.</p>
+              </div>
+              <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div class="flex items-center space-x-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#065F46] inline-block border border-white shadow-xs" title="Primary: Ashoka Green"></span>
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#B45309] inline-block border border-white shadow-xs" title="Accent: Bronze"></span>
+                  <span class="text-[11px] font-semibold text-slate-600 ml-1">Ashoka Green & Bronze</span>
+                </div>
+                <span class="text-xs font-bold text-slate-600">Preview Layout →</span>
+              </div>
+            </div>
+
+            <!-- 4. ESG & Sustainable Mining Report -->
+            <div onclick="App.selectTemplate('esg_sustainable')" id="tpl-card-esg_sustainable"
+              class="template-selector-card bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs hover-card flex flex-col justify-between space-y-3.5">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-2xl">🌿</span>
+                  <span class="px-2.5 py-0.5 bg-green-100 text-green-800 text-[10px] font-extrabold rounded-full uppercase tracking-wider">ESG & Green Transition</span>
+                </div>
+                <h4 class="text-base font-extrabold text-slate-900 mt-2.5 font-heading">ESG & Sustainable Mining</h4>
+                <p class="text-xs text-slate-500 mt-1 leading-normal">Environmental stewardship evaluating First-Mile rail offtake, eco-reclamation hectares, mine water reuse, and zero-harm safety.</p>
+              </div>
+              <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div class="flex items-center space-x-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#047857] inline-block border border-white shadow-xs" title="Primary: Forest Emerald"></span>
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#10B981] inline-block border border-white shadow-xs" title="Accent: Sage"></span>
+                  <span class="text-[11px] font-semibold text-slate-600 ml-1">Forest Emerald & Sage</span>
+                </div>
+                <span class="text-xs font-bold text-slate-600">Preview Layout →</span>
+              </div>
+            </div>
+
+            <!-- 5. Modern Corporate Minimalist -->
+            <div onclick="App.selectTemplate('corporate_minimalist')" id="tpl-card-corporate_minimalist"
+              class="template-selector-card bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs hover-card flex flex-col justify-between space-y-3.5">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-2xl">⚡</span>
+                  <span class="px-2.5 py-0.5 bg-zinc-100 text-zinc-800 text-[10px] font-extrabold rounded-full uppercase tracking-wider">Modern Swiss Grid</span>
+                </div>
+                <h4 class="text-base font-extrabold text-slate-900 mt-2.5 font-heading">Corporate Minimalist</h4>
+                <p class="text-xs text-slate-500 mt-1 leading-normal">Ultra-clean modern Swiss grid format with high data density, concise executive takeaways, and modular asset metrics.</p>
+              </div>
+              <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div class="flex items-center space-x-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#18181B] inline-block border border-white shadow-xs" title="Primary: Charcoal"></span>
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#71717A] inline-block border border-white shadow-xs" title="Accent: Silver"></span>
+                  <span class="text-[11px] font-semibold text-slate-600 ml-1">Charcoal & Platinum</span>
+                </div>
+                <span class="text-xs font-bold text-slate-600">Preview Layout →</span>
+              </div>
+            </div>
+
+            <!-- 6. High-Density Visual Infographic -->
+            <div onclick="App.selectTemplate('visual_infographic')" id="tpl-card-visual_infographic"
+              class="template-selector-card bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs hover-card flex flex-col justify-between space-y-3.5">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="text-2xl">📊</span>
+                  <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 text-[10px] font-extrabold rounded-full uppercase tracking-wider">Executive Infographic</span>
+                </div>
+                <h4 class="text-base font-extrabold text-slate-900 mt-2.5 font-heading">High-Density Infographic</h4>
+                <p class="text-xs text-slate-500 mt-1 leading-normal">High-impact presentation format featuring vibrant visual metric callouts, milestone flags, and regional extraction sprint badges.</p>
+              </div>
+              <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div class="flex items-center space-x-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#4338CA] inline-block border border-white shadow-xs" title="Primary: Indigo"></span>
+                  <span class="w-3.5 h-3.5 rounded-full bg-[#E11D48] inline-block border border-white shadow-xs" title="Accent: Rose"></span>
+                  <span class="text-[11px] font-semibold text-slate-600 ml-1">Vibrant Indigo & Rose</span>
+                </div>
+                <span class="text-xs font-bold text-slate-600">Preview Layout →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ======================================================== -->
+          <!-- ENGAGING INTERVAL ANIMATION: AI TEMPLATE FILLING STREAM  -->
+          <!-- ======================================================== -->
+          <div id="template-filling-hub" class="hidden bg-slate-950 text-white rounded-3xl p-7 shadow-2xl border border-blue-900/60 relative overflow-hidden space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div class="flex items-center space-x-3">
+                <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+                <div>
+                  <h4 class="text-sm font-bold uppercase tracking-wider text-blue-300 font-heading">AI Slot Filling in Progress</h4>
+                  <p class="text-xs text-slate-400">Synthesizing and mapping summarized data into selected template schema</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="text-xs font-mono text-slate-400">AI Engine:</span>
+                <span class="text-xs font-mono font-bold text-blue-400 px-2.5 py-1 bg-slate-900 rounded-md border border-slate-800">LLaMA 3.1 Synthesis</span>
+              </div>
+            </div>
+
+            <!-- Section Slot Status Indicators -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+              <div id="slot-indicator-1" class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center space-x-3">
+                <span class="text-lg">🏛️</span>
+                <div class="text-xs">
+                  <div class="font-bold text-slate-300">Masthead & Metadata</div>
+                  <span class="text-[10px] font-mono text-emerald-400 slot-status-badge">● Bound</span>
+                </div>
+              </div>
+
+              <div id="slot-indicator-2" class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center space-x-3">
+                <span class="text-lg">📊</span>
+                <div class="text-xs">
+                  <div class="font-bold text-slate-300">Strategic KPIs</div>
+                  <span class="text-[10px] font-mono text-amber-400 slot-status-badge">● Calibrating</span>
+                </div>
+              </div>
+
+              <div id="slot-indicator-3" class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center space-x-3">
+                <span class="text-lg">📝</span>
+                <div class="text-xs">
+                  <div class="font-bold text-slate-300">Section Schemas</div>
+                  <span class="text-[10px] font-mono text-blue-400 slot-status-badge">● Streaming</span>
+                </div>
+              </div>
+
+              <div id="slot-indicator-4" class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center space-x-3">
+                <span class="text-lg">🛡️</span>
+                <div class="text-xs">
+                  <div class="font-bold text-slate-300">AST Verification</div>
+                  <span class="text-[10px] font-mono text-slate-400 slot-status-badge">○ Queued</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Streaming Dynamic Text Ticker -->
+            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800/80 flex items-center space-x-3">
+              <span class="text-emerald-400 font-mono text-xs">⚡</span>
+              <div id="slot-streaming-text" class="text-xs font-mono text-blue-200 typing-cursor truncate">
+                Slotting Gevra, Kusmunda and Dipka extraction metrics into executive table layout...
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs">
+                <span id="slot-progress-label" class="text-slate-400">Populating template sections...</span>
+                <span id="slot-progress-pct" class="font-mono text-emerald-400 font-bold">25%</span>
+              </div>
+              <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                <div id="slot-progress-bar" class="bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-200" style="width: 25%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ====================================================================== -->
+          <!-- SIMULATED LIVE A4 DOCUMENT CANVAS WITH REAL-TIME PREVIEW                -->
+          <!-- ====================================================================== -->
+          <div class="bg-slate-100 p-4 sm:p-8 rounded-3xl border border-slate-200/80 shadow-inner">
+            <div class="max-w-4xl mx-auto space-y-4">
+              <!-- Canvas Control Bar -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
+                <div class="flex items-center space-x-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Live Document Canvas (Simulated 300 DPI A4 Page)</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <button onclick="App.refreshTemplatePreview()" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold shadow-xs transition flex items-center space-x-1.5">
+                    <span>🔄</span>
+                    <span>Re-Synthesize</span>
+                  </button>
+                  <button onclick="window.print()" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold shadow-xs transition flex items-center space-x-1.5">
+                    <span>🖨️</span>
+                    <span>Print Canvas</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- THE A4 CANVAS PAPER ITSELF -->
+              <div id="a4-document-paper" class="a4-document-canvas p-8 sm:p-12 space-y-6">
+                <!-- Tricolor Strip -->
+                <div class="w-full h-1.5 flex rounded-t-sm overflow-hidden -mt-4 -mx-4 mb-4">
+                  <div class="h-full bg-orange-500 w-1/3"></div>
+                  <div class="h-full bg-slate-200 w-1/3"></div>
+                  <div class="h-full bg-emerald-600 w-1/3"></div>
+                </div>
+
+                <!-- Document Header -->
+                <div class="flex items-start justify-between border-b pb-4" id="canvas-header-border">
+                  <div class="space-y-1">
+                    <div class="flex items-center space-x-2">
+                      <span class="text-xl" id="canvas-template-icon">🏛️</span>
+                      <span class="text-[11px] font-black uppercase tracking-widest text-slate-500" id="canvas-gov-subtitle">GOVERNMENT OF INDIA • MINISTRY OF COAL</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-black font-heading tracking-tight" id="canvas-template-title">Executive Ministry Brief</h2>
+                    <p class="text-xs text-slate-500 font-medium" id="canvas-template-desc">High-level strategic briefing prepared for Ministry leadership and Cabinet review</p>
+                  </div>
+                  <div class="text-right space-y-1 font-mono text-[11px] shrink-0">
+                    <div class="px-2.5 py-1 bg-slate-100 rounded text-slate-700 font-bold" id="canvas-pub-id">ID: REP-2026-B56D</div>
+                    <div class="text-slate-400" id="canvas-pub-date">04-Sep-2026</div>
+                    <span class="inline-block px-2 py-0.5 text-[10px] font-bold rounded text-white" id="canvas-badge-pill" style="background-color: #1E3A8A">Official Sovereign</span>
+                  </div>
+                </div>
+
+                <!-- 4 KPI Box Summary -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="canvas-kpi-grid">
+                  <div class="p-3 rounded-xl border text-center" id="canvas-kpi-box-1" style="background-color: #F8FAFC; border-color: #E2E8F0;">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">National Extraction</div>
+                    <div class="text-base sm:text-lg font-black font-mono text-slate-900 mt-1" id="canvas-kpi-val-1">133,767.30 MT</div>
+                    <div class="text-[10px] font-bold text-emerald-600 mt-0.5" id="canvas-kpi-badge-1">96.26% Target Met</div>
+                  </div>
+                  <div class="p-3 rounded-xl border text-center" id="canvas-kpi-box-2" style="background-color: #F8FAFC; border-color: #E2E8F0;">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Power Dispatch</div>
+                    <div class="text-base sm:text-lg font-black font-mono text-slate-900 mt-1" id="canvas-kpi-val-2">127,814.01 MT</div>
+                    <div class="text-[10px] font-bold text-blue-600 mt-0.5" id="canvas-kpi-badge-2">95.55% Offtake Ratio</div>
+                  </div>
+                  <div class="p-3 rounded-xl border text-center" id="canvas-kpi-box-3" style="background-color: #F8FAFC; border-color: #E2E8F0;">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Active Collieries</div>
+                    <div class="text-base sm:text-lg font-black font-mono text-slate-900 mt-1" id="canvas-kpi-val-3">18 Collieries</div>
+                    <div class="text-[10px] font-bold text-indigo-600 mt-0.5" id="canvas-kpi-badge-3">4 Mining Basins</div>
+                  </div>
+                  <div class="p-3 rounded-xl border text-center" id="canvas-kpi-box-4" style="background-color: #F8FAFC; border-color: #E2E8F0;">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Audit Verification</div>
+                    <div class="text-base sm:text-lg font-black font-mono text-slate-900 mt-1" id="canvas-kpi-val-4">100% Deterministic</div>
+                    <div class="text-[10px] font-bold text-purple-600 mt-0.5" id="canvas-kpi-badge-4">AST Math Verified</div>
+                  </div>
+                </div>
+
+                <!-- Template Specific AI Sections -->
+                <div class="space-y-4" id="canvas-sections-container">
+                  <!-- Dynamically populated from App.renderTemplatePreview -->
+                </div>
+
+                <!-- Colliery Benchmark Table -->
+                <div class="space-y-2 pt-2">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-800 font-heading" id="canvas-table-title">Top Colliery Production Rankings</h4>
+                    <span class="text-[10px] font-mono text-slate-500">Verified Pithead Records</span>
+                  </div>
+                  <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                    <table class="w-full text-left text-xs">
+                      <thead class="bg-slate-100 uppercase text-slate-600 font-bold" id="canvas-table-thead">
+                        <tr>
+                          <th class="py-2 px-2.5 text-center">Rank</th>
+                          <th class="py-2 px-2.5">Colliery Name</th>
+                          <th class="py-2 px-2.5">State</th>
+                          <th class="py-2 px-2.5">Co.</th>
+                          <th class="py-2 px-2.5 text-right">Production (MT)</th>
+                          <th class="py-2 px-2.5 text-right">Dispatch (MT)</th>
+                          <th class="py-2 px-2.5 text-right">Share</th>
+                        </tr>
+                      </thead>
+                      <tbody id="canvas-table-tbody" class="divide-y divide-slate-100 font-mono text-[11px]">
+                        <!-- Populated dynamically -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Document Footer & Security Seal -->
+                <div class="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500">
+                  <div class="flex items-center space-x-2">
+                    <span>🛡️</span>
+                    <span>Ministry of Coal Executive Intelligence Platform • Government of India</span>
+                  </div>
+                  <div class="font-mono text-[10px] text-slate-400 mt-1 sm:mt-0">
+                    AST Cryptographic Audit: PASSED (Delta = 0.00 MT)
+                  </div>
+                </div>
+              </div>
+
+              <!-- Export Bar for Selected Template -->
+              <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                  <div class="text-xs font-bold text-slate-800 uppercase tracking-wider">Export Document in Selected Template</div>
+                  <p class="text-xs text-slate-500 mt-0.5">Files are pre-compiled and formatted matching <span class="font-bold text-slate-800" id="export-template-label">Executive Ministry Brief</span></p>
+                </div>
+                <div class="flex flex-wrap gap-2.5">
+                  <a id="btn-download-tpl-pdf" href="/api/reports/download/pdf?template=executive_brief" download="Ministry_of_Coal_Report_2026.pdf"
+                    class="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-2">
+                    <span>📕</span>
+                    <span>Download Styled PDF</span>
+                  </a>
+                  <a id="btn-download-tpl-docx" href="/api/reports/download/docx?template=executive_brief" download="Ministry_of_Coal_Report_2026.docx"
+                    class="px-4 py-2.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-2">
+                    <span>📘</span>
+                    <span>Download Styled DOCX</span>
+                  </a>
+                  <a id="btn-download-tpl-xlsx" href="/api/reports/download/xlsx?template=executive_brief" download="Ministry_of_Coal_Report_2026.xlsx"
+                    class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-2">
+                    <span>📊</span>
+                    <span>Download 7-Sheet Excel</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

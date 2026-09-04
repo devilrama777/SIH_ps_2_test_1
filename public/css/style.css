@@ -190,3 +190,64 @@ h1, h2, h3, .font-heading {
     radial-gradient(at 85% 25%, rgba(13, 148, 136, 0.4) 0px, transparent 50%),
     radial-gradient(at 50% 85%, rgba(37, 99, 235, 0.45) 0px, transparent 50%);
 }
+
+/* ======================================================== */
+/* MODERN TEMPLATE STUDIO & SIMULATED A4 DOCUMENT CANVAS     */
+/* ======================================================== */
+.a4-document-canvas {
+  width: 100%;
+  max-width: 820px;
+  min-height: 1060px;
+  margin: 0 auto;
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.06);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.template-selector-card {
+  transition: all 0.25s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.template-selector-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+}
+
+.template-selector-card.active {
+  border-color: #2563EB !important;
+  background: #EFF6FF !important;
+  box-shadow: 0 0 0 2px #2563EB, 0 10px 20px -5px rgba(37, 99, 235, 0.2);
+}
+
+.slot-filling-active {
+  animation: slotPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes slotPulse {
+  0%, 100% {
+    background-color: rgba(37, 99, 235, 0.05);
+    border-color: rgba(37, 99, 235, 0.4);
+  }
+  50% {
+    background-color: rgba(37, 99, 235, 0.15);
+    border-color: rgba(37, 99, 235, 0.8);
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.2);
+  }
+}
+
+.typing-cursor::after {
+  content: '▋';
+  color: #2563EB;
+  animation: blinkCursor 0.8s step-end infinite;
+}
+
+@keyframes blinkCursor {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
+}
+

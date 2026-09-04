@@ -46,6 +46,107 @@ ACHIEVEMENT_PCT = (TOTAL_PRODUCTION / TOTAL_TARGET) * 100
 OFFTAKE_RATIO = (TOTAL_DISPATCH / TOTAL_PRODUCTION) * 100
 
 
+# 6 Modern Template Configuration Registry
+TEMPLATE_CONFIGS = {
+    "executive_brief": {
+        "id": "executive_brief",
+        "name": "Executive Ministry Brief",
+        "theme": "Sovereign Navy & Gold",
+        "header_title": "MINISTRY OF COAL • EXECUTIVE POLICY BRIEF",
+        "subtitle": "High-level strategic briefing prepared for Ministry leadership and Cabinet review",
+        "primary_hex": "#1E3A8A",
+        "accent_hex": "#D97706",
+        "light_bg_hex": "#F8FAFC",
+        "border_hex": "#CBD5E1",
+        "rgb_primary": (0x1E, 0x3A, 0x8A),
+        "rgb_accent": (0xD9, 0x77, 0x06),
+        "icon": "🏛️",
+        "badge": "Official Sovereign",
+        "sections": ["Sovereign Directive & Macro Overview", "Strategic KPI Benchmark", "Coalfield Performance Highlights", "Ministerial Action Directives"]
+    },
+    "technical_deepdive": {
+        "id": "technical_deepdive",
+        "name": "Technical Colliery Deep-Dive",
+        "theme": "Deep Slate & Electric Cyan",
+        "header_title": "CMPDI TECHNICAL AUDIT • COLLIERY DISPERSION DEEP-DIVE",
+        "subtitle": "Empirical statistical distribution, IQR anomaly fences and extraction diagnostics",
+        "primary_hex": "#0F172A",
+        "accent_hex": "#0891B2",
+        "light_bg_hex": "#F1F5F9",
+        "border_hex": "#94A3B8",
+        "rgb_primary": (0x0F, 0x17, 0x2A),
+        "rgb_accent": (0x08, 0x91, 0xB2),
+        "icon": "🔬",
+        "badge": "Engineering & Stats",
+        "sections": ["Statistical Distribution & Dispersion", "IQR Anomaly & Outlier Identification", "Extraction Methodology Comparison", "Engineering & Recovery Recommendations"]
+    },
+    "parliamentary_scorecard": {
+        "id": "parliamentary_scorecard",
+        "name": "Parliamentary & Audit Scorecard",
+        "theme": "Ashoka Green & Bronze Gold",
+        "header_title": "PARLIAMENTARY OVERSIGHT • STATUTORY AUDIT SCORECARD",
+        "subtitle": "Statutory target compliance, state-wise revenue allocations and public accountability",
+        "primary_hex": "#065F46",
+        "accent_hex": "#B45309",
+        "light_bg_hex": "#F0FDF4",
+        "border_hex": "#A7F3D0",
+        "rgb_primary": (0x06, 0x5F, 0x46),
+        "rgb_accent": (0xB4, 0x53, 0x09),
+        "icon": "📜",
+        "badge": "Public Audit Ready",
+        "sections": ["Statutory Compliance Statement", "State-Wise Allocation Matrix", "Dispatch Assurance to Power Utilities", "Audit Findings & Parliamentary Assurances"]
+    },
+    "esg_sustainable": {
+        "id": "esg_sustainable",
+        "name": "ESG & Sustainable Mining Report",
+        "theme": "Forest Emerald & Sage",
+        "header_title": "NATIONAL COAL ENCLAVE • ESG & ECOLOGICAL STEWARDSHIP",
+        "subtitle": "Environmental stewardship, First-Mile rail offtake, land reclamation and zero-harm safety",
+        "primary_hex": "#047857",
+        "accent_hex": "#10B981",
+        "light_bg_hex": "#ECFDF5",
+        "border_hex": "#6EE7B7",
+        "rgb_primary": (0x04, 0x78, 0x57),
+        "rgb_accent": (0x10, 0xB9, 0x81),
+        "icon": "🌿",
+        "badge": "ESG & Green Transition",
+        "sections": ["Green Transition & First-Mile Connectivity", "Ecological Restoration & Land Reclamation", "Zero-Harm Occupational Safety Audit", "Sustainable Mining Roadmap"]
+    },
+    "corporate_minimalist": {
+        "id": "corporate_minimalist",
+        "name": "Modern Corporate Minimalist",
+        "theme": "Monochrome Charcoal & Silver",
+        "header_title": "COAL INDIA ENTERPRISE • QUARTERLY OPERATIONAL MATRIX",
+        "subtitle": "Ultra-clean modern Swiss grid format with modular asset metrics and commercial priorities",
+        "primary_hex": "#18181B",
+        "accent_hex": "#4B5563",
+        "light_bg_hex": "#F4F4F5",
+        "border_hex": "#D4D4D8",
+        "rgb_primary": (0x18, 0x18, 0x1B),
+        "rgb_accent": (0x4B, 0x55, 0x63),
+        "icon": "⚡",
+        "badge": "Modern Swiss Grid",
+        "sections": ["Executive Dashboard & Core Metrics", "Asset Performance Matrix", "Supply Chain & Dispatch Bottlenecks", "Commercial Strategy & Priorities"]
+    },
+    "visual_infographic": {
+        "id": "visual_infographic",
+        "name": "High-Density Visual Infographic",
+        "theme": "Vibrant Indigo & Rose",
+        "header_title": "NATIONAL COAL PULSE • EXECUTIVE INFOGRAPHIC SCORECARD",
+        "subtitle": "High-impact presentation deck format featuring vibrant visual metric callouts and regional sprints",
+        "primary_hex": "#4338CA",
+        "accent_hex": "#E11D48",
+        "light_bg_hex": "#EEF2FF",
+        "border_hex": "#C7D2FE",
+        "rgb_primary": (0x43, 0x38, 0xCA),
+        "rgb_accent": (0xE1, 0x1D, 0x48),
+        "icon": "📊",
+        "badge": "Executive Infographic",
+        "sections": ["Macro Headline & National Record Milestones", "High-Impact Metric Radar", "Basin Sprint & Regional Surge", "Strategic Radar & Future Trajectory"]
+    }
+}
+
+
 class DocumentGenerator:
     """Generates official publication-grade PDF, DOCX, and XLSX reports."""
 
@@ -55,12 +156,20 @@ class DocumentGenerator:
 
     def generate_pdf_report(
         self,
-        template_name: str = "monthly_production",
+        template_name: str = "executive_brief",
         report_id: str = "REP-2026-B56D",
         summary_text: Optional[str] = None
     ) -> Path:
         """Generates a high-resolution 300 DPI PDF report with ReportLab."""
+        tpl_key = template_name.lower().replace(" ", "_")
+        if tpl_key not in TEMPLATE_CONFIGS:
+            tpl_key = "executive_brief"
+        tpl = TEMPLATE_CONFIGS[tpl_key]
+
         pdf_path = self.output_dir / "Ministry_of_Coal_Report_2026.pdf"
+        # Also generate template-specific PDF
+        tpl_pdf_path = self.output_dir / f"Ministry_of_Coal_{tpl_key}_2026.pdf"
+
         doc = SimpleDocTemplate(
             str(pdf_path),
             pagesize=letter,
@@ -71,38 +180,39 @@ class DocumentGenerator:
         )
 
         styles = getSampleStyleSheet()
-        primary_color = colors.HexColor("#1E3A8A")
+        primary_color = colors.HexColor(tpl["primary_hex"])
+        accent_color = colors.HexColor(tpl["accent_hex"])
+        light_bg = colors.HexColor(tpl["light_bg_hex"])
+        border_color = colors.HexColor(tpl["border_hex"])
         slate_color = colors.HexColor("#334155")
-        light_bg = colors.HexColor("#F8FAFC")
-        accent_blue = colors.HexColor("#DBEAFE")
 
         title_style = ParagraphStyle(
             'ReportTitle',
             parent=styles['Heading1'],
             fontName='Helvetica-Bold',
-            fontSize=18,
-            leading=22,
+            fontSize=16,
+            leading=20,
             textColor=primary_color,
-            spaceAfter=4
+            spaceAfter=3
         )
         subtitle_style = ParagraphStyle(
             'ReportSubtitle',
             parent=styles['Normal'],
             fontName='Helvetica',
-            fontSize=10,
-            leading=13,
+            fontSize=9,
+            leading=12,
             textColor=slate_color,
-            spaceAfter=12
+            spaceAfter=8
         )
         section_heading = ParagraphStyle(
             'SectionHeading',
             parent=styles['Heading2'],
             fontName='Helvetica-Bold',
-            fontSize=12,
-            leading=16,
+            fontSize=11,
+            leading=15,
             textColor=primary_color,
-            spaceBefore=12,
-            spaceAfter=6
+            spaceBefore=10,
+            spaceAfter=5
         )
         body_style = ParagraphStyle(
             'ReportBody',
@@ -129,11 +239,11 @@ class DocumentGenerator:
 
         elements = []
 
-        # Masthead Header
-        elements.append(Paragraph("GOVERNMENT OF INDIA • MINISTRY OF COAL", subtitle_style))
-        elements.append(Paragraph("Automated Coal & Mining Intelligence Report", title_style))
-        elements.append(Paragraph(f"Publication Identifier: <b>{report_id}</b> | Template: <b>{template_name.replace('_', ' ').title()}</b> | Date: {datetime.date.today().strftime('%d-%b-%Y')}", subtitle_style))
-        elements.append(HRFlowable(width="100%", thickness=1.5, color=primary_color, spaceAfter=10))
+        # Masthead Header with Template Theme
+        elements.append(Paragraph(f"GOVERNMENT OF INDIA • {tpl['header_title']}", subtitle_style))
+        elements.append(Paragraph(f"{tpl['name']} — Automated Intelligence Analysis", title_style))
+        elements.append(Paragraph(f"Publication ID: <b>{report_id}</b> | Template: <b>{tpl['name']} ({tpl['theme']})</b> | Date: {datetime.date.today().strftime('%d-%b-%Y')}", subtitle_style))
+        elements.append(HRFlowable(width="100%", thickness=1.5, color=primary_color, spaceAfter=8))
 
         # Metadata Box
         meta_data = [
@@ -147,19 +257,19 @@ class DocumentGenerator:
             ],
             [
                 Paragraph("<b>Active Collieries:</b>", meta_label), Paragraph(f"{len(COLLIERIES_DATA)} Mines (4 States)", meta_val),
-                Paragraph("<b>Audit Integrity:</b>", meta_label), Paragraph("100% Deterministic (AST Verified)", meta_val)
+                Paragraph("<b>Audit Integrity:</b>", meta_label), Paragraph("100% Deterministic AST", meta_val)
             ]
         ]
         meta_table = Table(meta_data, colWidths=[110, 150, 110, 170])
         meta_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, -1), light_bg),
-            ('BOX', (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
+            ('BOX', (0, 0), (-1, -1), 0.5, border_color),
             ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.HexColor("#E2E8F0")),
             ('TOPPADDING', (0, 0), (-1, -1), 4),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
         ]))
         elements.append(meta_table)
-        elements.append(Spacer(1, 10))
+        elements.append(Spacer(1, 8))
 
         # Executive Overview / AI Summary
         elements.append(Paragraph("1. Executive Summary & AI Operational Synthesis", section_heading))
@@ -246,12 +356,18 @@ class DocumentGenerator:
 
     def generate_docx_report(
         self,
-        template_name: str = "monthly_production",
+        template_name: str = "executive_brief",
         report_id: str = "REP-2026-B56D",
         summary_text: Optional[str] = None
     ) -> Path:
         """Generates an executive Word DOCX briefing document."""
+        tpl_key = template_name.lower().replace(" ", "_")
+        if tpl_key not in TEMPLATE_CONFIGS:
+            tpl_key = "executive_brief"
+        tpl = TEMPLATE_CONFIGS[tpl_key]
+
         docx_path = self.output_dir / "Ministry_of_Coal_Report_2026.docx"
+        tpl_docx_path = self.output_dir / f"Ministry_of_Coal_{tpl_key}_2026.docx"
         doc = Document()
 
         # Page Setup
@@ -263,18 +379,18 @@ class DocumentGenerator:
 
         # Title & Header
         h1 = doc.add_paragraph()
-        r1 = h1.add_run("GOVERNMENT OF INDIA • MINISTRY OF COAL\n")
+        r1 = h1.add_run(f"GOVERNMENT OF INDIA • {tpl['header_title']}\n")
         r1.font.size = Pt(10)
         r1.font.bold = True
-        r1.font.color.rgb = RGBColor(0x1E, 0x3A, 0x8A)
+        r1.font.color.rgb = RGBColor(*tpl["rgb_primary"])
 
-        r2 = h1.add_run("Automated Coal & Mining Intelligence Report")
-        r2.font.size = Pt(18)
+        r2 = h1.add_run(f"{tpl['name']} — Automated Intelligence Analysis")
+        r2.font.size = Pt(17)
         r2.font.bold = True
-        r2.font.color.rgb = RGBColor(0x0F, 0x17, 0x2A)
+        r2.font.color.rgb = RGBColor(*tpl["rgb_primary"])
 
         p_meta = doc.add_paragraph()
-        p_meta.add_run(f"Report ID: {report_id}  |  Template: {template_name.replace('_', ' ').title()}  |  Date: {datetime.date.today().strftime('%B %d, %Y')}\n")
+        p_meta.add_run(f"Report ID: {report_id}  |  Template: {tpl['name']} ({tpl['theme']})  |  Date: {datetime.date.today().strftime('%B %d, %Y')}\n")
         p_meta.add_run("Classification: OFFICIAL / STATUTORY BRIEFING  |  System: SIH-2026-AI-ENGINE")
         p_meta.runs[0].font.size = Pt(9)
         p_meta.runs[0].font.italic = True
@@ -296,6 +412,7 @@ class DocumentGenerator:
 
         doc.add_heading("2. Executive Analytical Synthesis", level=1)
         doc.add_paragraph(summary_text or (
+            f"Official synthesis compiled under the {tpl['name']} specification. "
             "National coal production continues sustained expansion across Coal India Limited (CIL) subsidiaries. "
             "The top three open cast mines (Gevra Expansion, Kusmunda, Dipka) contributed over 30% of total national volume. "
             "Statistical anomaly checks identified operational variances in underground collieries requiring modern longwall equipment."
@@ -327,6 +444,7 @@ class DocumentGenerator:
         )
 
         doc.save(str(docx_path))
+        doc.save(str(tpl_docx_path))
         return docx_path
 
     def generate_excel_workbook(
@@ -498,7 +616,7 @@ class DocumentGenerator:
 
     def generate_all_packages(
         self,
-        template_name: str = "monthly_production",
+        template_name: str = "executive_brief",
         report_id: str = "REP-2026-B56D",
         summary_text: Optional[str] = None
     ) -> Dict[str, Any]:
