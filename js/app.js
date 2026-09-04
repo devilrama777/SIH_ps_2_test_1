@@ -921,6 +921,123 @@ const App = {
     }
   },
 
+  // =========================================================================
+  // AI AUTO PROMPT GENERATOR & PRESET DIRECTIVES
+  // =========================================================================
+  autoGenerateAIPrompt: async function(category = null) {
+    const input = document.getElementById("pipeline-custom-command");
+    const btn = document.getElementById("btn-auto-prompt");
+    const icon = document.getElementById("auto-prompt-icon");
+    const text = document.getElementById("auto-prompt-text");
+
+    if (icon) icon.innerText = "⏳";
+    if (text) text.innerText = "Generating AI Directive...";
+    if (btn) btn.disabled = true;
+
+    const fallbackPrompts = {
+      high_yield: [
+        "Prioritize top mega-collieries (Gevra, Kusmunda, Dipka), analyze heavy earthmoving machinery efficiency, and flag stripping ratio bottlenecks.",
+        "Isolate high-yield opencast basins yielding >15,000 MT, verify daily extraction quotas, and project Q3 production trajectory.",
+        "Benchmark tier-1 opencast mines against annual MoC production charter, isolating volume contributors across SECL and MCL basins."
+      ],
+      variance_audit: [
+        "Perform statistical anomaly audit across all 18 basins, isolating collieries with >3% target fulfillment variance against statutory quotas.",
+        "Audit production variance across coalfield basins, highlight overperforming and lagging mines, and calculate net national deficit index.",
+        "Execute mathematical variance breakdown comparing actual extraction against scheduled union budget targets with determinism verification."
+      ],
+      logistics: [
+        "Audit First-Mile rail connectivity, evaluate rakes availability at siding nodes, and calculate power plant thermal coal buffer reserves.",
+        "Track thermal power dispatch efficiency, evaluate offtake-to-extraction ratios, and map wagon turnaround times across Korba and Talcher.",
+        "Assess multimodal evacuation corridors, monitor merry-go-round conveyor throughput, and verify critical power plant coal stockpiles."
+      ],
+      esg: [
+        "Evaluate eco-reclamation hectarage, solar mine transitions, mine water treatment recycling, and zero-harm safety statutory records.",
+        "Audit sustainable mining parameters: first-mile rail adoption %, afforestation offset compliance, and carbon abatement progress.",
+        "Benchmark zero-harm safety indices, overburden dump stability monitoring, and environmental statutory clearance conformity."
+      ],
+      statutory: [
+        "Compile statutory audit format focusing on union budget fulfillment, state royalty allocations, and public accounts committee review.",
+        "Perform parliamentary accountability analysis: royalty distributions, district mineral foundation (DMF) allocations, and audit trails.",
+        "Verify compliance with Mines Act guidelines, statutory vigilance oversight, and 100% deterministic cryptographic audit hashing."
+      ],
+      general: [
+        "Conduct comprehensive strategic review isolating mega-collieries, thermal power plant dispatch ratios, and statutory audit integrity.",
+        "Synthesize national extraction leaderboard, calculate colliery variance against target quotas, and evaluate rail evacuation corridors.",
+        "Perform deep-dive colliery operational audit: benchmark extraction velocity, identify dispatch bottlenecks, and assess regional quotas.",
+        "Audit high-capacity opencast mining assets, verify statutory compliance metrics, and formulate executive ministerial directives."
+      ]
+    };
+
+    let generatedPrompt = "";
+    try {
+      const formData = new FormData();
+      if (category) formData.append("category", category);
+      if (this.selectedFile) formData.append("filename", this.selectedFile.name);
+
+      const resp = await fetch("/api/pipeline/auto-generate-prompt", {
+        method: "POST",
+        body: formData
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data && data.prompt) {
+          generatedPrompt = data.prompt;
+        }
+      }
+    } catch (err) {
+      console.warn("Backend auto-prompt call failed, using client-side synthesis engine:", err);
+    }
+
+    if (!generatedPrompt) {
+      const catKey = category && fallbackPrompts[category] ? category : "general";
+      const list = fallbackPrompts[catKey];
+      generatedPrompt = list[Math.floor(Math.random() * list.length)];
+    }
+
+    // Typewriter effect into the input
+    if (input) {
+      input.value = "";
+      input.focus();
+      let i = 0;
+      const typeInterval = setInterval(() => {
+        if (i < generatedPrompt.length) {
+          input.value += generatedPrompt.charAt(i);
+          i++;
+        } else {
+          clearInterval(typeInterval);
+          if (icon) icon.innerText = "✨";
+          if (text) text.innerText = "Auto-Generate with AI";
+          if (btn) btn.disabled = false;
+        }
+      }, 10);
+    } else {
+      if (icon) icon.innerText = "✨";
+      if (text) text.innerText = "Auto-Generate with AI";
+      if (btn) btn.disabled = false;
+    }
+
+    this.showToast("AI Prompt Generated & Injected!", "success");
+  },
+
+  applyPromptPreset: function(presetKey) {
+    this.autoGenerateAIPrompt(presetKey);
+  },
+
+  cycleRandomPrompt: function() {
+    const keys = ["high_yield", "variance_audit", "logistics", "esg", "statutory", "general"];
+    const randomKey = keys[Math.floor(Math.random() * keys.length)];
+    this.autoGenerateAIPrompt(randomKey);
+  },
+
+  clearPromptInput: function() {
+    const input = document.getElementById("pipeline-custom-command");
+    if (input) {
+      input.value = "";
+      input.focus();
+    }
+    this.showToast("Cleared analysis prompt", "info");
+  },
+
   runSequentialPipeline: async function() {
     if (!this.selectedFile) {
       this.showToast("Please select or drop a CSV or PDF dataset first!", "error");
