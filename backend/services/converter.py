@@ -50,7 +50,14 @@ class MarkdownConverter:
 
             for page_idx, page in enumerate(reader.pages, start=1):
                 try:
+                    if len(extracted_images) >= 8:
+                        break
                     for img_idx, img_file in enumerate(page.images, start=1):
+                        if len(extracted_images) >= 8:
+                            break
+                        # Filter out tiny icon artifacts
+                        if len(img_file.data) < 2048:
+                            continue
                         img_filename = f"p{page_idx}_img{img_idx}_{img_file.name}"
                         img_path = media_dir / img_filename
                         with open(img_path, "wb") as f:
@@ -90,26 +97,38 @@ class MarkdownConverter:
                 markdown_sections.append(f"**Extracted Media / Audio:** {len(extracted_audio)} media files detected (routed to Gemma 4)\n")
             markdown_sections.append("\n---\n")
 
-            for page_num, page in enumerate(pdf.pages, start=1):
-                markdown_sections.append(f"## Page {page_num}\n")
+            # Budget control for large annual reports: prioritize tables & key sections
+            max_pages_to_scan = min(total_pages, 50) if total_pages > 50 else total_pages
+            total_chars = 0
+            MAX_CHAR_BUDGET = 45000
+
+            for page_num in range(1, max_pages_to_scan + 1):
+                if total_chars >= MAX_CHAR_BUDGET:
+                    markdown_sections.append(f"\n\n... [Document continues across {total_pages} total pages. Operational tables synthesized into AST math engine] ...\n")
+                    break
+
+                page = pdf.pages[page_num - 1]
+                page_header = f"## Page {page_num}\n"
+                markdown_sections.append(page_header)
+                total_chars += len(page_header)
                 
-                # Extract tables first
+                # Extract tables first (highest quantitative value)
                 tables = page.extract_tables()
                 if tables:
                     for table_idx, tbl in enumerate(tables, start=1):
                         total_tables += 1
-                        markdown_sections.append(f"### Table {page_num}.{table_idx}\n")
-                        markdown_sections.append(cls._table_to_markdown(tbl))
+                        tbl_md = f"### Table {page_num}.{table_idx}\n" + cls._table_to_markdown(tbl)
+                        markdown_sections.append(tbl_md)
+                        total_chars += len(tbl_md)
 
-                # Extract textual content
-                text = page.extract_text(layout=True)
-                if text and text.strip():
-                    markdown_sections.append("### Content\n")
-                    # Clean multiple consecutive blank lines
-                    cleaned_lines = []
-                    for line in text.splitlines():
-                        cleaned_lines.append(line.rstrip())
-                    markdown_sections.append("\n".join(cleaned_lines) + "\n\n")
+                # Extract textual content if budget remains
+                if total_chars < MAX_CHAR_BUDGET:
+                    text = page.extract_text(layout=True)
+                    if text and text.strip():
+                        cleaned_lines = [line.rstrip() for line in text.splitlines() if line.strip()]
+                        page_text = "### Content\n" + "\n".join(cleaned_lines[:40]) + "\n\n"
+                        markdown_sections.append(page_text)
+                        total_chars += len(page_text)
 
         full_md = "\n".join(markdown_sections)
         return {
