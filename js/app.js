@@ -49,6 +49,11 @@ const App = {
 
   setTheme: function(theme, showToastNotification = false) {
     document.documentElement.setAttribute("data-theme", theme);
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
     localStorage.setItem("moc_theme", theme);
 
     // Update icons and labels
@@ -61,6 +66,14 @@ const App = {
 
     if (showToastNotification) {
       this.showToast(`Switched to ${theme === 'dark' ? 'Sovereign Dark' : 'Executive Light'} Mode`, "info");
+    }
+
+    // Immediately re-render rankings table with proper light/dark contrast
+    this.renderRankingsTable();
+
+    // Re-render report history cards if loaded
+    if (this.historyList && this.historyList.length > 0) {
+      this.renderReportHistoryCards(this.historyList);
     }
 
     // Refresh charts if on dashboard
@@ -633,41 +646,68 @@ const App = {
     const tbody = document.getElementById("rankings-tbody");
     if (!tbody || typeof MOCK_COLLIERIES === "undefined") return;
 
+    const isDark = (document.documentElement.getAttribute("data-theme") || "dark") === "dark";
+
     tbody.innerHTML = MOCK_COLLIERIES.slice(0, 7).map(c => {
-      let medal = `<span class="px-2 py-0.5 bg-slate-800 text-slate-300 border border-slate-700 font-bold rounded-md font-mono text-xs">${c.rank}</span>`;
-      if (c.rank === 1) medal = `<span class="px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold rounded-md font-mono text-xs">🥇 1</span>`;
-      if (c.rank === 2) medal = `<span class="px-2 py-0.5 bg-slate-700/60 text-slate-200 border border-slate-600 font-bold rounded-md font-mono text-xs">🥈 2</span>`;
-      if (c.rank === 3) medal = `<span class="px-2 py-0.5 bg-amber-700/30 text-amber-200 border border-amber-600/40 font-bold rounded-md font-mono text-xs">🥉 3</span>`;
+      let medal = isDark
+        ? `<span class="px-2 py-0.5 bg-slate-800 text-slate-300 border border-slate-700 font-bold rounded-md font-mono text-xs">${c.rank}</span>`
+        : `<span class="px-2 py-0.5 bg-slate-100 text-slate-700 border border-slate-300 font-bold rounded-md font-mono text-xs">${c.rank}</span>`;
+      if (c.rank === 1) medal = isDark
+        ? `<span class="px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold rounded-md font-mono text-xs">🥇 1</span>`
+        : `<span class="px-2 py-0.5 bg-amber-100 text-amber-800 border border-amber-300 font-bold rounded-md font-mono text-xs">🥇 1</span>`;
+      if (c.rank === 2) medal = isDark
+        ? `<span class="px-2 py-0.5 bg-slate-700/60 text-slate-200 border border-slate-600 font-bold rounded-md font-mono text-xs">🥈 2</span>`
+        : `<span class="px-2 py-0.5 bg-slate-100 text-slate-700 border border-slate-300 font-bold rounded-md font-mono text-xs">🥈 2</span>`;
+      if (c.rank === 3) medal = isDark
+        ? `<span class="px-2 py-0.5 bg-amber-700/30 text-amber-200 border border-amber-600/40 font-bold rounded-md font-mono text-xs">🥉 3</span>`
+        : `<span class="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 font-bold rounded-md font-mono text-xs">🥉 3</span>`;
 
       const pct = Math.min(100, Math.round((c.production / c.target) * 100));
 
+      const rowClass = isDark
+        ? "hover:bg-slate-800/60 transition border-b border-slate-800/80"
+        : "hover:bg-slate-50 transition border-b border-slate-200";
+      const nameClass = isDark ? "font-bold text-white" : "font-bold text-slate-900";
+      const stateClass = isDark ? "text-slate-300 font-medium" : "text-slate-600 font-medium";
+      const companyPill = isDark
+        ? `<span class="px-2.5 py-0.5 bg-blue-950 text-cyan-300 border border-cyan-500/40 rounded-full text-[11px] font-bold font-mono">${c.company}</span>`
+        : `<span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full text-[11px] font-bold font-mono">${c.company}</span>`;
+      const prodClass = isDark ? "font-bold text-white mono text-sm" : "font-bold text-slate-900 mono text-sm";
+      const pctColor = isDark ? "text-emerald-400" : "text-emerald-600";
+      const countColor = isDark ? "text-slate-400" : "text-slate-500";
+      const trackClass = isDark
+        ? "w-32 bg-slate-800 border border-slate-700 rounded-full h-2.5 overflow-hidden shadow-inner"
+        : "w-32 bg-slate-200 border border-slate-300 rounded-full h-2.5 overflow-hidden shadow-inner";
+      const shareClass = isDark ? "text-cyan-300 font-bold mono text-sm" : "text-blue-700 font-bold mono text-sm";
+
       return `
-        <tr class="hover:bg-slate-800/60 transition border-b border-slate-800/80">
+        <tr class="${rowClass}">
           <td class="py-3 px-3.5">${medal}</td>
-          <td class="py-3 px-3.5 font-bold text-white">${c.name}</td>
-          <td class="py-3 px-3.5 text-slate-300 font-medium">${c.state}</td>
-          <td class="py-3 px-3.5"><span class="px-2.5 py-0.5 bg-blue-950 text-cyan-300 border border-cyan-500/40 rounded-full text-[11px] font-bold font-mono">${c.company}</span></td>
-          <td class="py-3 px-3.5 text-right font-bold text-white mono text-sm">${c.production.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+          <td class="py-3 px-3.5 ${nameClass}">${c.name}</td>
+          <td class="py-3 px-3.5 ${stateClass}">${c.state}</td>
+          <td class="py-3 px-3.5">${companyPill}</td>
+          <td class="py-3 px-3.5 text-right ${prodClass}">${c.production.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
           <td class="py-3 px-3.5 text-right">
             <div class="flex flex-col items-end space-y-1">
               <div class="flex items-center space-x-2">
-                <span class="text-xs font-bold font-mono text-emerald-400">${pct}%</span>
-                <span class="text-[11px] text-slate-400 font-mono">(${c.production.toLocaleString('en-IN', {maximumFractionDigits: 0})} / ${c.target.toLocaleString('en-IN', {maximumFractionDigits: 0})} MT)</span>
+                <span class="text-xs font-bold font-mono ${pctColor}">${pct}%</span>
+                <span class="text-[11px] ${countColor} font-mono">(${c.production.toLocaleString('en-IN', {maximumFractionDigits: 0})} / ${c.target.toLocaleString('en-IN', {maximumFractionDigits: 0})} MT)</span>
               </div>
-              <div class="w-32 bg-slate-800 border border-slate-700 rounded-full h-2.5 overflow-hidden shadow-inner">
+              <div class="${trackClass}">
                 <div class="bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 h-2.5 rounded-full shadow-xs" style="width: ${pct}%"></div>
               </div>
             </div>
           </td>
-          <td class="py-3 px-3.5 text-right text-cyan-300 font-bold mono text-sm">${c.share}</td>
+          <td class="py-3 px-3.5 text-right ${shareClass}">${c.share}</td>
         </tr>
       `;
     }).join("");
-
   },
 
   renderDashboardCharts: function() {
     if (typeof Chart === "undefined") return;
+
+    const isDark = (document.documentElement.getAttribute("data-theme") || "dark") === "dark";
 
     // Line / Area Chart: 12-Month Trends
     const ctxTrends = document.getElementById("chart-production-trends");
@@ -681,18 +721,18 @@ const App = {
             {
               label: 'Actual Production (MT)',
               data: [10.2, 10.8, 11.1, 10.9, 11.4, 11.8, 12.1, 12.5, 12.8, 13.1, 13.4, 13.8],
-              borderColor: '#1E3A8A',
-              backgroundColor: 'rgba(30, 58, 138, 0.12)',
+              borderColor: isDark ? '#38BDF8' : '#1E3A8A',
+              backgroundColor: isDark ? 'rgba(56, 189, 248, 0.15)' : 'rgba(30, 58, 138, 0.12)',
               fill: true,
               tension: 0.35,
               borderWidth: 2.5,
-              pointBackgroundColor: '#1E3A8A',
+              pointBackgroundColor: isDark ? '#38BDF8' : '#1E3A8A',
               pointRadius: 3
             },
             {
               label: 'Target Allocation (MT)',
               data: [10.0, 10.5, 10.8, 11.0, 11.2, 11.5, 12.0, 12.2, 12.5, 12.8, 13.0, 13.5],
-              borderColor: '#D97706',
+              borderColor: isDark ? '#F59E0B' : '#D97706',
               borderDash: [5, 5],
               borderWidth: 2,
               pointRadius: 0,
@@ -706,7 +746,7 @@ const App = {
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: '#0F172A',
+              backgroundColor: isDark ? '#0B1120' : '#0F172A',
               titleFont: { size: 12, weight: 'bold' },
               bodyFont: { size: 12 },
               padding: 10,
@@ -714,8 +754,15 @@ const App = {
             }
           },
           scales: {
-            x: { grid: { display: false } },
-            y: { grid: { color: '#F1F5F9' }, min: 8 }
+            x: { 
+              grid: { display: false },
+              ticks: { color: isDark ? '#94A3B8' : '#64748B' }
+            },
+            y: { 
+              grid: { color: isDark ? 'rgba(255, 255, 255, 0.08)' : '#F1F5F9' }, 
+              ticks: { color: isDark ? '#94A3B8' : '#64748B' },
+              min: 8 
+            }
           }
         }
       });
@@ -733,14 +780,21 @@ const App = {
             data: [30.8, 23.6, 26.0, 15.6, 4.0],
             backgroundColor: ['#1E3A8A', '#059669', '#2563EB', '#D97706', '#9333EA'],
             borderWidth: 2,
-            borderColor: '#FFFFFF'
+            borderColor: isDark ? '#0F172A' : '#FFFFFF'
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+            legend: { 
+              position: 'bottom', 
+              labels: { 
+                boxWidth: 10, 
+                font: { size: 10 },
+                color: isDark ? '#CBD5E1' : '#475569'
+              } 
+            }
           },
           cutout: '70%'
         }
@@ -1824,42 +1878,54 @@ const App = {
       visual_infographic: { bg: "bg-indigo-50", border: "border-indigo-300", text: "text-indigo-900", icon: "🏜️" }
     };
 
+    const isDark = (document.documentElement.getAttribute("data-theme") || "dark") === "dark";
+
     container.innerHTML = items.map(item => {
-      const theme = themeColors[item.template] || { bg: "bg-slate-50", border: "border-slate-200", text: "text-slate-800", icon: "📄" };
+      const theme = themeColors[item.template] || { bg: isDark ? "bg-slate-800" : "bg-slate-50", border: isDark ? "border-slate-700" : "border-slate-200", text: isDark ? "text-slate-200" : "text-slate-800", icon: "📄" };
       const pdfUrl = item.pdf_url || `/api/reports/download/pdf?template=${item.template}`;
       const docxUrl = item.docx_url || `/api/reports/download/docx?template=${item.template}`;
       const csvUrl = item.csv_url || `/api/reports/download/csv`;
 
+      const cardBg = isDark ? "bg-slate-900 border-slate-700/80 text-white" : "bg-white border-slate-200/90 text-slate-900";
+      const titleColor = isDark ? "text-white" : "text-slate-900";
+      const descColor = isDark ? "text-slate-300" : "text-slate-600";
+      const metaBorder = isDark ? "border-slate-800" : "border-slate-100";
+      const idPill = isDark ? "bg-slate-800 text-slate-200 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-200";
+      const auditorPill = isDark ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-50 text-slate-700 border-slate-200";
+      const verifiedPill = isDark ? "bg-emerald-950/60 text-emerald-400 border-emerald-700/60" : "bg-emerald-50 text-emerald-700 border-emerald-200";
+      const previewBtn = isDark ? "bg-slate-800 hover:bg-slate-700 text-cyan-300 border-slate-700" : "bg-slate-100 hover:bg-slate-200 text-blue-700 border-slate-300";
+      const editBtn = isDark ? "bg-gradient-to-r from-purple-800 to-indigo-800 hover:from-purple-700 hover:to-indigo-700 text-purple-200 border-purple-700/60" : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-purple-500";
+
       return `
-        <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md transition space-y-4">
+        <div class="${cardBg} rounded-2xl border p-5 shadow-xs hover:shadow-md transition space-y-4">
           <!-- Top Row: Meta & Badges -->
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b ${metaBorder} pb-3">
             <div class="flex items-center space-x-2.5 flex-wrap gap-y-1">
               <span class="px-2.5 py-1 ${theme.bg} ${theme.border} ${theme.text} border text-[11px] font-bold rounded-lg flex items-center space-x-1">
                 <span>${theme.icon}</span>
                 <span>${item.template_name || item.template}</span>
               </span>
-              <span class="px-2 py-0.5 bg-slate-100 text-slate-700 font-mono text-xs font-bold rounded border border-slate-200">
+              <span class="px-2 py-0.5 ${idPill} font-mono text-xs font-bold rounded border">
                 ${item.id}
               </span>
               <span class="text-xs text-slate-400 font-mono">
                 📅 ${item.timestamp}
               </span>
             </div>
-            <div class="flex items-center space-x-2 text-xs font-mono text-slate-500">
-              <span class="px-2 py-0.5 bg-slate-50 rounded border border-slate-200">Auditor: ${item.auditor_id || 'MOC-7890'}</span>
-              <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded border border-emerald-200">✓ Verified</span>
+            <div class="flex items-center space-x-2 text-xs font-mono">
+              <span class="px-2 py-0.5 ${auditorPill} rounded border">Auditor: ${item.auditor_id || 'MOC-7890'}</span>
+              <span class="px-2 py-0.5 ${verifiedPill} font-bold rounded border">✓ Verified</span>
             </div>
           </div>
 
           <!-- Middle Row: Title & Summary -->
           <div>
-            <h3 class="text-base font-extrabold text-slate-900 font-heading tracking-tight">${item.title}</h3>
-            <p class="text-xs text-slate-600 mt-1 leading-relaxed">${item.summary_snippet || 'Publication dossier compiled and mathematically verified across active subsidiary colliery ledgers.'}</p>
+            <h3 class="text-base font-extrabold ${titleColor} font-heading tracking-tight">${item.title}</h3>
+            <p class="text-xs ${descColor} mt-1 leading-relaxed">${item.summary_snippet || 'Publication dossier compiled and mathematically verified across active subsidiary colliery ledgers.'}</p>
           </div>
 
           <!-- Bottom Row: 3 Styled Download Action Buttons -->
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t ${metaBorder}">
             <div class="text-[11px] font-semibold text-slate-500 flex items-center space-x-1">
               <span>⚡ Format Actions:</span>
               <span class="text-slate-400">PDF uses chosen template • CSV exports raw dataset</span>
@@ -1867,13 +1933,13 @@ const App = {
             <div class="flex items-center space-x-2 flex-wrap gap-y-2">
               <!-- Button 0: Live Preview without downloading -->
               <button type="button" onclick="App.openReportPreviewModal('${item.id}')"
-                class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-xs">
+                class="px-3 py-2 ${previewBtn} border rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-xs">
                 <span>👁️</span>
                 <span>Preview</span>
               </button>
               <!-- Button 0.5: AI Revision with Gemma 4 -->
               <button type="button" onclick="App.openEditReportModal('${item.id}')"
-                class="px-3 py-2 bg-gradient-to-r from-purple-800 to-indigo-800 hover:from-purple-700 hover:to-indigo-700 text-purple-200 border border-purple-700/60 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-xs">
+                class="px-3 py-2 ${editBtn} rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-xs">
                 <span>✏️</span>
                 <span>Edit (Gemma 4)</span>
               </button>
