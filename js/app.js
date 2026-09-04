@@ -33,6 +33,7 @@ const App = {
     this.renderDashboardCharts();
     this.loadLatestSummary();
     this.loadReportHistory();
+    this.initUniversalSearchListeners();
   },
 
   initTheme: function() {
@@ -108,6 +109,429 @@ const App = {
     if (loginForm) {
       loginForm.addEventListener("submit", (e) => this.handleLogin(e));
     }
+  },
+
+  // =========================================================================
+  // UNIVERSAL SEARCH ENGINE (Header Spotlight with Instant Cross-Module Navigation)
+  // =========================================================================
+  initUniversalSearchListeners: function() {
+    // Close dropdown on outside click
+    document.addEventListener("click", (e) => {
+      const container = document.getElementById("universal-search-container");
+      if (container && !container.contains(e.target)) {
+        App.closeUniversalSearch();
+      }
+    });
+
+    // Keyboard support: Escape to close, Enter to execute top match
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        App.closeUniversalSearch();
+      } else if (e.key === "Enter") {
+        const input = document.getElementById("universal-search-input");
+        const dropdown = document.getElementById("universal-search-dropdown");
+        if (input && document.activeElement === input && dropdown && !dropdown.classList.contains("hidden")) {
+          e.preventDefault();
+          App.executeUniversalSearchResult(0);
+        }
+      }
+    });
+  },
+
+  getUniversalSearchIndex: function() {
+    return [
+      // 1. Collieries & Basins
+      {
+        type: "colliery",
+        category: "Collieries & Mines",
+        icon: "⛏️",
+        title: "Gevra Colliery",
+        subtitle: "SECL • Korba Basin • 32,450 MT • 98.2% Target",
+        keywords: "gevra secl korba chhattisgarh 32450 extraction opencast",
+        action: () => {
+          App.switchTab('analytics');
+          setTimeout(() => {
+            const el = document.getElementById("rankings-table-body");
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            App.showToast("Navigated to Gevra Colliery in Coalfield Analytics", "info");
+          }, 150);
+        }
+      },
+      {
+        type: "colliery",
+        category: "Collieries & Mines",
+        icon: "⛏️",
+        title: "Kusmunda Colliery",
+        subtitle: "SECL • Bilaspur • 28,120 MT • 96.5% Target",
+        keywords: "kusmunda secl bilaspur 28120 extraction opencast",
+        action: () => {
+          App.switchTab('analytics');
+          App.showToast("Navigated to Kusmunda Colliery in Coalfield Analytics", "info");
+        }
+      },
+      {
+        type: "colliery",
+        category: "Collieries & Mines",
+        icon: "⛏️",
+        title: "Dipka Colliery",
+        subtitle: "SECL • Gevra-Dipka Sector • 22,890 MT • 95.1% Target",
+        keywords: "dipka secl 22890 extraction opencast",
+        action: () => {
+          App.switchTab('analytics');
+          App.showToast("Navigated to Dipka Colliery in Coalfield Analytics", "info");
+        }
+      },
+      {
+        type: "colliery",
+        category: "Collieries & Mines",
+        icon: "⛏️",
+        title: "Bhubaneswari Colliery",
+        subtitle: "MCL • Talcher Basin • 16,740 MT • 97.4% Target",
+        keywords: "bhubaneswari mcl talcher odisha 16740",
+        action: () => {
+          App.switchTab('analytics');
+          App.showToast("Navigated to Bhubaneswari Colliery in Coalfield Analytics", "info");
+        }
+      },
+      {
+        type: "colliery",
+        category: "Collieries & Mines",
+        icon: "⛏️",
+        title: "Belpahar Colliery",
+        subtitle: "MCL • IB Valley • 12,300 MT • 96.0% Target",
+        keywords: "belpahar mcl ib valley odisha 12300",
+        action: () => {
+          App.switchTab('analytics');
+          App.showToast("Navigated to Belpahar Colliery in Coalfield Analytics", "info");
+        }
+      },
+      {
+        type: "colliery",
+        category: "Collieries & Mines",
+        icon: "⛏️",
+        title: "Jayant Colliery",
+        subtitle: "NCL • Singrauli Basin • 9,450 MT • 97.8% Target",
+        keywords: "jayant ncl singrauli madhya pradesh 9450",
+        action: () => {
+          App.switchTab('analytics');
+          App.showToast("Navigated to Jayant Colliery in Coalfield Analytics", "info");
+        }
+      },
+      {
+        type: "colliery",
+        category: "Collieries & Mines",
+        icon: "⛏️",
+        title: "Dudhichua Colliery",
+        subtitle: "NCL • Singrauli Basin • 5,820 MT • 95.9% Target",
+        keywords: "dudhichua ncl singrauli 5820",
+        action: () => {
+          App.switchTab('analytics');
+          App.showToast("Navigated to Dudhichua Colliery in Coalfield Analytics", "info");
+        }
+      },
+      {
+        type: "colliery",
+        category: "Collieries & Mines",
+        icon: "⛏️",
+        title: "Nigahi Colliery",
+        subtitle: "NCL • Singrauli Basin • 3,838.90 MT • 94.7% Target",
+        keywords: "nigahi ncl singrauli 3838",
+        action: () => {
+          App.switchTab('analytics');
+          App.showToast("Navigated to Nigahi Colliery in Coalfield Analytics", "info");
+        }
+      },
+
+      // 2. Gamma.app Modern Graphic Templates
+      {
+        type: "template",
+        category: "Graphic Templates",
+        icon: "🍱",
+        title: "Bento Modular Grid Template",
+        subtitle: "Gamma Bento Tech • Asymmetric KPI Cards & Royal Blue Theme",
+        keywords: "bento modular grid gamma template modern royal blue violet pdf export",
+        action: () => {
+          App.switchTab('reports');
+          App.selectTemplate('bento_grid');
+          App.showToast("Selected Bento Modular Grid Template", "success");
+        }
+      },
+      {
+        type: "template",
+        category: "Graphic Templates",
+        icon: "📰",
+        title: "Clean Editorial Canvas Template",
+        subtitle: "Gamma Minimalist Paper • High-End Swiss Print & Geometric Rules",
+        keywords: "clean editorial canvas gamma template swiss print modern paper pdf",
+        action: () => {
+          App.switchTab('reports');
+          App.selectTemplate('editorial_canvas');
+          App.showToast("Selected Clean Editorial Canvas Template", "success");
+        }
+      },
+      {
+        type: "template",
+        category: "Graphic Templates",
+        icon: "🌑",
+        title: "Obsidian Dark Deck Template",
+        subtitle: "Gamma Midnight Tech • Cyber Dark Cards with Electric Cyan",
+        keywords: "obsidian dark deck cyber midnight cyan glowing gamma template pdf",
+        action: () => {
+          App.switchTab('reports');
+          App.selectTemplate('obsidian_deck');
+          App.showToast("Selected Obsidian Dark Deck Template", "success");
+        }
+      },
+      {
+        type: "template",
+        category: "Graphic Templates",
+        icon: "✨",
+        title: "Aurora Vibrant Gradient Template",
+        subtitle: "Gamma Aurora Modern • Sunset Radiant Indigo, Fuchsia & Rose",
+        keywords: "aurora vibrant gradient sunset indigo rose fuchsia gamma template",
+        action: () => {
+          App.switchTab('reports');
+          App.selectTemplate('aurora_gradient');
+          App.showToast("Selected Aurora Vibrant Gradient Template", "success");
+        }
+      },
+      {
+        type: "template",
+        category: "Graphic Templates",
+        icon: "🌊",
+        title: "Nordic Ocean Slate Template",
+        subtitle: "Gamma Deep Ocean • Clean Scandinavian Palette & Arctic Blue",
+        keywords: "nordic ocean slate scandinavian arctic navy cyan gamma template",
+        action: () => {
+          App.switchTab('reports');
+          App.selectTemplate('nordic_ocean');
+          App.showToast("Selected Nordic Ocean Slate Template", "success");
+        }
+      },
+      {
+        type: "template",
+        category: "Graphic Templates",
+        icon: "🏜️",
+        title: "Warm Sandstone Executive Template",
+        subtitle: "Gamma Warm Sand • Institutional Paper, Forest Pine & Terracotta",
+        keywords: "warm sandstone executive forest pine terracotta paper gamma template",
+        action: () => {
+          App.switchTab('reports');
+          App.selectTemplate('warm_sandstone');
+          App.showToast("Selected Warm Sandstone Executive Template", "success");
+        }
+      },
+
+      // 3. Sovereign KPIs & Production Metrics
+      {
+        type: "metric",
+        category: "Sovereign KPIs",
+        icon: "📊",
+        title: "National Extraction Metric",
+        subtitle: "131,608.90 MT Logged • 96.72% Target Fulfillment",
+        keywords: "national extraction 131608 96.72 target production metric kpi",
+        action: () => {
+          App.switchTab('dashboard');
+          window.scrollTo({ top: 120, behavior: 'smooth' });
+          App.showToast("Viewing National Extraction KPI", "info");
+        }
+      },
+      {
+        type: "metric",
+        category: "Sovereign KPIs",
+        icon: "🚂",
+        title: "Thermal Dispatch & Power Offtake",
+        subtitle: "126,491.21 MT Dispatched • 96.11% Offtake Ratio",
+        keywords: "thermal dispatch 126491 96.11 offtake power rail logistics kpi",
+        action: () => {
+          App.switchTab('dashboard');
+          window.scrollTo({ top: 120, behavior: 'smooth' });
+          App.showToast("Viewing Thermal Dispatch KPI", "info");
+        }
+      },
+      {
+        type: "metric",
+        category: "Sovereign KPIs",
+        icon: "🛡️",
+        title: "AST Deterministic Audit Integrity",
+        subtitle: "100% Deterministic • AST Math & Hash Verified",
+        keywords: "audit integrity 100 deterministic ast math verified compliance kpi",
+        action: () => {
+          App.switchTab('dashboard');
+          window.scrollTo({ top: 120, behavior: 'smooth' });
+          App.showToast("Viewing Audit Integrity Verification", "info");
+        }
+      },
+
+      // 4. Navigation & Quick Actions
+      {
+        type: "navigation",
+        category: "Navigation & Actions",
+        icon: "⚡",
+        title: "New Report / Ingest Dataset",
+        subtitle: "Upload raw colliery CSV, TSV, or PDF and trigger AI analysis",
+        keywords: "new report upload dataset csv pdf ingest analyze",
+        action: () => {
+          App.switchTab('datasets');
+        }
+      },
+      {
+        type: "navigation",
+        category: "Navigation & Actions",
+        icon: "📊",
+        title: "Executive Overview Dashboard",
+        subtitle: "National summary, production charts, and strategic radar",
+        keywords: "dashboard executive overview charts graphs statistics",
+        action: () => {
+          App.switchTab('dashboard');
+        }
+      },
+      {
+        type: "navigation",
+        category: "Navigation & Actions",
+        icon: "📈",
+        title: "Coalfield Analytics & Leaderboard",
+        subtitle: "Interactive basin rankings, colliery sorting, and fulfillment bars",
+        keywords: "coalfield analytics leaderboard colliery rankings table",
+        action: () => {
+          App.switchTab('analytics');
+        }
+      },
+      {
+        type: "navigation",
+        category: "Navigation & Actions",
+        icon: "📄",
+        title: "Report Studio & PDF Export",
+        subtitle: "Live A4 document preview canvas and official PDF download",
+        keywords: "report studio export pdf download print preview canvas",
+        action: () => {
+          App.switchTab('reports');
+        }
+      },
+      {
+        type: "navigation",
+        category: "Navigation & Actions",
+        icon: "📥",
+        title: "Download Clean CSV (No Template)",
+        subtitle: "Export raw verified data without formatting or styling",
+        keywords: "download clean csv raw data export tabular dataset",
+        action: () => {
+          window.location.href = '/api/reports/download/csv';
+          App.showToast("Initiated CSV download", "success");
+        }
+      }
+    ];
+  },
+
+  handleUniversalSearch: function(event) {
+    const input = document.getElementById("universal-search-input");
+    const dropdown = document.getElementById("universal-search-dropdown");
+    const clearBtn = document.getElementById("universal-search-clear");
+    if (!input || !dropdown) return;
+
+    const q = (input.value || "").toLowerCase().trim();
+    if (clearBtn) {
+      if (q) clearBtn.classList.remove("hidden");
+      else clearBtn.classList.add("hidden");
+    }
+
+    const index = this.getUniversalSearchIndex();
+    // Also include dynamic report history items if present
+    if (this.historyList && this.historyList.length > 0) {
+      this.historyList.forEach(item => {
+        index.push({
+          type: "report",
+          category: "Generated Dossiers",
+          icon: "📜",
+          title: item.title || "Report Dossier",
+          subtitle: `${item.id} • ${item.date} • ${item.auditor_id || 'MOC-7890'}`,
+          keywords: `${item.title} ${item.template} ${item.id} dossier pdf report`.toLowerCase(),
+          action: () => {
+            App.switchTab('reports');
+            App.showToast(`Navigated to dossier ${item.id}`, "info");
+          }
+        });
+      });
+    }
+
+    let results = [];
+    if (!q) {
+      // Show default recommended shortcuts
+      results = index.filter(item => item.type === "template" || item.type === "colliery" || item.type === "navigation").slice(0, 7);
+    } else {
+      results = index.filter(item => {
+        const text = `${item.title} ${item.subtitle} ${item.keywords} ${item.category}`.toLowerCase();
+        return text.includes(q);
+      }).slice(0, 10);
+    }
+
+    if (results.length === 0) {
+      dropdown.innerHTML = `
+        <div class="p-5 text-center text-xs text-slate-500 dark:text-slate-400">
+          <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">No matching results found</p>
+          <p class="mt-1 text-[11px]">Try searching for <span class="text-blue-500 font-mono font-bold">Gevra</span>, <span class="text-blue-500 font-mono font-bold">Obsidian</span>, <span class="text-blue-500 font-mono font-bold">Dispatch</span>, or <span class="text-blue-500 font-mono font-bold">PDF</span></p>
+        </div>
+      `;
+      dropdown.classList.remove("hidden");
+      return;
+    }
+
+    // Render grouped results
+    let html = `
+      <div class="p-2.5 bg-slate-50 dark:bg-slate-950/80 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+        <span class="font-bold uppercase tracking-wider">${q ? `Matching Results (${results.length})` : 'Universal Shortcuts & Data'}</span>
+        <span class="font-mono text-[10px]">Universal Index</span>
+      </div>
+      <div class="divide-y divide-slate-100 dark:divide-slate-800/80">
+    `;
+
+    results.forEach((item, idx) => {
+      html += `
+        <div onclick="App.executeUniversalSearchResult(${idx})"
+          class="p-3 hover:bg-blue-50 dark:hover:bg-slate-800/80 cursor-pointer transition flex items-center justify-between group">
+          <div class="flex items-center space-x-3 min-w-0">
+            <span class="text-base w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition">${item.icon}</span>
+            <div class="min-w-0">
+              <div class="flex items-center space-x-2">
+                <span class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">${item.title}</span>
+                <span class="text-[9px] px-1.5 py-0.2 rounded-full font-semibold uppercase bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0">${item.category.split(' ')[0]}</span>
+              </div>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">${item.subtitle}</p>
+            </div>
+          </div>
+          <span class="text-xs text-blue-600 dark:text-cyan-400 font-bold opacity-0 group-hover:opacity-100 transition shrink-0 ml-2">→</span>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+    dropdown.innerHTML = html;
+    dropdown.classList.remove("hidden");
+    this._currentUniversalResults = results;
+  },
+
+  executeUniversalSearchResult: function(index) {
+    if (this._currentUniversalResults && this._currentUniversalResults[index]) {
+      const item = this._currentUniversalResults[index];
+      if (item.action) item.action();
+    }
+    this.closeUniversalSearch();
+  },
+
+  clearUniversalSearch: function() {
+    const input = document.getElementById("universal-search-input");
+    if (input) {
+      input.value = "";
+      input.focus();
+    }
+    this.closeUniversalSearch();
+    const clearBtn = document.getElementById("universal-search-clear");
+    if (clearBtn) clearBtn.classList.add("hidden");
+  },
+
+  closeUniversalSearch: function() {
+    const dropdown = document.getElementById("universal-search-dropdown");
+    if (dropdown) dropdown.classList.add("hidden");
   },
 
   togglePasswordVisibility: function(event) {
@@ -1225,7 +1649,7 @@ const App = {
   setHistoryCategoryFilter: function(category) {
     this.activeHistoryFilter = category;
     document.querySelectorAll(".hist-filter-btn").forEach(btn => {
-      btn.className = "hist-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg text-xs font-bold transition";
+      btn.className = "hist-filter-btn px-3 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 rounded-lg text-xs font-bold transition";
     });
     const activeBtn = document.getElementById(`hist-filter-${category}`);
     if (activeBtn) activeBtn.className = "hist-filter-btn px-3 py-1.5 bg-blue-700 text-white rounded-lg text-xs font-bold transition";
