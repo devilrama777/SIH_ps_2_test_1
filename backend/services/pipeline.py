@@ -117,7 +117,7 @@ class DocumentPipeline:
         doc_gen = DocumentGenerator(output_dir=config.REPORTS_DIR)
         summary_to_use = final_report if final_report.strip() else llama_analysis
         doc_pkg = doc_gen.generate_all_packages(
-            template_name="monthly_production",
+            template_name="aurora_gradient",
             report_id=job_id,
             summary_text=summary_to_use,
             images=[img["path"] for img in extracted_images] if extracted_images else None
@@ -283,7 +283,7 @@ class DocumentPipeline:
         doc_gen = DocumentGenerator(output_dir=config.REPORTS_DIR)
         summary_to_use = final_report if final_report.strip() else llama_analysis
         doc_pkg = doc_gen.generate_all_packages(
-            template_name="monthly_production",
+            template_name="aurora_gradient",
             report_id=job_id,
             summary_text=summary_to_use,
             images=[img["path"] for img in extracted_images] if extracted_images else None
