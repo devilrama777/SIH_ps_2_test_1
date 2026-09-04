@@ -4,7 +4,7 @@
    ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-:root {
+:root, [data-theme="dark"] {
   /* Core Dark Theme Surfaces */
   --bg-app: #070B14;
   --bg-app-subtle: #0B1120;
@@ -33,6 +33,35 @@
   --rose-accent: #F43F5E;
 }
 
+[data-theme="light"] {
+  /* Core Light Theme Surfaces */
+  --bg-app: #F8FAFC;
+  --bg-app-subtle: #F1F5F9;
+  --surface-card: #FFFFFF;
+  --surface-card-hover: #F8FAFC;
+  --surface-card-elevated: #FFFFFF;
+  --surface-input: #FFFFFF;
+  
+  /* Borders & Dividers */
+  --border-subtle: #E2E8F0;
+  --border-highlight: #CBD5E1;
+  --border-glow: rgba(30, 58, 138, 0.15);
+
+  /* High-Contrast Typography */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-accent: #1E3A8A;
+
+  /* Sovereign Palette */
+  --sovereign-navy: #1E3A8A;
+  --electric-cyan: #0284C7;
+  --cyan-glow: rgba(2, 132, 199, 0.2);
+  --gold-accent: #D97706;
+  --emerald-accent: #059669;
+  --rose-accent: #E11D48;
+}
+
 /* Base Body Styles */
 html, body {
   background-color: var(--bg-app) !important;
@@ -42,6 +71,7 @@ html, body {
   padding: 0;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 h1, h2, h3, h4, .font-heading {
@@ -53,53 +83,177 @@ h1, h2, h3, h4, .font-heading {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Custom Executive Dark Scrollbar */
+/* Custom Executive Dark/Light Scrollbar */
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #070B14;
+  background: var(--bg-app);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
+  background: var(--border-subtle);
   border-radius: 9999px;
-  border: 1px solid #334155;
+  border: 1px solid var(--border-highlight);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #38BDF8;
+  background: var(--text-accent);
 }
 
 /* ==========================================================================
    GLOBAL DARK THEME OVERRIDES FOR TAILWIND LIGHT UTILITIES
-   Ensures absolute consistency across the whole DOM
+   Scoped to data-theme="dark" (or default when not light)
    ========================================================================== */
-.bg-slate-50, .bg-slate-100 {
+[data-theme="dark"] .bg-slate-50, 
+[data-theme="dark"] .bg-slate-100,
+:root:not([data-theme="light"]) .bg-slate-50,
+:root:not([data-theme="light"]) .bg-slate-100 {
   background-color: var(--bg-app-subtle) !important;
 }
-.bg-white {
+
+[data-theme="dark"] .bg-white,
+:root:not([data-theme="light"]) .bg-white {
   background-color: var(--surface-card) !important;
 }
-.text-slate-900, .text-slate-800, .text-slate-700 {
+
+[data-theme="dark"] .text-slate-900, 
+[data-theme="dark"] .text-slate-800, 
+[data-theme="dark"] .text-slate-700,
+:root:not([data-theme="light"]) .text-slate-900,
+:root:not([data-theme="light"]) .text-slate-800,
+:root:not([data-theme="light"]) .text-slate-700 {
   color: var(--text-primary) !important;
 }
-.text-slate-600, .text-slate-500 {
+
+[data-theme="dark"] .text-slate-600, 
+[data-theme="dark"] .text-slate-500,
+:root:not([data-theme="light"]) .text-slate-600,
+:root:not([data-theme="light"]) .text-slate-500 {
   color: var(--text-secondary) !important;
 }
-.text-slate-400 {
+
+[data-theme="dark"] .text-slate-400,
+:root:not([data-theme="light"]) .text-slate-400 {
   color: var(--text-muted) !important;
 }
-.border-slate-100, .border-slate-200 {
+
+[data-theme="dark"] .border-slate-100, 
+[data-theme="dark"] .border-slate-200,
+:root:not([data-theme="light"]) .border-slate-100,
+:root:not([data-theme="light"]) .border-slate-200 {
   border-color: var(--border-subtle) !important;
 }
-.border-slate-300 {
+
+[data-theme="dark"] .border-slate-300,
+:root:not([data-theme="light"]) .border-slate-300 {
   border-color: var(--border-highlight) !important;
 }
-.hover\:bg-slate-50:hover {
+
+[data-theme="dark"] .hover\:bg-slate-50:hover,
+:root:not([data-theme="light"]) .hover\:bg-slate-50:hover {
   background-color: var(--surface-card-hover) !important;
 }
-.hover\:bg-slate-100:hover {
+
+[data-theme="dark"] .hover\:bg-slate-100:hover,
+:root:not([data-theme="light"]) .hover\:bg-slate-100:hover {
   background-color: var(--surface-card-elevated) !important;
+}
+
+/* ==========================================================================
+   LIGHT THEME OVERRIDES FOR DARK SURFACES
+   Active when [data-theme="light"]
+   ========================================================================== */
+[data-theme="light"] html,
+[data-theme="light"] body {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+[data-theme="light"] header,
+[data-theme="light"] #nav-tabs-bar {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
+
+[data-theme="light"] .bg-slate-900,
+[data-theme="light"] .bg-slate-950 {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+[data-theme="light"] .border-slate-700,
+[data-theme="light"] .border-slate-800 {
+  border-color: #E2E8F0 !important;
+}
+
+[data-theme="light"] .text-white {
+  color: #0F172A !important;
+}
+
+[data-theme="light"] .text-slate-200,
+[data-theme="light"] .text-slate-300 {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .text-slate-400 {
+  color: #64748B !important;
+}
+
+[data-theme="light"] .bg-blue-950 {
+  background-color: #EFF6FF !important;
+  color: #1E40AF !important;
+  border-color: #BFDBFE !important;
+}
+
+[data-theme="light"] .btn-theme-switcher {
+  background-color: #F1F5F9 !important;
+  color: #1E293B !important;
+  border-color: #CBD5E1 !important;
+}
+
+[data-theme="light"] .btn-theme-switcher:hover {
+  background-color: #E2E8F0 !important;
+}
+
+[data-theme="light"] #view-login {
+  background-color: #F1F5F9 !important;
+  background-image: 
+    radial-gradient(at 15% 20%, rgba(219, 234, 254, 0.8) 0px, transparent 50%),
+    radial-gradient(at 85% 25%, rgba(207, 250, 254, 0.7) 0px, transparent 50%),
+    radial-gradient(at 50% 85%, rgba(224, 231, 255, 0.7) 0px, transparent 50%) !important;
+}
+
+[data-theme="light"] #view-login .bg-slate-900\/95 {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] #view-login input[type="text"],
+[data-theme="light"] #view-login input[type="password"] {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}
+
+[data-theme="light"] #view-login input[type="text"]:focus,
+[data-theme="light"] #view-login input[type="password"]:focus {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #2563EB !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+}
+
+[data-theme="light"] #view-login label {
+  color: #475569 !important;
+}
+
+[data-theme="light"] tr.hover\:bg-slate-800\/60:hover {
+  background-color: #F8FAFC !important;
+}
+
+[data-theme="light"] tr.border-slate-800\/80 {
+  border-color: #E2E8F0 !important;
 }
 
 /* ==========================================================================

@@ -24,6 +24,7 @@ const App = {
   ],
 
   init: function() {
+    this.initTheme();
     this.checkAuth();
     this.renderRankingsTable();
     this.initEventListeners();
@@ -32,6 +33,39 @@ const App = {
     this.renderDashboardCharts();
     this.loadLatestSummary();
     this.loadReportHistory();
+  },
+
+  initTheme: function() {
+    const saved = localStorage.getItem("moc_theme") || "dark";
+    this.setTheme(saved, false);
+  },
+
+  toggleTheme: function() {
+    const current = document.documentElement.getAttribute("data-theme") || "dark";
+    const next = current === "dark" ? "light" : "dark";
+    this.setTheme(next, true);
+  },
+
+  setTheme: function(theme, showToastNotification = false) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("moc_theme", theme);
+
+    // Update icons and labels
+    document.querySelectorAll(".theme-toggle-icon").forEach(el => {
+      el.textContent = theme === "dark" ? "🌙" : "☀️";
+    });
+    document.querySelectorAll(".theme-toggle-label").forEach(el => {
+      el.textContent = theme === "dark" ? "Dark" : "Light";
+    });
+
+    if (showToastNotification) {
+      this.showToast(`Switched to ${theme === 'dark' ? 'Sovereign Dark' : 'Executive Light'} Mode`, "info");
+    }
+
+    // Refresh charts if on dashboard
+    if (this.activeTab === "dashboard") {
+      setTimeout(() => this.renderDashboardCharts(), 50);
+    }
   },
 
   startHeaderClock: function() {
@@ -143,14 +177,19 @@ const App = {
 
   switchTab: function(tabId) {
     const tabs = ["dashboard", "datasets", "analytics", "reports"];
+    const isDark = (document.documentElement.getAttribute("data-theme") || "dark") === "dark";
     tabs.forEach(t => {
       const tabBtn = document.getElementById(`tab-${t}`);
       const tabView = document.getElementById(`view-${t}`);
       if (tabBtn) {
         if (t === tabId) {
-          tabBtn.className = "py-3.5 text-sm font-semibold border-b-2 border-cyan-400 text-cyan-300 transition flex items-center space-x-2 shrink-0";
+          tabBtn.className = isDark
+            ? "py-3.5 text-sm font-semibold border-b-2 border-cyan-400 text-cyan-300 transition flex items-center space-x-2 shrink-0"
+            : "py-3.5 text-sm font-semibold border-b-2 border-blue-700 text-blue-800 transition flex items-center space-x-2 shrink-0";
         } else {
-          tabBtn.className = "py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2 shrink-0";
+          tabBtn.className = isDark
+            ? "py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2 shrink-0"
+            : "py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition flex items-center space-x-2 shrink-0";
         }
       }
       if (tabView) {

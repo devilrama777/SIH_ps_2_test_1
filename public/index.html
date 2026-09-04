@@ -1,8 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('moc_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
   <title>Ministry of Coal • Executive Report Intelligence Platform</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -46,6 +52,14 @@
   <!-- 1. AUTHENTICATION / LOGIN VIEW (HIGH-IMPACT & ANIMATED)   -->
   <!-- ======================================================== -->
   <div id="view-login" class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden login-bg-mesh">
+    <!-- Top-Right Theme Switcher on Login View -->
+    <div class="absolute top-5 right-5 z-30">
+      <button onclick="App.toggleTheme()" class="btn-theme-switcher inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border text-xs font-bold transition shadow-md cursor-pointer select-none bg-slate-900/90 text-cyan-300 border-slate-700 hover:bg-slate-800" title="Switch Theme (Light / Dark)">
+        <span class="theme-toggle-icon text-sm">🌙</span>
+        <span class="theme-toggle-label font-mono">Dark</span>
+      </button>
+    </div>
+
     <!-- Ambient Glowing Orbs -->
     <div class="w-96 h-96 rounded-full bg-blue-600/25 blur-3xl absolute -top-12 -left-12 pointer-events-none"></div>
     <div class="w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl absolute -bottom-12 -right-12 pointer-events-none"></div>
@@ -186,6 +200,12 @@
             <span>New Report</span>
           </button>
 
+          <!-- Theme Switcher Button -->
+          <button id="btn-theme-toggle" onclick="App.toggleTheme()" class="btn-theme-switcher inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition border shadow-xs cursor-pointer select-none bg-slate-800 hover:bg-slate-700 text-cyan-300 border-slate-700" title="Switch Theme (Light / Dark)">
+            <span class="theme-toggle-icon text-sm">🌙</span>
+            <span class="theme-toggle-label font-mono">Dark</span>
+          </button>
+
           <!-- User Session & Logout -->
           <div class="flex items-center space-x-2 pl-2 border-l border-slate-200">
             <div class="px-2.5 py-1 bg-slate-100 rounded-lg text-xs font-semibold text-slate-700 flex items-center space-x-1.5">
@@ -201,7 +221,7 @@
     </header>
 
     <!-- NAVIGATION TABS -->
-    <div class="bg-white border-b border-slate-200 sticky top-16 z-30 shadow-xs">
+    <div id="nav-tabs-bar" class="bg-white border-b border-slate-200 sticky top-16 z-30 shadow-xs">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 flex space-x-1 sm:space-x-8 overflow-x-auto">
         <button onclick="App.switchTab('dashboard')" id="tab-dashboard" class="py-3.5 text-sm font-semibold border-b-2 border-primary text-primary transition flex items-center space-x-2 shrink-0">
           <span>📊</span>
