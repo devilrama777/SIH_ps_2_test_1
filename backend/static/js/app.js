@@ -658,7 +658,7 @@ const App = {
     this.showToast("Analysis complete! Select your modern report template below.", "success");
 
     // Automatically initialize the modern template studio with the default template
-    this.selectTemplate("executive_brief", false);
+    this.selectTemplate("bento_grid", false);
 
     // Guide user to Step 2 Template Selection
     setTimeout(() => {
@@ -666,7 +666,7 @@ const App = {
     }, 700);
   },
 
-  currentTemplate: "executive_brief",
+  currentTemplate: "bento_grid",
   currentSummaryText: "",
   templateCache: {},
 
@@ -733,12 +733,18 @@ const App = {
     hub.scrollIntoView({ behavior: "smooth" });
 
     const tplNames = {
-      executive_brief: "Executive Ministry Brief",
-      technical_deepdive: "Technical Colliery Deep-Dive",
-      parliamentary_scorecard: "Parliamentary & Audit Scorecard",
-      esg_sustainable: "ESG & Sustainable Mining Report",
-      corporate_minimalist: "Modern Corporate Minimalist",
-      visual_infographic: "High-Density Visual Infographic"
+      bento_grid: "Bento Modular Grid",
+      editorial_canvas: "Clean Editorial Canvas",
+      obsidian_deck: "Obsidian Dark Deck",
+      aurora_gradient: "Aurora Vibrant Gradient",
+      nordic_ocean: "Nordic Ocean Slate",
+      warm_sandstone: "Warm Sandstone Executive",
+      executive_brief: "Bento Modular Grid",
+      corporate_minimalist: "Clean Editorial Canvas",
+      technical_deepdive: "Obsidian Dark Deck",
+      visual_infographic: "Aurora Vibrant Gradient",
+      parliamentary_scorecard: "Nordic Ocean Slate",
+      esg_sustainable: "Warm Sandstone Executive"
     };
     const tplName = tplNames[templateId] || templateId;
 
@@ -808,6 +814,7 @@ const App = {
   },
 
   renderTemplatePreview: function(templateId, data) {
+    const paper = document.getElementById("a4-document-paper");
     const tTitle = document.getElementById("canvas-template-title");
     const tDesc = document.getElementById("canvas-template-desc");
     const tIcon = document.getElementById("canvas-template-icon");
@@ -834,81 +841,153 @@ const App = {
       badgePill.style.backgroundColor = data.primary_hex || "#1E3A8A";
     }
 
-    // 1. Render Dynamic KPI Grid
+    // Adapt overall A4 paper styling based on graphic style
+    if (paper) {
+      if (templateId === "obsidian_deck" || templateId === "technical_deepdive") {
+        paper.style.backgroundColor = "#0B0F19";
+        paper.style.borderColor = "#1E293B";
+        if (tTitle) tTitle.style.color = "#06B6D4";
+      } else if (templateId === "warm_sandstone" || templateId === "esg_sustainable") {
+        paper.style.backgroundColor = "#FDFBF7";
+        paper.style.borderColor = "#E6DFD5";
+      } else if (templateId === "nordic_ocean" || templateId === "parliamentary_scorecard") {
+        paper.style.backgroundColor = "#F0F9FF";
+        paper.style.borderColor = "#BAE6FD";
+      } else if (templateId === "aurora_gradient" || templateId === "visual_infographic") {
+        paper.style.backgroundColor = "#FAF5FF";
+        paper.style.borderColor = "#DDD6FE";
+      } else {
+        paper.style.backgroundColor = "#FFFFFF";
+        paper.style.borderColor = "#CBD5E1";
+      }
+    }
+
+    // 1. Dynamic KPI Grid (Visual Variations with identical data)
     if (kpiGrid && data.kpis && data.kpis.length >= 4) {
-      if (templateId === "corporate_minimalist") {
-        // Swiss 2x2 Minimalist Wireframe Cards
-        kpiGrid.className = "grid grid-cols-1 sm:grid-cols-2 gap-3";
-        kpiGrid.innerHTML = data.kpis.map(k => `
-          <div class="p-4 bg-zinc-50 border border-zinc-200 rounded-xl space-y-1">
-            <div class="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">${k.label}</div>
-            <div class="text-xl font-black font-mono text-zinc-900">${k.value}</div>
-            <div class="text-[10px] text-zinc-600 font-mono">${k.badge}</div>
-          </div>
-        `).join("");
-      } else if (templateId === "visual_infographic") {
-        // Vibrant Infographic Hero Cards with Visual Percentage Bars
-        kpiGrid.className = "grid grid-cols-2 sm:grid-cols-4 gap-3";
-        kpiGrid.innerHTML = data.kpis.map((k, idx) => `
-          <div class="p-3 bg-indigo-50/60 border border-indigo-200 rounded-xl text-center space-y-1">
-            <div class="text-[10px] uppercase font-bold text-indigo-700">${k.label}</div>
-            <div class="text-lg font-black font-mono text-indigo-950">${k.value}</div>
-            <div class="w-full bg-indigo-100 rounded-full h-1.5 overflow-hidden my-1">
-              <div class="bg-indigo-600 h-1.5 rounded-full" style="width: ${85 + idx * 4}%"></div>
+      const kpis = data.kpis;
+      if (templateId === "bento_grid" || templateId === "executive_brief") {
+        // Asymmetric Bento Grid: Hero stat spans 2 columns with visual progress bar + 2 square cards
+        kpiGrid.className = "grid grid-cols-1 sm:grid-cols-3 gap-3";
+        kpiGrid.innerHTML = `
+          <div class="sm:col-span-2 p-4 bg-blue-50/70 border border-blue-200 rounded-2xl space-y-2 shadow-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] uppercase font-extrabold tracking-wider text-blue-800">${kpis[0].label}</span>
+              <span class="px-2 py-0.5 bg-blue-600 text-white text-[10px] font-bold rounded-full">${kpis[0].badge}</span>
             </div>
-            <div class="text-[10px] font-bold text-rose-600">${k.badge}</div>
+            <div class="text-2xl font-black font-mono text-slate-900">${kpis[0].value}</div>
+            <div class="w-full bg-blue-100 rounded-full h-2 overflow-hidden">
+              <div class="bg-gradient-to-r from-blue-600 to-indigo-600 h-2 rounded-full" style="width: 96.72%"></div>
+            </div>
+            <div class="text-[10px] font-semibold text-slate-500">Official National Extraction Benchmark</div>
+          </div>
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between space-y-2 shadow-xs">
+            <div class="text-[10px] uppercase font-bold text-slate-500">${kpis[1].label}</div>
+            <div class="text-xl font-black font-mono text-slate-900">${kpis[1].value}</div>
+            <div class="text-[10px] font-bold text-emerald-700">${kpis[1].badge}</div>
+          </div>
+          <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-center space-y-1 shadow-xs">
+            <div class="text-[10px] uppercase font-bold text-slate-500">${kpis[2].label}</div>
+            <div class="text-lg font-black font-mono text-slate-900">${kpis[2].value}</div>
+            <div class="text-[10px] font-bold text-blue-700">${kpis[2].badge}</div>
+          </div>
+          <div class="sm:col-span-2 p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between shadow-xs">
+            <div>
+              <div class="text-[10px] uppercase font-bold text-slate-500">${kpis[3].label}</div>
+              <div class="text-base font-black font-mono text-slate-900">${kpis[3].value}</div>
+            </div>
+            <span class="px-2.5 py-1 bg-purple-100 text-purple-800 text-[10px] font-bold rounded-xl border border-purple-200">
+              ${kpis[3].badge}
+            </span>
+          </div>
+        `;
+      } else if (templateId === "editorial_canvas" || templateId === "corporate_minimalist") {
+        // Swiss Minimalist Paper: Horizontal hairline divider layout, no heavy box backgrounds
+        kpiGrid.className = "grid grid-cols-2 sm:grid-cols-4 divide-x divide-slate-300 py-3 border-y border-slate-900";
+        kpiGrid.innerHTML = kpis.map(k => `
+          <div class="px-3 text-center space-y-0.5">
+            <div class="text-[9px] uppercase font-bold text-slate-500 tracking-wider">${k.label}</div>
+            <div class="text-lg font-black font-serif text-slate-900">${k.value}</div>
+            <div class="text-[10px] font-bold text-slate-700 font-mono">${k.badge}</div>
           </div>
         `).join("");
-      } else if (templateId === "technical_deepdive") {
-        // Slate & Cyan Technical Cards
+      } else if (templateId === "obsidian_deck" || templateId === "technical_deepdive") {
+        // Cyber Obsidian Dark Deck: High-contrast midnight cards with glowing cyan borders
         kpiGrid.className = "grid grid-cols-2 sm:grid-cols-4 gap-3";
-        kpiGrid.innerHTML = data.kpis.map(k => `
-          <div class="p-3 bg-slate-900 text-white border border-cyan-800 rounded-xl text-center space-y-1">
+        kpiGrid.innerHTML = kpis.map((k, idx) => `
+          <div class="p-3 bg-[#111827] border border-cyan-500/40 rounded-xl text-center space-y-1 shadow-lg shadow-cyan-950/20">
             <div class="text-[10px] uppercase font-bold text-cyan-400 font-mono">${k.label}</div>
             <div class="text-lg font-black font-mono text-white">${k.value}</div>
-            <div class="text-[10px] text-cyan-200 font-mono">${k.badge}</div>
+            <div class="text-[10px] font-bold text-cyan-300 font-mono">${k.badge}</div>
+          </div>
+        `).join("");
+      } else if (templateId === "aurora_gradient" || templateId === "visual_infographic") {
+        // Aurora Gradient Modern Deck: Vibrant top stripes and rose/violet badges
+        kpiGrid.className = "grid grid-cols-2 sm:grid-cols-4 gap-3";
+        kpiGrid.innerHTML = kpis.map((k, idx) => `
+          <div class="p-3 bg-white border-t-2 border-indigo-500 border border-purple-100 rounded-xl text-center space-y-1 shadow-xs">
+            <div class="text-[10px] uppercase font-bold text-indigo-800">${k.label}</div>
+            <div class="text-lg font-black font-mono text-indigo-950">${k.value}</div>
+            <div class="text-[10px] font-bold text-rose-600 bg-rose-50 rounded-full px-2 py-0.5 inline-block">${k.badge}</div>
+          </div>
+        `).join("");
+      } else if (templateId === "nordic_ocean" || templateId === "parliamentary_scorecard") {
+        // Nordic Maritime Ocean: Clean oceanic cards with marine blue typography
+        kpiGrid.className = "grid grid-cols-2 sm:grid-cols-4 gap-3";
+        kpiGrid.innerHTML = kpis.map(k => `
+          <div class="p-3 bg-white border border-sky-200 rounded-xl text-center space-y-1 shadow-xs">
+            <div class="text-[10px] uppercase font-bold text-sky-800 tracking-wider">${k.label}</div>
+            <div class="text-lg font-black font-mono text-sky-950">${k.value}</div>
+            <div class="text-[10px] font-bold text-cyan-700 font-mono">${k.badge}</div>
           </div>
         `).join("");
       } else {
-        // Sovereign Executive & Parliamentary Standard
+        // Warm Sandstone Executive: Parchment cards with forest green numerals
         kpiGrid.className = "grid grid-cols-2 sm:grid-cols-4 gap-3";
-        kpiGrid.innerHTML = data.kpis.map(k => `
-          <div class="p-3 rounded-xl border text-center shadow-xs" style="background-color: ${data.light_bg_hex || '#F8FAFC'}; border-color: ${data.border_hex || '#E2E8F0'};">
-            <div class="text-[10px] font-bold uppercase tracking-wider" style="color: #64748B !important;">${k.label}</div>
-            <div class="text-base sm:text-lg font-black font-mono mt-1" style="color: #0F172A !important;">${k.value}</div>
-            <div class="text-[10px] font-bold mt-0.5" style="color: ${data.primary_hex || '#1E3A8A'};">${k.badge}</div>
+        kpiGrid.innerHTML = kpis.map(k => `
+          <div class="p-3 bg-[#F7F3EB] border border-[#E6DFD5] rounded-xl text-center space-y-1 shadow-xs">
+            <div class="text-[10px] uppercase font-bold text-stone-600 tracking-wider">${k.label}</div>
+            <div class="text-lg font-black font-serif text-[#14532D]">${k.value}</div>
+            <div class="text-[10px] font-bold text-[#C2410C] font-mono">${k.badge}</div>
           </div>
         `).join("");
       }
     }
 
-    // 2. Render Distinct Sections
+    // 2. Dynamic Sections (Identical synthesized content with graphic styling differences)
     if (secContainer && data.sections) {
+      const textColor = (templateId === "obsidian_deck" || templateId === "technical_deepdive") ? "#F1F5F9" : "#0F172A";
       let secHtml = "";
+
       data.sections.forEach((sec, idx) => {
         let bodyContent = sec.content
           .replace(/\n\n/g, '<br/><br/>')
-          .replace(/• (.*)/g, '<li class="ml-4 list-disc py-0.5" style="color: #0F172A !important;">$1</li>')
-          .replace(/(\d+\.) (.*)/g, '<li class="ml-4 list-decimal py-0.5" style="color: #0F172A !important;">$2</li>')
-          .replace(/★ (.*)/g, '<div class="flex items-center space-x-2 py-0.5 font-bold" style="color: #1E3A8A !important;"><span>★</span><span style="color: #0F172A !important;">$1</span></div>');
+          .replace(/• (.*)/g, `<li class="ml-4 list-disc py-0.5" style="color: ${textColor} !important;">$1</li>`)
+          .replace(/(\d+\.) (.*)/g, `<li class="ml-4 list-decimal py-0.5" style="color: ${textColor} !important;">$2</li>`)
+          .replace(/★ (.*)/g, `<div class="flex items-center space-x-2 py-0.5 font-bold"><span>★</span><span style="color: ${textColor} !important;">$1</span></div>`);
 
-        // Layout-specific styling touches
-        let cardBorder = data.border_hex || '#E2E8F0';
-        let cardBg = data.light_bg_hex || '#F8FAFC';
-        let isDirectivesBox = sec.title.toLowerCase().includes("directive") || sec.title.toLowerCase().includes("priority") || sec.title.toLowerCase().includes("radar");
-
-        if (isDirectivesBox && templateId === "executive_brief") {
-          cardBg = "#FEF3C7";
-          cardBorder = "#F59E0B";
+        let cardStyle = "";
+        if (templateId === "obsidian_deck" || templateId === "technical_deepdive") {
+          cardStyle = "background-color: #111827; border: 1px solid #1E293B; color: #F1F5F9;";
+        } else if (templateId === "editorial_canvas" || templateId === "corporate_minimalist") {
+          cardStyle = "background-color: transparent; border-left: 3px solid #0F172A; padding-left: 1rem; border-top: none; border-right: none; border-bottom: none;";
+        } else if (templateId === "aurora_gradient" || templateId === "visual_infographic") {
+          cardStyle = "background-color: #FFFFFF; border-left: 4px solid #4F46E5; border: 1px solid #DDD6FE; border-left-width: 4px;";
+        } else if (templateId === "warm_sandstone" || templateId === "esg_sustainable") {
+          cardStyle = "background-color: #F7F3EB; border-left: 3px solid #C2410C; border: 1px solid #E6DFD5; border-left-width: 3px;";
+        } else if (templateId === "nordic_ocean" || templateId === "parliamentary_scorecard") {
+          cardStyle = "background-color: #FFFFFF; border-left: 3px solid #0369A1; border: 1px solid #BAE6FD; border-left-width: 3px;";
+        } else {
+          // Bento Modular Grid
+          cardStyle = "background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 1rem;";
         }
 
         secHtml += `
-          <div class="space-y-1.5 p-4 rounded-xl border shadow-xs" style="background-color: ${cardBg}; border-color: ${cardBorder};">
+          <div class="space-y-1.5 p-4 rounded-xl shadow-xs" style="${cardStyle}">
             <h3 class="text-xs sm:text-sm font-extrabold font-heading uppercase tracking-wide flex items-center space-x-2" style="color: ${data.primary_hex || '#1E3A8A'};">
               <span>§${idx + 1}</span>
               <span>${sec.title}</span>
             </h3>
-            <div class="text-xs font-semibold leading-relaxed font-sans pt-1" style="color: #0F172A !important;">
+            <div class="text-xs font-semibold leading-relaxed font-sans pt-1" style="color: ${textColor} !important;">
               ${bodyContent}
             </div>
           </div>
@@ -917,95 +996,44 @@ const App = {
       secContainer.innerHTML = secHtml;
     }
 
-    // 3. Render Distinct Table
+    // 3. Dynamic Colliery Table (Exact same data across all templates)
     const collieryRecords = data.collieries_preview || (typeof MOCK_COLLIERIES !== "undefined" ? MOCK_COLLIERIES.slice(0, 8) : []);
     if (tbody) {
-      if (templateId === "technical_deepdive") {
-        if (tableTitle) { tableTitle.innerText = "Empirical IQR Anomaly & Colliery Outlier Classification"; tableTitle.style.color = "#0F172A"; }
-        if (tableThead) {
-          tableThead.innerHTML = `
-            <tr class="bg-slate-900 text-cyan-300 font-mono text-[10px]">
-              <th class="py-2 px-2.5 text-center">Rank</th>
-              <th class="py-2 px-2.5">Colliery / Installation</th>
-              <th class="py-2 px-2.5">Basin</th>
-              <th class="py-2 px-2.5 text-right">Production (MT)</th>
-              <th class="py-2 px-2.5 text-center">IQR Classification</th>
-            </tr>
-          `;
-        }
-        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => {
-          let badgeClass = "bg-slate-100 text-slate-700";
-          let badgeText = "[NOMINAL 1.5 IQR]";
-          if (i === 0) { badgeClass = "bg-amber-100 text-amber-900 border border-amber-300 font-bold"; badgeText = "[SURGE OUTLIER]"; }
-          if (i >= 6) { badgeClass = "bg-purple-100 text-purple-900 border border-purple-300 font-bold"; badgeText = "[BOTTLENECK / LOW]"; }
+      if (tableTitle) {
+        tableTitle.innerText = "Top Colliery Production & Dispatch Rankings";
+        tableTitle.style.color = (templateId === "obsidian_deck" || templateId === "technical_deepdive") ? "#06B6D4" : "#0F172A";
+      }
 
-          return `
-            <tr class="hover:bg-slate-50 border-b border-slate-200 font-mono text-[11px]">
-              <td class="py-1.5 px-2.5 text-center font-bold" style="color: #475569 !important;">${c.rank || i+1}</td>
-              <td class="py-1.5 px-2.5 font-bold" style="color: #0F172A !important;">${c.name}</td>
-              <td class="py-1.5 px-2.5" style="color: #334155 !important;">${c.state}</td>
-              <td class="py-1.5 px-2.5 text-right font-bold" style="color: #0F172A !important;">${(c.production || 0).toLocaleString()}</td>
-              <td class="py-1.5 px-2.5 text-center"><span class="px-2 py-0.5 rounded text-[10px] ${badgeClass}">${badgeText}</span></td>
-            </tr>
-          `;
-        }).join("");
-      } else if (templateId === "parliamentary_scorecard") {
-        if (tableTitle) { tableTitle.innerText = "State-Wise Allocation & Mineral Royalty Matrix (Statutory)"; tableTitle.style.color = "#0F172A"; }
+      if (templateId === "obsidian_deck" || templateId === "technical_deepdive") {
         if (tableThead) {
           tableThead.innerHTML = `
-            <tr class="bg-emerald-900 text-emerald-100 text-[10px]">
-              <th class="py-2 px-2.5 text-center">Rank</th>
-              <th class="py-2 px-2.5">Mining Asset</th>
-              <th class="py-2 px-2.5">State Jurisdiction</th>
-              <th class="py-2 px-2.5 text-right">Output (MT)</th>
-              <th class="py-2 px-2.5 text-right">Dispatch (MT)</th>
-              <th class="py-2 px-2.5 text-center">Statutory Status</th>
-            </tr>
-          `;
-        }
-        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
-          <tr class="hover:bg-slate-50 border-b border-slate-200 text-[11px]">
-            <td class="py-1.5 px-2.5 text-center font-bold" style="color: #475569 !important;">${c.rank || i+1}</td>
-            <td class="py-1.5 px-2.5 font-bold" style="color: #0F172A !important;">${c.name}</td>
-            <td class="py-1.5 px-2.5 font-medium" style="color: #065F46 !important;">${c.state}</td>
-            <td class="py-1.5 px-2.5 text-right font-mono font-bold" style="color: #0F172A !important;">${(c.production || 0).toLocaleString()}</td>
-            <td class="py-1.5 px-2.5 text-right font-mono" style="color: #334155 !important;">${(c.dispatch || 0).toLocaleString()}</td>
-            <td class="py-1.5 px-2.5 text-center"><span class="text-emerald-700 font-bold text-[10px]">✓ Verified</span></td>
-          </tr>
-        `).join("");
-      } else if (templateId === "esg_sustainable") {
-        if (tableTitle) { tableTitle.innerText = "Colliery Ecological Stewardship & Sustainable Mine Tiering"; tableTitle.style.color = "#0F172A"; }
-        if (tableThead) {
-          tableThead.innerHTML = `
-            <tr class="bg-green-900 text-green-100 text-[10px]">
-              <th class="py-2 px-2.5 text-center">Rank</th>
-              <th class="py-2 px-2.5">Colliery / Mine</th>
-              <th class="py-2 px-2.5">Extraction (MT)</th>
-              <th class="py-2 px-2.5">Evacuation Type</th>
-              <th class="py-2 px-2.5 text-center">ESG Compliance</th>
-            </tr>
-          `;
-        }
-        const tiers = ["A+ (Exemplary)", "A (Compliant)", "A (Compliant)", "B+ (Satisfactory)", "B+ (Satisfactory)", "B (Satisfactory)", "B (Compliant)", "B (Compliant)"];
-        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
-          <tr class="hover:bg-slate-50 border-b border-slate-200 text-[11px]">
-            <td class="py-1.5 px-2.5 text-center font-bold" style="color: #475569 !important;">${c.rank || i+1}</td>
-            <td class="py-1.5 px-2.5 font-bold" style="color: #0F172A !important;">${c.name}</td>
-            <td class="py-1.5 px-2.5 text-right font-mono font-bold" style="color: #0F172A !important;">${(c.production || 0).toLocaleString()}</td>
-            <td class="py-1.5 px-2.5" style="color: #334155 !important;">${i < 4 ? 'Rail FMC Corridor' : 'Rail / Road Hybrid'}</td>
-            <td class="py-1.5 px-2.5 text-center"><span class="px-2 py-0.5 rounded bg-green-100 text-green-900 font-bold text-[10px]">${tiers[i] || 'Compliant'}</span></td>
-          </tr>
-        `).join("");
-      } else {
-        // Standard Colliery Production Table
-        if (tableTitle) { tableTitle.innerText = "Top Colliery Production & Dispatch Rankings"; tableTitle.style.color = "#0F172A"; }
-        if (tableThead) {
-          tableThead.innerHTML = `
-            <tr class="bg-slate-100 text-slate-700 text-[10px]">
+            <tr class="bg-[#111827] text-cyan-400 font-mono text-[10px] border-b border-cyan-500/30">
               <th class="py-2 px-2.5 text-center">Rank</th>
               <th class="py-2 px-2.5">Colliery Name</th>
-              <th class="py-2 px-2.5">State</th>
-              <th class="py-2 px-2.5">Company</th>
+              <th class="py-2 px-2.5">State / Basin</th>
+              <th class="py-2 px-2.5 text-right">Production (MT)</th>
+              <th class="py-2 px-2.5 text-right">Dispatch (MT)</th>
+              <th class="py-2 px-2.5 text-center">Status</th>
+            </tr>
+          `;
+        }
+        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
+          <tr class="border-b border-slate-800 font-mono text-[11px] hover:bg-slate-900/50">
+            <td class="py-1.5 px-2.5 text-center font-bold text-cyan-400">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold text-white">${c.name}</td>
+            <td class="py-1.5 px-2.5 text-slate-400">${c.state}</td>
+            <td class="py-1.5 px-2.5 text-right font-bold text-cyan-300">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right text-slate-300">${(c.dispatch || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-center"><span class="px-2 py-0.5 rounded text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-800">[OPTIMAL]</span></td>
+          </tr>
+        `).join("");
+      } else if (templateId === "editorial_canvas" || templateId === "corporate_minimalist") {
+        if (tableThead) {
+          tableThead.innerHTML = `
+            <tr class="border-y border-slate-900 text-slate-900 font-serif uppercase italic text-[10px]">
+              <th class="py-2 px-2.5 text-center">Rank</th>
+              <th class="py-2 px-2.5">Colliery Name</th>
+              <th class="py-2 px-2.5">State / Basin</th>
               <th class="py-2 px-2.5 text-right">Production (MT)</th>
               <th class="py-2 px-2.5 text-right">Dispatch (MT)</th>
               <th class="py-2 px-2.5 text-right">Share</th>
@@ -1013,14 +1041,106 @@ const App = {
           `;
         }
         tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
-          <tr class="hover:bg-slate-50 border-b border-slate-200 text-[11px]">
-            <td class="py-1.5 px-2.5 text-center font-bold" style="color: #475569 !important;">${c.rank || i+1}</td>
-            <td class="py-1.5 px-2.5 font-bold" style="color: #0F172A !important;">${c.name}</td>
-            <td class="py-1.5 px-2.5" style="color: #334155 !important;">${c.state}</td>
-            <td class="py-1.5 px-2.5" style="color: #475569 !important;">${c.company}</td>
-            <td class="py-1.5 px-2.5 text-right font-mono font-bold" style="color: #0F172A !important;">${(c.production || 0).toLocaleString()}</td>
-            <td class="py-1.5 px-2.5 text-right font-mono" style="color: #334155 !important;">${(c.dispatch || 0).toLocaleString()}</td>
-            <td class="py-1.5 px-2.5 text-right font-mono font-bold text-emerald-600">${c.share || '-'}</td>
+          <tr class="border-b border-slate-200 font-serif text-[11px] hover:bg-slate-50">
+            <td class="py-1.5 px-2.5 text-center font-bold text-slate-700">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold text-slate-950">${c.name}</td>
+            <td class="py-1.5 px-2.5 text-slate-700">${c.state}</td>
+            <td class="py-1.5 px-2.5 text-right font-bold text-slate-950">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right text-slate-700">${(c.dispatch || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono text-slate-600">${c.share || '-'}</td>
+          </tr>
+        `).join("");
+      } else if (templateId === "aurora_gradient" || templateId === "visual_infographic") {
+        if (tableThead) {
+          tableThead.innerHTML = `
+            <tr class="bg-indigo-900 text-white text-[10px]">
+              <th class="py-2 px-2.5 text-center">Rank</th>
+              <th class="py-2 px-2.5">Colliery Name</th>
+              <th class="py-2 px-2.5">State / Basin</th>
+              <th class="py-2 px-2.5 text-right">Production (MT)</th>
+              <th class="py-2 px-2.5 text-right">Dispatch (MT)</th>
+              <th class="py-2 px-2.5 text-center">Sprint Badge</th>
+            </tr>
+          `;
+        }
+        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
+          <tr class="hover:bg-purple-50/50 border-b border-purple-100 text-[11px]">
+            <td class="py-1.5 px-2.5 text-center font-bold text-indigo-700">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold text-indigo-950">${c.name}</td>
+            <td class="py-1.5 px-2.5 text-slate-600">${c.state}</td>
+            <td class="py-1.5 px-2.5 text-right font-bold text-indigo-900 font-mono">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono text-slate-700">${(c.dispatch || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${i === 0 ? 'bg-rose-100 text-rose-800' : 'bg-indigo-100 text-indigo-800'}">${i === 0 ? '★ LEADER' : '✓ VERIFIED'}</span></td>
+          </tr>
+        `).join("");
+      } else if (templateId === "nordic_ocean" || templateId === "parliamentary_scorecard") {
+        if (tableThead) {
+          tableThead.innerHTML = `
+            <tr class="bg-[#0369A1] text-white text-[10px]">
+              <th class="py-2 px-2.5 text-center">Rank</th>
+              <th class="py-2 px-2.5">Colliery Name</th>
+              <th class="py-2 px-2.5">State / Basin</th>
+              <th class="py-2 px-2.5 text-right">Production (MT)</th>
+              <th class="py-2 px-2.5 text-right">Dispatch (MT)</th>
+              <th class="py-2 px-2.5 text-center">Maritime Offtake</th>
+            </tr>
+          `;
+        }
+        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
+          <tr class="hover:bg-sky-50 border-b border-sky-100 text-[11px]">
+            <td class="py-1.5 px-2.5 text-center font-bold text-sky-800">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold text-sky-950">${c.name}</td>
+            <td class="py-1.5 px-2.5 text-slate-600">${c.state}</td>
+            <td class="py-1.5 px-2.5 text-right font-bold text-sky-950 font-mono">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono text-slate-700">${(c.dispatch || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800">Assigned</span></td>
+          </tr>
+        `).join("");
+      } else if (templateId === "warm_sandstone" || templateId === "esg_sustainable") {
+        if (tableThead) {
+          tableThead.innerHTML = `
+            <tr class="bg-[#14532D] text-white text-[10px]">
+              <th class="py-2 px-2.5 text-center">Rank</th>
+              <th class="py-2 px-2.5">Colliery Name</th>
+              <th class="py-2 px-2.5">State / Basin</th>
+              <th class="py-2 px-2.5 text-right">Production (MT)</th>
+              <th class="py-2 px-2.5 text-right">Dispatch (MT)</th>
+              <th class="py-2 px-2.5 text-center">Audit Tier</th>
+            </tr>
+          `;
+        }
+        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
+          <tr class="hover:bg-amber-50/50 border-b border-stone-200 text-[11px]">
+            <td class="py-1.5 px-2.5 text-center font-bold text-stone-700">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold text-[#14532D]">${c.name}</td>
+            <td class="py-1.5 px-2.5 text-stone-600">${c.state}</td>
+            <td class="py-1.5 px-2.5 text-right font-bold text-stone-900 font-mono">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono text-stone-700">${(c.dispatch || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-[#C2410C]">Standard</span></td>
+          </tr>
+        `).join("");
+      } else {
+        // Bento Modular Grid Standard
+        if (tableThead) {
+          tableThead.innerHTML = `
+            <tr class="bg-blue-900 text-white text-[10px]">
+              <th class="py-2 px-2.5 text-center">Rank</th>
+              <th class="py-2 px-2.5">Colliery Name</th>
+              <th class="py-2 px-2.5">State / Basin</th>
+              <th class="py-2 px-2.5 text-right">Production (MT)</th>
+              <th class="py-2 px-2.5 text-right">Dispatch (MT)</th>
+              <th class="py-2 px-2.5 text-center">Fulfillment</th>
+            </tr>
+          `;
+        }
+        tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
+          <tr class="hover:bg-blue-50/40 border-b border-slate-100 text-[11px]">
+            <td class="py-1.5 px-2.5 text-center font-bold text-blue-700">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold text-slate-900">${c.name}</td>
+            <td class="py-1.5 px-2.5 text-slate-600">${c.state}</td>
+            <td class="py-1.5 px-2.5 text-right font-bold text-slate-900 font-mono">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono text-slate-700">${(c.dispatch || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">96.7% Met</span></td>
           </tr>
         `).join("");
       }
@@ -1149,12 +1269,18 @@ const App = {
     }
 
     const themeColors = {
-      executive_brief: { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-900", icon: "🏛️" },
-      technical_deepdive: { bg: "bg-slate-100", border: "border-cyan-300", text: "text-slate-900", icon: "🔬" },
-      parliamentary_scorecard: { bg: "bg-emerald-50", border: "border-emerald-300", text: "text-emerald-900", icon: "📜" },
-      esg_sustainable: { bg: "bg-green-50", border: "border-green-300", text: "text-green-900", icon: "🌿" },
-      corporate_minimalist: { bg: "bg-zinc-100", border: "border-zinc-300", text: "text-zinc-900", icon: "⚡" },
-      visual_infographic: { bg: "bg-indigo-50", border: "border-indigo-300", text: "text-indigo-900", icon: "📊" }
+      bento_grid: { bg: "bg-blue-50 dark:bg-blue-950/40", border: "border-blue-300 dark:border-blue-700", text: "text-blue-900 dark:text-blue-200", icon: "🍱" },
+      editorial_canvas: { bg: "bg-amber-50 dark:bg-amber-950/40", border: "border-amber-300 dark:border-amber-700", text: "text-amber-900 dark:text-amber-200", icon: "📰" },
+      obsidian_deck: { bg: "bg-slate-900", border: "border-cyan-500", text: "text-cyan-300", icon: "🌑" },
+      aurora_gradient: { bg: "bg-purple-50 dark:bg-purple-950/40", border: "border-purple-300 dark:border-purple-700", text: "text-purple-900 dark:text-purple-200", icon: "✨" },
+      nordic_ocean: { bg: "bg-sky-50 dark:bg-sky-950/40", border: "border-sky-300 dark:border-sky-700", text: "text-sky-900 dark:text-sky-200", icon: "🌊" },
+      warm_sandstone: { bg: "bg-stone-50 dark:bg-stone-900", border: "border-stone-300 dark:border-stone-700", text: "text-stone-900 dark:text-stone-200", icon: "🏜️" },
+      executive_brief: { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-900", icon: "🍱" },
+      technical_deepdive: { bg: "bg-slate-100", border: "border-cyan-300", text: "text-slate-900", icon: "📰" },
+      parliamentary_scorecard: { bg: "bg-emerald-50", border: "border-emerald-300", text: "text-emerald-900", icon: "🌑" },
+      esg_sustainable: { bg: "bg-green-50", border: "border-green-300", text: "text-green-900", icon: "✨" },
+      corporate_minimalist: { bg: "bg-zinc-100", border: "border-zinc-300", text: "text-zinc-900", icon: "🌊" },
+      visual_infographic: { bg: "bg-indigo-50", border: "border-indigo-300", text: "text-indigo-900", icon: "🏜️" }
     };
 
     container.innerHTML = items.map(item => {

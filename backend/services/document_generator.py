@@ -221,105 +221,113 @@ def get_active_dataset_metrics(user_records: Optional[List[Dict[str, Any]]] = No
     }
 
 
-# 6 Modern Template Configuration Registry
+# 6 Modern Gamma.app Graphic Template Configuration Registry
 TEMPLATE_CONFIGS = {
-    "executive_brief": {
-        "id": "executive_brief",
-        "name": "Executive Ministry Brief",
-        "theme": "Sovereign Navy & Gold",
-        "header_title": "MINISTRY OF COAL • EXECUTIVE POLICY BRIEF",
-        "subtitle": "High-level strategic briefing prepared for Ministry leadership and Cabinet review",
-        "primary_hex": "#1E3A8A",
-        "accent_hex": "#D97706",
+    "bento_grid": {
+        "id": "bento_grid",
+        "name": "Bento Modular Grid",
+        "theme": "Gamma Bento Tech",
+        "header_title": "MINISTRY OF COAL • BENTO OPERATIONAL DECK",
+        "subtitle": "Modern modular bento layout with asymmetric stat hierarchy and dynamic progress indicators",
+        "primary_hex": "#2563EB",
+        "accent_hex": "#7C3AED",
         "light_bg_hex": "#F8FAFC",
-        "border_hex": "#CBD5E1",
-        "rgb_primary": (0x1E, 0x3A, 0x8A),
-        "rgb_accent": (0xD9, 0x77, 0x06),
-        "icon": "🏛️",
-        "badge": "Official Sovereign",
-        "sections": ["Sovereign Directive & Macro Overview", "Strategic KPI Benchmark", "Coalfield Performance Highlights", "Ministerial Action Directives"]
+        "border_hex": "#E2E8F0",
+        "rgb_primary": (0x25, 0x63, 0xEB),
+        "rgb_accent": (0x7C, 0x3A, 0xED),
+        "icon": "🍱",
+        "badge": "Gamma Bento Tech",
+        "sections": ["Macro Operational Baseline & Synthesis", "Key Performance Indicators & Benchmark Analytics", "Supply Chain, Logistics & Dispatch Priorities"]
     },
-    "technical_deepdive": {
-        "id": "technical_deepdive",
-        "name": "Technical Colliery Deep-Dive",
-        "theme": "Deep Slate & Electric Cyan",
-        "header_title": "CMPDI TECHNICAL AUDIT • COLLIERY DISPERSION DEEP-DIVE",
-        "subtitle": "Empirical statistical distribution, IQR anomaly fences and extraction diagnostics",
+    "editorial_canvas": {
+        "id": "editorial_canvas",
+        "name": "Clean Editorial Canvas",
+        "theme": "Gamma Minimalist Paper",
+        "header_title": "MINISTRY OF COAL • WHITE PAPER DOSSIER",
+        "subtitle": "Swiss editorial layout with sharp hairline dividers, stark monochrome typography, and generous whitespace",
         "primary_hex": "#0F172A",
-        "accent_hex": "#0891B2",
-        "light_bg_hex": "#F1F5F9",
-        "border_hex": "#94A3B8",
+        "accent_hex": "#475569",
+        "light_bg_hex": "#FFFFFF",
+        "border_hex": "#0F172A",
         "rgb_primary": (0x0F, 0x17, 0x2A),
-        "rgb_accent": (0x08, 0x91, 0xB2),
-        "icon": "🔬",
-        "badge": "Engineering & Stats",
-        "sections": ["Statistical Distribution & Dispersion", "IQR Anomaly & Outlier Identification", "Extraction Methodology Comparison", "Engineering & Recovery Recommendations"]
+        "rgb_accent": (0x47, 0x55, 0x69),
+        "icon": "📰",
+        "badge": "Gamma Minimalist Paper",
+        "sections": ["Macro Operational Baseline & Synthesis", "Key Performance Indicators & Benchmark Analytics", "Supply Chain, Logistics & Dispatch Priorities"]
     },
-    "parliamentary_scorecard": {
-        "id": "parliamentary_scorecard",
-        "name": "Parliamentary & Audit Scorecard",
-        "theme": "Ashoka Green & Bronze Gold",
-        "header_title": "PARLIAMENTARY OVERSIGHT • STATUTORY AUDIT SCORECARD",
-        "subtitle": "Statutory target compliance, state-wise revenue allocations and public accountability",
-        "primary_hex": "#065F46",
-        "accent_hex": "#B45309",
-        "light_bg_hex": "#F0FDF4",
-        "border_hex": "#A7F3D0",
-        "rgb_primary": (0x06, 0x5F, 0x46),
-        "rgb_accent": (0xB4, 0x53, 0x09),
-        "icon": "📜",
-        "badge": "Public Audit Ready",
-        "sections": ["Statutory Compliance Statement", "State-Wise Allocation Matrix", "Dispatch Assurance to Power Utilities", "Audit Findings & Parliamentary Assurances"]
+    "obsidian_deck": {
+        "id": "obsidian_deck",
+        "name": "Obsidian Dark Deck",
+        "theme": "Gamma Midnight Tech",
+        "header_title": "COAL INTELLIGENCE ENCLAVE • OBSIDIAN DECK",
+        "subtitle": "High-contrast midnight obsidian presentation deck with electric cyan glowing borders and tech badges",
+        "primary_hex": "#06B6D4",
+        "accent_hex": "#8B5CF6",
+        "light_bg_hex": "#0B0F19",
+        "border_hex": "#1E293B",
+        "rgb_primary": (0x06, 0xB6, 0xD4),
+        "rgb_accent": (0x8B, 0x5C, 0xF6),
+        "icon": "🌌",
+        "badge": "Gamma Midnight Tech",
+        "sections": ["Macro Operational Baseline & Synthesis", "Key Performance Indicators & Benchmark Analytics", "Supply Chain, Logistics & Dispatch Priorities"]
     },
-    "esg_sustainable": {
-        "id": "esg_sustainable",
-        "name": "ESG & Sustainable Mining Report",
-        "theme": "Forest Emerald & Sage",
-        "header_title": "NATIONAL COAL ENCLAVE • ESG & ECOLOGICAL STEWARDSHIP",
-        "subtitle": "Environmental stewardship, First-Mile rail offtake, land reclamation and zero-harm safety",
-        "primary_hex": "#047857",
-        "accent_hex": "#10B981",
-        "light_bg_hex": "#ECFDF5",
-        "border_hex": "#6EE7B7",
-        "rgb_primary": (0x04, 0x78, 0x57),
-        "rgb_accent": (0x10, 0xB9, 0x81),
-        "icon": "🌿",
-        "badge": "ESG & Green Transition",
-        "sections": ["Green Transition & First-Mile Connectivity", "Ecological Restoration & Land Reclamation", "Zero-Harm Occupational Safety Audit", "Sustainable Mining Roadmap"]
+    "aurora_gradient": {
+        "id": "aurora_gradient",
+        "name": "Aurora Vibrant Gradient",
+        "theme": "Gamma Aurora Modern",
+        "header_title": "NATIONAL COAL PULSE • AURORA PRESENTATION DECK",
+        "subtitle": "High-impact modern pitch deck with vibrant violet-to-rose gradient headers and energetic accent ribbons",
+        "primary_hex": "#4F46E5",
+        "accent_hex": "#EC4899",
+        "light_bg_hex": "#FAF5FF",
+        "border_hex": "#DDD6FE",
+        "rgb_primary": (0x4F, 0x46, 0xE5),
+        "rgb_accent": (0xEC, 0x48, 0x99),
+        "icon": "🎨",
+        "badge": "Gamma Aurora Modern",
+        "sections": ["Macro Operational Baseline & Synthesis", "Key Performance Indicators & Benchmark Analytics", "Supply Chain, Logistics & Dispatch Priorities"]
     },
-    "corporate_minimalist": {
-        "id": "corporate_minimalist",
-        "name": "Modern Corporate Minimalist",
-        "theme": "Monochrome Charcoal & Silver",
-        "header_title": "COAL INDIA ENTERPRISE • QUARTERLY OPERATIONAL MATRIX",
-        "subtitle": "Ultra-clean modern Swiss grid format with modular asset metrics and commercial priorities",
-        "primary_hex": "#18181B",
-        "accent_hex": "#4B5563",
-        "light_bg_hex": "#F4F4F5",
-        "border_hex": "#D4D4D8",
-        "rgb_primary": (0x18, 0x18, 0x1B),
-        "rgb_accent": (0x4B, 0x55, 0x63),
-        "icon": "⚡",
-        "badge": "Modern Swiss Grid",
-        "sections": ["Executive Dashboard & Core Metrics", "Asset Performance Matrix", "Supply Chain & Dispatch Bottlenecks", "Commercial Strategy & Priorities"]
+    "nordic_ocean": {
+        "id": "nordic_ocean",
+        "name": "Nordic Ocean Slate",
+        "theme": "Gamma Deep Ocean",
+        "header_title": "MINISTRY OF COAL • NORDIC MARITIME REPORT",
+        "subtitle": "Deep oceanic navy and arctic cyan architecture with crisp symmetrical grid cards and structured data matrices",
+        "primary_hex": "#0369A1",
+        "accent_hex": "#06B6D4",
+        "light_bg_hex": "#F0F9FF",
+        "border_hex": "#BAE6FD",
+        "rgb_primary": (0x03, 0x69, 0xA1),
+        "rgb_accent": (0x06, 0xB6, 0xD4),
+        "icon": "🌊",
+        "badge": "Gamma Deep Ocean",
+        "sections": ["Macro Operational Baseline & Synthesis", "Key Performance Indicators & Benchmark Analytics", "Supply Chain, Logistics & Dispatch Priorities"]
     },
-    "visual_infographic": {
-        "id": "visual_infographic",
-        "name": "High-Density Visual Infographic",
-        "theme": "Vibrant Indigo & Rose",
-        "header_title": "NATIONAL COAL PULSE • EXECUTIVE INFOGRAPHIC SCORECARD",
-        "subtitle": "High-impact presentation deck format featuring vibrant visual metric callouts and regional sprints",
-        "primary_hex": "#4338CA",
-        "accent_hex": "#E11D48",
-        "light_bg_hex": "#EEF2FF",
-        "border_hex": "#C7D2FE",
-        "rgb_primary": (0x43, 0x38, 0xCA),
-        "rgb_accent": (0xE1, 0x1D, 0x48),
-        "icon": "📊",
-        "badge": "Executive Infographic",
-        "sections": ["Macro Headline & National Record Milestones", "High-Impact Metric Radar", "Basin Sprint & Regional Surge", "Strategic Radar & Future Trajectory"]
+    "warm_sandstone": {
+        "id": "warm_sandstone",
+        "name": "Warm Sandstone Executive",
+        "theme": "Gamma Warm Sand",
+        "header_title": "REPUBLIC OF INDIA • SANDSTONE EXECUTIVE BRIEF",
+        "subtitle": "Refined warm ivory paper deck with deep forest pine typography, terracotta gold badges, and serif elegance",
+        "primary_hex": "#14532D",
+        "accent_hex": "#C2410C",
+        "light_bg_hex": "#FDFBF7",
+        "border_hex": "#E6DFD5",
+        "rgb_primary": (0x14, 0x53, 0x2D),
+        "rgb_accent": (0xC2, 0x41, 0x0C),
+        "icon": "🏛️",
+        "badge": "Gamma Warm Sand",
+        "sections": ["Macro Operational Baseline & Synthesis", "Key Performance Indicators & Benchmark Analytics", "Supply Chain, Logistics & Dispatch Priorities"]
     }
 }
+
+# Backward compatibility aliases
+TEMPLATE_CONFIGS["executive_brief"] = TEMPLATE_CONFIGS["bento_grid"]
+TEMPLATE_CONFIGS["corporate_minimalist"] = TEMPLATE_CONFIGS["editorial_canvas"]
+TEMPLATE_CONFIGS["technical_deepdive"] = TEMPLATE_CONFIGS["obsidian_deck"]
+TEMPLATE_CONFIGS["visual_infographic"] = TEMPLATE_CONFIGS["aurora_gradient"]
+TEMPLATE_CONFIGS["parliamentary_scorecard"] = TEMPLATE_CONFIGS["nordic_ocean"]
+TEMPLATE_CONFIGS["esg_sustainable"] = TEMPLATE_CONFIGS["warm_sandstone"]
 
 
 class DocumentGenerator:
@@ -331,7 +339,7 @@ class DocumentGenerator:
 
     def generate_pdf_report(
         self,
-        template_name: str = "executive_brief",
+        template_name: str = "bento_grid",
         report_id: str = "REP-2026-B56D",
         summary_text: Optional[str] = None,
         user_records: Optional[List[Dict[str, Any]]] = None
@@ -339,7 +347,7 @@ class DocumentGenerator:
         """Generates a high-resolution 300 DPI PDF report with ReportLab using template-specific layouts."""
         tpl_key = template_name.lower().replace(" ", "_")
         if tpl_key not in TEMPLATE_CONFIGS:
-            tpl_key = "executive_brief"
+            tpl_key = "bento_grid"
         tpl = TEMPLATE_CONFIGS[tpl_key]
 
         pdf_path = self.output_dir / "Ministry_of_Coal_Report_2026.pdf"
@@ -360,19 +368,21 @@ class DocumentGenerator:
         styles = getSampleStyleSheet()
         elements = []
 
-        # Dispatch to distinct layout builder for each of the 6 templates
-        if tpl_key == "executive_brief":
-            self._build_executive_brief_pdf(elements, styles, tpl, metrics, summary_text, report_id)
-        elif tpl_key == "technical_deepdive":
-            self._build_technical_deepdive_pdf(elements, styles, tpl, metrics, summary_text, report_id)
-        elif tpl_key == "parliamentary_scorecard":
-            self._build_parliamentary_scorecard_pdf(elements, styles, tpl, metrics, summary_text, report_id)
-        elif tpl_key == "esg_sustainable":
-            self._build_esg_sustainable_pdf(elements, styles, tpl, metrics, summary_text, report_id)
-        elif tpl_key == "corporate_minimalist":
-            self._build_corporate_minimalist_pdf(elements, styles, tpl, metrics, summary_text, report_id)
-        else: # visual_infographic
-            self._build_visual_infographic_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+        # Dispatch to distinct graphic layout builder for each Gamma template (with identical data)
+        if tpl_key in ("bento_grid", "executive_brief"):
+            self._build_bento_grid_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+        elif tpl_key in ("editorial_canvas", "corporate_minimalist"):
+            self._build_editorial_canvas_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+        elif tpl_key in ("obsidian_deck", "technical_deepdive"):
+            self._build_obsidian_deck_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+        elif tpl_key in ("aurora_gradient", "visual_infographic"):
+            self._build_aurora_gradient_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+        elif tpl_key in ("nordic_ocean", "parliamentary_scorecard"):
+            self._build_nordic_ocean_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+        elif tpl_key in ("warm_sandstone", "esg_sustainable"):
+            self._build_warm_sandstone_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+        else:
+            self._build_bento_grid_pdf(elements, styles, tpl, metrics, summary_text, report_id)
 
         doc.build(elements)
 
@@ -385,64 +395,8 @@ class DocumentGenerator:
 
         return pdf_path
 
-    # -------------------------------------------------------------------------
-    # LAYOUT 1: EXECUTIVE BRIEF (Sovereign Navy & Gold, Hero Cards, Directives)
-    # -------------------------------------------------------------------------
-    def _build_executive_brief_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
-        primary = colors.HexColor(tpl["primary_hex"])
-        accent = colors.HexColor(tpl["accent_hex"])
-        light_bg = colors.HexColor(tpl["light_bg_hex"])
-
-        # Masthead
-        elements.append(Paragraph(f"<b>GOVERNMENT OF INDIA • {tpl['header_title']}</b>", ParagraphStyle('M1', parent=styles['Normal'], fontSize=8.5, textColor=primary, spaceAfter=2)))
-        elements.append(Paragraph(f"{tpl['name']} — High-Level Policy Dossier", ParagraphStyle('T1', parent=styles['Heading1'], fontSize=16, leading=19, fontName='Helvetica-Bold', textColor=primary, spaceAfter=3)))
-        elements.append(Paragraph(f"ID: <b>{report_id}</b> | Classification: <b>CABINET STRATEGIC REVIEW</b> | Date: {datetime.date.today().strftime('%d %B %Y')}", ParagraphStyle('S1', parent=styles['Normal'], fontSize=8, textColor=colors.HexColor("#475569"), spaceAfter=6)))
-        elements.append(HRFlowable(width="100%", thickness=2, color=primary, spaceAfter=8))
-
-        # 4 Hero Metric Cards in a Grid
-        hero_data = [
-            [
-                Paragraph("<b>NATIONAL OUTPUT</b>", ParagraphStyle('HL1', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
-                Paragraph("<b>THERMAL DISPATCH</b>", ParagraphStyle('HL2', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
-                Paragraph("<b>TARGET FULFILLMENT</b>", ParagraphStyle('HL3', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
-                Paragraph("<b>OFFTAKE EFFICIENCY</b>", ParagraphStyle('HL4', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
-            ],
-            [
-                Paragraph(f"<b>{metrics['total_production']:,.1f} MT</b>", ParagraphStyle('HV1', fontName='Helvetica-Bold', fontSize=12, textColor=accent, alignment=1)),
-                Paragraph(f"<b>{metrics['total_dispatch']:,.1f} MT</b>", ParagraphStyle('HV2', fontName='Helvetica-Bold', fontSize=12, textColor=accent, alignment=1)),
-                Paragraph(f"<b>{metrics['achievement_pct']:.1f}%</b>", ParagraphStyle('HV3', fontName='Helvetica-Bold', fontSize=12, textColor=colors.HexColor("#166534"), alignment=1)),
-                Paragraph(f"<b>{metrics['offtake_ratio']:.1f}%</b>", ParagraphStyle('HV4', fontName='Helvetica-Bold', fontSize=12, textColor=colors.HexColor("#166534"), alignment=1)),
-            ],
-            [
-                Paragraph("Active Extraction Scale", ParagraphStyle('HS1', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
-                Paragraph("Power Utility Supply", ParagraphStyle('HS2', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
-                Paragraph("Planned Benchmark", ParagraphStyle('HS3', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
-                Paragraph("Pithead Evacuation", ParagraphStyle('HS4', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
-            ]
-        ]
-        hero_table = Table(hero_data, colWidths=[135, 135, 135, 135])
-        hero_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, -1), light_bg),
-            ('BOX', (0, 0), (-1, -1), 1, colors.HexColor(tpl["border_hex"])),
-            ('INNERGRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#E2E8F0")),
-            ('TOPPADDING', (0, 0), (-1, -1), 4),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
-        ]))
-        elements.append(hero_table)
-        elements.append(Spacer(1, 8))
-
-        # 1. Sovereign Directive Overview
-        elements.append(Paragraph("1. Sovereign Directive & Macro Overview", ParagraphStyle('H2_1', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
-        macro_text = summary_text or (
-            f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
-            f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
-            "Pithead dispatch efficiency remained robust, substantially mitigating coastal coal import requirements."
-        )
-        elements.append(Paragraph(macro_text, ParagraphStyle('B1', fontSize=8, leading=11, textColor=colors.HexColor("#1E293B"))))
-        elements.append(Spacer(1, 8))
-
-        # 2. Top Colliery Production Share (Aggregated Top 8)
-        elements.append(Paragraph("2. Strategic Colliery Contribution Leaderboard (Top Producers)", ParagraphStyle('H2_2', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+    # Helper to assemble common standardized colliery table rows
+    def _get_common_colliery_rows(self, metrics):
         top_collieries = metrics["collieries"][:8]
         col_headers = ["Rank", "Colliery / Mining Project", "State", "Company", "Type", "Prod (MT)", "Disp (MT)", "Share"]
         rows = [col_headers]
@@ -457,30 +411,571 @@ class DocumentGenerator:
                 f"{c.get('dispatch', 0):,.1f}",
                 str(c.get("share", "-"))
             ])
+        return rows
+
+    # -------------------------------------------------------------------------
+    # LAYOUT 1: BENTO MODULAR GRID (Gamma Bento Tech)
+    # -------------------------------------------------------------------------
+    def _build_bento_grid_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+        primary = colors.HexColor(tpl["primary_hex"])
+        accent = colors.HexColor(tpl["accent_hex"])
+        light_bg = colors.HexColor(tpl["light_bg_hex"])
+
+        # Masthead
+        elements.append(Paragraph(f"<b>GOVERNMENT OF INDIA • {tpl['header_title']}</b>", ParagraphStyle('Bento_M', fontName='Helvetica-Bold', fontSize=8.5, textColor=primary, spaceAfter=2)))
+        elements.append(Paragraph("National Coal Extraction & Operational Performance", ParagraphStyle('Bento_T', fontName='Helvetica-Bold', fontSize=16, leading=19, textColor=primary, spaceAfter=3)))
+        elements.append(Paragraph(f"Template Style: <b>{tpl['name']} ({tpl['theme']})</b> | ID: <b>{report_id}</b> | Verification: <b>AST Math Engine</b>", ParagraphStyle('Bento_S', fontSize=8, textColor=colors.HexColor("#475569"), spaceAfter=6)))
+        elements.append(HRFlowable(width="100%", thickness=2, color=primary, spaceAfter=8))
+
+        # Asymmetric Bento Hero Stats
+        hero_data = [
+            [
+                Paragraph("<b>NATIONAL EXTRACTION</b>", ParagraphStyle('BH1', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>THERMAL DISPATCH</b>", ParagraphStyle('BH2', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>ACTIVE COLLIERIES</b>", ParagraphStyle('BH3', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>AUDIT INTEGRITY</b>", ParagraphStyle('BH4', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+            ],
+            [
+                Paragraph(f"<b>{metrics['total_production']:,.1f} MT</b>", ParagraphStyle('BV1', fontName='Helvetica-Bold', fontSize=12, textColor=accent, alignment=1)),
+                Paragraph(f"<b>{metrics['total_dispatch']:,.1f} MT</b>", ParagraphStyle('BV2', fontName='Helvetica-Bold', fontSize=12, textColor=accent, alignment=1)),
+                Paragraph(f"<b>{metrics['count']} Collieries</b>", ParagraphStyle('BV3', fontName='Helvetica-Bold', fontSize=12, textColor=colors.HexColor("#166534"), alignment=1)),
+                Paragraph("<b>100% Deterministic</b>", ParagraphStyle('BV4', fontName='Helvetica-Bold', fontSize=11, textColor=primary, alignment=1)),
+            ],
+            [
+                Paragraph(f"{metrics['achievement_pct']:.1f}% Target Benchmark", ParagraphStyle('BS1', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph(f"{metrics['offtake_ratio']:.1f}% Power Offtake", ParagraphStyle('BS2', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph("Basin Monitored Units", ParagraphStyle('BS3', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph("AST Math Engine Verified", ParagraphStyle('BS4', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+            ]
+        ]
+        hero_table = Table(hero_data, colWidths=[135, 135, 135, 135])
+        hero_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), light_bg),
+            ('BOX', (0, 0), (-1, -1), 1, colors.HexColor(tpl["border_hex"])),
+            ('INNERGRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#E2E8F0")),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ]))
+        elements.append(hero_table)
+        elements.append(Spacer(1, 8))
+
+        # Section 1
+        elements.append(Paragraph("1. Macro Operational Baseline & Synthesis", ParagraphStyle('Bento_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        macro_text = summary_text or (
+            f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
+            f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
+            f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
+        )
+        elements.append(Paragraph(macro_text, ParagraphStyle('Bento_Body', fontSize=8, leading=11, textColor=colors.HexColor("#1E293B"))))
+        elements.append(Spacer(1, 8))
+
+        # Section 2: Colliery Table
+        elements.append(Paragraph("2. Key Performance Indicators & Colliery Benchmark Leaderboard", ParagraphStyle('Bento_Sec2', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        rows = self._get_common_colliery_rows(metrics)
         tbl = Table(rows, colWidths=[30, 165, 80, 45, 45, 60, 60, 55], repeatRows=1)
         tbl.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), primary),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 7.5),
-            ('ALIGN', (5, 0), (-1, -1), 'RIGHT'),
+            ('FONTSIZE', (0, 0), (-1, -1), 7),
+            ('ALIGN', (0, 0), (0, -1), 'CENTER'),
+            ('ALIGN', (5, 0), (7, -1), 'RIGHT'),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, light_bg]),
-            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor("#CBD5E1")),
+            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor(tpl["border_hex"])),
             ('TOPPADDING', (0, 0), (-1, -1), 3),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
         ]))
         elements.append(tbl)
         elements.append(Spacer(1, 8))
 
-        # 3. Ministerial Action Directives Callout Box
-        elements.append(Paragraph("3. Ministerial Action Directives & Implementation Timeline", ParagraphStyle('H2_3', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        # Section 3: Supply Chain Directives
+        elements.append(Paragraph("3. Supply Chain, Logistics & Dispatch Priorities", ParagraphStyle('Bento_Sec3', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
         directives_data = [
             [
                 Paragraph(
-                    "<b>POLICY DIRECTIVE 1:</b> Fast-track First-Mile Rail sidings to enhance pithead evacuation.<br/>"
-                    "<b>POLICY DIRECTIVE 2:</b> Standardize continuous miners and longwall automation across underground units.<br/>"
-                    "<b>POLICY DIRECTIVE 3:</b> Maintain mandatory 18-day normative buffer stocks across all thermal utilities.",
-                    ParagraphStyle('DirP', fontSize=7.5, leading=11, textColor=colors.HexColor("#0F172A"))
+                    "<b>PRIORITY 1:</b> Accelerate First-Mile Connectivity (FMC) rail sidings to enhance pithead evacuation.<br/>"
+                    "<b>PRIORITY 2:</b> Standardize continuous surface miner telemetry across active open-cast benches.<br/>"
+                    "<b>PRIORITY 3:</b> Maintain mandatory 24-day normative buffer stocks across all critical thermal utilities.",
+                    ParagraphStyle('Bento_Dir', fontSize=7.5, leading=11, textColor=colors.HexColor("#0F172A"))
+                )
+            ]
+        ]
+        dir_tbl = Table(directives_data, colWidths=[540])
+        dir_tbl.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#EFF6FF")),
+            ('BOX', (0, 0), (-1, -1), 1, primary),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        elements.append(dir_tbl)
+
+    # -------------------------------------------------------------------------
+    # LAYOUT 2: CLEAN EDITORIAL CANVAS (Gamma Minimalist Paper)
+    # -------------------------------------------------------------------------
+    def _build_editorial_canvas_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+        primary = colors.HexColor(tpl["primary_hex"])
+        accent = colors.HexColor(tpl["accent_hex"])
+
+        # Swiss Minimalist Masthead
+        elements.append(Paragraph(f"<b>{tpl['header_title']}</b>", ParagraphStyle('Ed_M', fontName='Helvetica-Bold', fontSize=8, textColor=accent, spaceAfter=2)))
+        elements.append(Paragraph("National Coal Extraction & Operational Performance", ParagraphStyle('Ed_T', fontName='Helvetica-Bold', fontSize=17, leading=20, textColor=primary, spaceAfter=3)))
+        elements.append(Paragraph(f"Style: <b>{tpl['name']} ({tpl['theme']})</b> | Ref: <b>{report_id}</b> | Verification: <b>AST Math Engine</b>", ParagraphStyle('Ed_S', fontSize=7.5, textColor=accent, spaceAfter=6)))
+        elements.append(HRFlowable(width="100%", thickness=1.5, color=primary, spaceAfter=8))
+
+        # Minimalist Tabular Stats (Hairline Separators, No Heavy Fills)
+        stat_data = [
+            ["NATIONAL EXTRACTION", "THERMAL DISPATCH", "ACTIVE COLLIERIES", "AUDIT INTEGRITY"],
+            [f"{metrics['total_production']:,.1f} MT", f"{metrics['total_dispatch']:,.1f} MT", f"{metrics['count']} Units", "100% Deterministic"],
+            [f"{metrics['achievement_pct']:.1f}% Target Benchmark", f"{metrics['offtake_ratio']:.1f}% Power Offtake", "Basin Monitored Units", "Mathematical Parity"]
+        ]
+        stat_tbl = Table(stat_data, colWidths=[135, 135, 135, 135])
+        stat_tbl.setStyle(TableStyle([
+            ('LINEBELOW', (0, 0), (-1, 0), 0.5, primary),
+            ('LINEBELOW', (0, -1), (-1, -1), 1, primary),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 7.5),
+            ('FONTNAME', (0, 1), (-1, 1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 1), (-1, 1), 12),
+            ('TEXTCOLOR', (0, 1), (-1, 1), primary),
+            ('FONTSIZE', (0, 2), (-1, 2), 7),
+            ('TEXTCOLOR', (0, 2), (-1, 2), accent),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ]))
+        elements.append(stat_tbl)
+        elements.append(Spacer(1, 8))
+
+        # Section 1
+        elements.append(Paragraph("§1. Macro Operational Baseline & Synthesis", ParagraphStyle('Ed_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        macro_text = summary_text or (
+            f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
+            f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
+            f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
+        )
+        elements.append(Paragraph(macro_text, ParagraphStyle('Ed_B', fontSize=8, leading=11.5, textColor=colors.HexColor("#1E293B"))))
+        elements.append(Spacer(1, 8))
+
+        # Section 2: Minimalist Table
+        elements.append(Paragraph("§2. Key Performance Indicators & Colliery Benchmark Leaderboard", ParagraphStyle('Ed_Sec2', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        rows = self._get_common_colliery_rows(metrics)
+        tbl = Table(rows, colWidths=[30, 165, 80, 45, 45, 60, 60, 55], repeatRows=1)
+        tbl.setStyle(TableStyle([
+            ('LINEABOVE', (0, 0), (-1, 0), 1, primary),
+            ('LINEBELOW', (0, 0), (-1, 0), 1, primary),
+            ('LINEBELOW', (0, -1), (-1, -1), 1, primary),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 7),
+            ('ALIGN', (0, 0), (0, -1), 'CENTER'),
+            ('ALIGN', (5, 0), (7, -1), 'RIGHT'),
+            ('TOPPADDING', (0, 0), (-1, -1), 3),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+        ]))
+        elements.append(tbl)
+        elements.append(Spacer(1, 8))
+
+        # Section 3: Clean Directives Box
+        elements.append(Paragraph("§3. Supply Chain, Logistics & Dispatch Priorities", ParagraphStyle('Ed_Sec3', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        dir_data = [
+            [
+                Paragraph(
+                    "<b>• PRIORITY 1:</b> Accelerate First-Mile Connectivity (FMC) rail sidings to enhance pithead evacuation.<br/>"
+                    "<b>• PRIORITY 2:</b> Standardize continuous surface miner telemetry across active open-cast benches.<br/>"
+                    "<b>• PRIORITY 3:</b> Maintain mandatory 24-day normative buffer stocks across all critical thermal utilities.",
+                    ParagraphStyle('Ed_Dir', fontSize=7.5, leading=11, textColor=primary)
+                )
+            ]
+        ]
+        dir_tbl = Table(dir_data, colWidths=[540])
+        dir_tbl.setStyle(TableStyle([
+            ('LINELEFT', (0, 0), (0, -1), 3, primary),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ]))
+        elements.append(dir_tbl)
+
+    # -------------------------------------------------------------------------
+    # LAYOUT 3: OBSIDIAN DARK DECK (Gamma Midnight Tech)
+    # -------------------------------------------------------------------------
+    def _build_obsidian_deck_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+        primary = colors.HexColor(tpl["primary_hex"])
+        accent = colors.HexColor(tpl["accent_hex"])
+        dark_bg = colors.HexColor("#0B0F19")
+        card_bg = colors.HexColor("#111827")
+
+        # Masthead
+        elements.append(Paragraph(f"<b>COAL INTELLIGENCE ENCLAVE • {tpl['header_title']}</b>", ParagraphStyle('Obs_M', fontName='Helvetica-Bold', fontSize=8, textColor=primary, spaceAfter=2)))
+        elements.append(Paragraph("National Coal Extraction & Operational Performance", ParagraphStyle('Obs_T', fontName='Helvetica-Bold', fontSize=16, leading=19, textColor=colors.HexColor("#0F172A"), spaceAfter=3)))
+        elements.append(Paragraph(f"Style: <b>{tpl['name']} ({tpl['theme']})</b> | ID: <b>{report_id}</b> | Mode: <b>High-Contrast Deck</b>", ParagraphStyle('Obs_S', fontSize=7.5, textColor=colors.HexColor("#475569"), spaceAfter=6)))
+        elements.append(HRFlowable(width="100%", thickness=2, color=primary, spaceAfter=8))
+
+        # Obsidian Stat Cards
+        hero_data = [
+            [
+                Paragraph("<b>NATIONAL EXTRACTION</b>", ParagraphStyle('OH1', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>THERMAL DISPATCH</b>", ParagraphStyle('OH2', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>ACTIVE COLLIERIES</b>", ParagraphStyle('OH3', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>AUDIT INTEGRITY</b>", ParagraphStyle('OH4', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+            ],
+            [
+                Paragraph(f"<b>{metrics['total_production']:,.1f} MT</b>", ParagraphStyle('OV1', fontName='Helvetica-Bold', fontSize=12, textColor=colors.HexColor("#0284C7"), alignment=1)),
+                Paragraph(f"<b>{metrics['total_dispatch']:,.1f} MT</b>", ParagraphStyle('OV2', fontName='Helvetica-Bold', fontSize=12, textColor=colors.HexColor("#0284C7"), alignment=1)),
+                Paragraph(f"<b>{metrics['count']} Collieries</b>", ParagraphStyle('OV3', fontName='Helvetica-Bold', fontSize=12, textColor=colors.HexColor("#166534"), alignment=1)),
+                Paragraph("<b>100% Deterministic</b>", ParagraphStyle('OV4', fontName='Helvetica-Bold', fontSize=11, textColor=accent, alignment=1)),
+            ],
+            [
+                Paragraph(f"{metrics['achievement_pct']:.1f}% Target Benchmark", ParagraphStyle('OS1', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph(f"{metrics['offtake_ratio']:.1f}% Power Offtake", ParagraphStyle('OS2', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph("Basin Monitored Units", ParagraphStyle('OS3', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph("AST Math Engine Verified", ParagraphStyle('OS4', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+            ]
+        ]
+        hero_table = Table(hero_data, colWidths=[135, 135, 135, 135])
+        hero_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
+            ('BOX', (0, 0), (-1, -1), 1.5, primary),
+            ('INNERGRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ]))
+        elements.append(hero_table)
+        elements.append(Spacer(1, 8))
+
+        # Section 1
+        elements.append(Paragraph("◈ 1. Macro Operational Baseline & Synthesis", ParagraphStyle('Obs_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=colors.HexColor("#0F172A"), spaceAfter=4)))
+        macro_text = summary_text or (
+            f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
+            f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
+            f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
+        )
+        elements.append(Paragraph(macro_text, ParagraphStyle('Obs_B', fontSize=8, leading=11, textColor=colors.HexColor("#1E293B"))))
+        elements.append(Spacer(1, 8))
+
+        # Section 2: Table
+        elements.append(Paragraph("◈ 2. Key Performance Indicators & Colliery Benchmark Leaderboard", ParagraphStyle('Obs_Sec2', fontName='Helvetica-Bold', fontSize=10, textColor=colors.HexColor("#0F172A"), spaceAfter=4)))
+        rows = self._get_common_colliery_rows(metrics)
+        tbl = Table(rows, colWidths=[30, 165, 80, 45, 45, 60, 60, 55], repeatRows=1)
+        tbl.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#0F172A")),
+            ('TEXTCOLOR', (0, 0), (-1, 0), primary),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 7),
+            ('ALIGN', (0, 0), (0, -1), 'CENTER'),
+            ('ALIGN', (5, 0), (7, -1), 'RIGHT'),
+            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor("#94A3B8")),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#F1F5F9")]),
+            ('TOPPADDING', (0, 0), (-1, -1), 3),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+        ]))
+        elements.append(tbl)
+        elements.append(Spacer(1, 8))
+
+        # Section 3
+        elements.append(Paragraph("◈ 3. Supply Chain, Logistics & Dispatch Priorities", ParagraphStyle('Obs_Sec3', fontName='Helvetica-Bold', fontSize=10, textColor=colors.HexColor("#0F172A"), spaceAfter=4)))
+        dir_data = [
+            [
+                Paragraph(
+                    "<b>[DIRECTIVE 01]:</b> Accelerate First-Mile Connectivity (FMC) rail sidings to enhance pithead evacuation.<br/>"
+                    "<b>[DIRECTIVE 02]:</b> Standardize continuous surface miner telemetry across active open-cast benches.<br/>"
+                    "<b>[DIRECTIVE 03]:</b> Maintain mandatory 24-day normative buffer stocks across all critical thermal utilities.",
+                    ParagraphStyle('Obs_Dir', fontSize=7.5, leading=11, textColor=colors.HexColor("#0F172A"))
+                )
+            ]
+        ]
+        dir_tbl = Table(dir_data, colWidths=[540])
+        dir_tbl.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor("#F0FDFA")),
+            ('BOX', (0, 0), (-1, -1), 1, primary),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        elements.append(dir_tbl)
+
+    # -------------------------------------------------------------------------
+    # LAYOUT 4: AURORA VIBRANT GRADIENT (Gamma Aurora Modern)
+    # -------------------------------------------------------------------------
+    def _build_aurora_gradient_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+        primary = colors.HexColor(tpl["primary_hex"])
+        accent = colors.HexColor(tpl["accent_hex"])
+        light_bg = colors.HexColor(tpl["light_bg_hex"])
+
+        # Masthead
+        elements.append(Paragraph(f"<b>NATIONAL COAL PULSE • {tpl['header_title']}</b>", ParagraphStyle('Aur_M', fontName='Helvetica-Bold', fontSize=8, textColor=accent, spaceAfter=2)))
+        elements.append(Paragraph("National Coal Extraction & Operational Performance", ParagraphStyle('Aur_T', fontName='Helvetica-Bold', fontSize=16, leading=19, textColor=primary, spaceAfter=3)))
+        elements.append(Paragraph(f"Style: <b>{tpl['name']} ({tpl['theme']})</b> | ID: <b>{report_id}</b> | Verification: <b>AST Math Engine</b>", ParagraphStyle('Aur_S', fontSize=7.5, textColor=colors.HexColor("#64748B"), spaceAfter=6)))
+        elements.append(HRFlowable(width="100%", thickness=2, color=accent, spaceAfter=8))
+
+        # Hero Cards
+        hero_data = [
+            [
+                Paragraph("<b>NATIONAL EXTRACTION</b>", ParagraphStyle('AH1', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>THERMAL DISPATCH</b>", ParagraphStyle('AH2', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>ACTIVE COLLIERIES</b>", ParagraphStyle('AH3', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>AUDIT INTEGRITY</b>", ParagraphStyle('AH4', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+            ],
+            [
+                Paragraph(f"<b>{metrics['total_production']:,.1f} MT</b>", ParagraphStyle('AV1', fontName='Helvetica-Bold', fontSize=12, textColor=accent, alignment=1)),
+                Paragraph(f"<b>{metrics['total_dispatch']:,.1f} MT</b>", ParagraphStyle('AV2', fontName='Helvetica-Bold', fontSize=12, textColor=accent, alignment=1)),
+                Paragraph(f"<b>{metrics['count']} Collieries</b>", ParagraphStyle('AV3', fontName='Helvetica-Bold', fontSize=12, textColor=colors.HexColor("#166534"), alignment=1)),
+                Paragraph("<b>100% Deterministic</b>", ParagraphStyle('AV4', fontName='Helvetica-Bold', fontSize=11, textColor=primary, alignment=1)),
+            ],
+            [
+                Paragraph(f"{metrics['achievement_pct']:.1f}% Target Benchmark", ParagraphStyle('AS1', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph(f"{metrics['offtake_ratio']:.1f}% Power Offtake", ParagraphStyle('AS2', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph("Basin Monitored Units", ParagraphStyle('AS3', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph("AST Math Engine Verified", ParagraphStyle('AS4', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+            ]
+        ]
+        hero_table = Table(hero_data, colWidths=[135, 135, 135, 135])
+        hero_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), light_bg),
+            ('BOX', (0, 0), (-1, -1), 1, colors.HexColor(tpl["border_hex"])),
+            ('INNERGRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#DDD6FE")),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ]))
+        elements.append(hero_table)
+        elements.append(Spacer(1, 8))
+
+        # Section 1
+        elements.append(Paragraph("★ 1. Macro Operational Baseline & Synthesis", ParagraphStyle('Aur_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        macro_text = summary_text or (
+            f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
+            f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
+            f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
+        )
+        elements.append(Paragraph(macro_text, ParagraphStyle('Aur_B', fontSize=8, leading=11, textColor=colors.HexColor("#1E293B"))))
+        elements.append(Spacer(1, 8))
+
+        # Section 2: Table
+        elements.append(Paragraph("★ 2. Key Performance Indicators & Colliery Benchmark Leaderboard", ParagraphStyle('Aur_Sec2', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        rows = self._get_common_colliery_rows(metrics)
+        tbl = Table(rows, colWidths=[30, 165, 80, 45, 45, 60, 60, 55], repeatRows=1)
+        tbl.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), primary),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 7),
+            ('ALIGN', (0, 0), (0, -1), 'CENTER'),
+            ('ALIGN', (5, 0), (7, -1), 'RIGHT'),
+            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor(tpl["border_hex"])),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, light_bg]),
+            ('TOPPADDING', (0, 0), (-1, -1), 3),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+        ]))
+        elements.append(tbl)
+        elements.append(Spacer(1, 8))
+
+        # Section 3
+        elements.append(Paragraph("★ 3. Supply Chain, Logistics & Dispatch Priorities", ParagraphStyle('Aur_Sec3', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        dir_data = [
+            [
+                Paragraph(
+                    "<b>DIRECTIVE 1:</b> Accelerate First-Mile Connectivity (FMC) rail sidings to enhance pithead evacuation.<br/>"
+                    "<b>DIRECTIVE 2:</b> Standardize continuous surface miner telemetry across active open-cast benches.<br/>"
+                    "<b>DIRECTIVE 3:</b> Maintain mandatory 24-day normative buffer stocks across all critical thermal utilities.",
+                    ParagraphStyle('Aur_Dir', fontSize=7.5, leading=11, textColor=colors.HexColor("#0F172A"))
+                )
+            ]
+        ]
+        dir_tbl = Table(dir_data, colWidths=[540])
+        dir_tbl.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), light_bg),
+            ('BOX', (0, 0), (-1, -1), 1, accent),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        elements.append(dir_tbl)
+
+    # -------------------------------------------------------------------------
+    # LAYOUT 5: NORDIC OCEAN SLATE (Gamma Deep Ocean)
+    # -------------------------------------------------------------------------
+    def _build_nordic_ocean_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+        primary = colors.HexColor(tpl["primary_hex"])
+        accent = colors.HexColor(tpl["accent_hex"])
+        light_bg = colors.HexColor(tpl["light_bg_hex"])
+
+        # Masthead
+        elements.append(Paragraph(f"<b>GOVERNMENT OF INDIA • {tpl['header_title']}</b>", ParagraphStyle('Nord_M', fontName='Helvetica-Bold', fontSize=8, textColor=primary, spaceAfter=2)))
+        elements.append(Paragraph("National Coal Extraction & Operational Performance", ParagraphStyle('Nord_T', fontName='Helvetica-Bold', fontSize=16, leading=19, textColor=primary, spaceAfter=3)))
+        elements.append(Paragraph(f"Style: <b>{tpl['name']} ({tpl['theme']})</b> | ID: <b>{report_id}</b> | Verification: <b>AST Math Engine</b>", ParagraphStyle('Nord_S', fontSize=7.5, textColor=colors.HexColor("#64748B"), spaceAfter=6)))
+        elements.append(HRFlowable(width="100%", thickness=2, color=primary, spaceAfter=8))
+
+        # Hero Cards
+        hero_data = [
+            [
+                Paragraph("<b>NATIONAL EXTRACTION</b>", ParagraphStyle('NH1', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>THERMAL DISPATCH</b>", ParagraphStyle('NH2', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>ACTIVE COLLIERIES</b>", ParagraphStyle('NH3', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>AUDIT INTEGRITY</b>", ParagraphStyle('NH4', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+            ],
+            [
+                Paragraph(f"<b>{metrics['total_production']:,.1f} MT</b>", ParagraphStyle('NV1', fontName='Helvetica-Bold', fontSize=12, textColor=primary, alignment=1)),
+                Paragraph(f"<b>{metrics['total_dispatch']:,.1f} MT</b>", ParagraphStyle('NV2', fontName='Helvetica-Bold', fontSize=12, textColor=primary, alignment=1)),
+                Paragraph(f"<b>{metrics['count']} Collieries</b>", ParagraphStyle('NV3', fontName='Helvetica-Bold', fontSize=12, textColor=colors.HexColor("#065F46"), alignment=1)),
+                Paragraph("<b>100% Deterministic</b>", ParagraphStyle('NV4', fontName='Helvetica-Bold', fontSize=11, textColor=primary, alignment=1)),
+            ],
+            [
+                Paragraph(f"{metrics['achievement_pct']:.1f}% Target Benchmark", ParagraphStyle('NS1', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph(f"{metrics['offtake_ratio']:.1f}% Power Offtake", ParagraphStyle('NS2', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph("Basin Monitored Units", ParagraphStyle('NS3', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+                Paragraph("AST Math Engine Verified", ParagraphStyle('NS4', fontSize=7, textColor=colors.HexColor("#64748B"), alignment=1)),
+            ]
+        ]
+        hero_table = Table(hero_data, colWidths=[135, 135, 135, 135])
+        hero_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), light_bg),
+            ('BOX', (0, 0), (-1, -1), 1, colors.HexColor(tpl["border_hex"])),
+            ('INNERGRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#BAE6FD")),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ]))
+        elements.append(hero_table)
+        elements.append(Spacer(1, 8))
+
+        # Section 1
+        elements.append(Paragraph("1. Macro Operational Baseline & Synthesis", ParagraphStyle('Nord_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        macro_text = summary_text or (
+            f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
+            f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
+            f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
+        )
+        elements.append(Paragraph(macro_text, ParagraphStyle('Nord_B', fontSize=8, leading=11, textColor=colors.HexColor("#1E293B"))))
+        elements.append(Spacer(1, 8))
+
+        # Section 2: Table
+        elements.append(Paragraph("2. Key Performance Indicators & Colliery Benchmark Leaderboard", ParagraphStyle('Nord_Sec2', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        rows = self._get_common_colliery_rows(metrics)
+        tbl = Table(rows, colWidths=[30, 165, 80, 45, 45, 60, 60, 55], repeatRows=1)
+        tbl.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), primary),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 7),
+            ('ALIGN', (0, 0), (0, -1), 'CENTER'),
+            ('ALIGN', (5, 0), (7, -1), 'RIGHT'),
+            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor(tpl["border_hex"])),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, light_bg]),
+            ('TOPPADDING', (0, 0), (-1, -1), 3),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+        ]))
+        elements.append(tbl)
+        elements.append(Spacer(1, 8))
+
+        # Section 3
+        elements.append(Paragraph("3. Supply Chain, Logistics & Dispatch Priorities", ParagraphStyle('Nord_Sec3', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        dir_data = [
+            [
+                Paragraph(
+                    "<b>ACTION ITEM 1:</b> Accelerate First-Mile Connectivity (FMC) rail sidings to enhance pithead evacuation.<br/>"
+                    "<b>ACTION ITEM 2:</b> Standardize continuous surface miner telemetry across active open-cast benches.<br/>"
+                    "<b>ACTION ITEM 3:</b> Maintain mandatory 24-day normative buffer stocks across all critical thermal utilities.",
+                    ParagraphStyle('Nord_Dir', fontSize=7.5, leading=11, textColor=colors.HexColor("#0F172A"))
+                )
+            ]
+        ]
+        dir_tbl = Table(dir_data, colWidths=[540])
+        dir_tbl.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), light_bg),
+            ('BOX', (0, 0), (-1, -1), 1, primary),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        elements.append(dir_tbl)
+
+    # -------------------------------------------------------------------------
+    # LAYOUT 6: WARM SANDSTONE EXECUTIVE (Gamma Warm Sand)
+    # -------------------------------------------------------------------------
+    def _build_warm_sandstone_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+        primary = colors.HexColor(tpl["primary_hex"])
+        accent = colors.HexColor(tpl["accent_hex"])
+        light_bg = colors.HexColor(tpl["light_bg_hex"])
+
+        # Masthead
+        elements.append(Paragraph(f"<b>REPUBLIC OF INDIA • {tpl['header_title']}</b>", ParagraphStyle('Sand_M', fontName='Helvetica-Bold', fontSize=8, textColor=accent, spaceAfter=2)))
+        elements.append(Paragraph("National Coal Extraction & Operational Performance", ParagraphStyle('Sand_T', fontName='Helvetica-Bold', fontSize=16, leading=19, textColor=primary, spaceAfter=3)))
+        elements.append(Paragraph(f"Style: <b>{tpl['name']} ({tpl['theme']})</b> | ID: <b>{report_id}</b> | Verification: <b>AST Math Engine</b>", ParagraphStyle('Sand_S', fontSize=7.5, textColor=colors.HexColor("#78716C"), spaceAfter=6)))
+        elements.append(HRFlowable(width="100%", thickness=2, color=primary, spaceAfter=8))
+
+        # Hero Cards
+        hero_data = [
+            [
+                Paragraph("<b>NATIONAL EXTRACTION</b>", ParagraphStyle('SH1', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>THERMAL DISPATCH</b>", ParagraphStyle('SH2', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>ACTIVE COLLIERIES</b>", ParagraphStyle('SH3', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+                Paragraph("<b>AUDIT INTEGRITY</b>", ParagraphStyle('SH4', fontName='Helvetica-Bold', fontSize=8, textColor=primary, alignment=1)),
+            ],
+            [
+                Paragraph(f"<b>{metrics['total_production']:,.1f} MT</b>", ParagraphStyle('SV1', fontName='Helvetica-Bold', fontSize=12, textColor=accent, alignment=1)),
+                Paragraph(f"<b>{metrics['total_dispatch']:,.1f} MT</b>", ParagraphStyle('SV2', fontName='Helvetica-Bold', fontSize=12, textColor=accent, alignment=1)),
+                Paragraph(f"<b>{metrics['count']} Collieries</b>", ParagraphStyle('SV3', fontName='Helvetica-Bold', fontSize=12, textColor=primary, alignment=1)),
+                Paragraph("<b>100% Deterministic</b>", ParagraphStyle('SV4', fontName='Helvetica-Bold', fontSize=11, textColor=primary, alignment=1)),
+            ],
+            [
+                Paragraph(f"{metrics['achievement_pct']:.1f}% Target Benchmark", ParagraphStyle('SS1', fontSize=7, textColor=colors.HexColor("#78716C"), alignment=1)),
+                Paragraph(f"{metrics['offtake_ratio']:.1f}% Power Offtake", ParagraphStyle('SS2', fontSize=7, textColor=colors.HexColor("#78716C"), alignment=1)),
+                Paragraph("Basin Monitored Units", ParagraphStyle('SS3', fontSize=7, textColor=colors.HexColor("#78716C"), alignment=1)),
+                Paragraph("AST Math Engine Verified", ParagraphStyle('SS4', fontSize=7, textColor=colors.HexColor("#78716C"), alignment=1)),
+            ]
+        ]
+        hero_table = Table(hero_data, colWidths=[135, 135, 135, 135])
+        hero_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), light_bg),
+            ('BOX', (0, 0), (-1, -1), 1, colors.HexColor(tpl["border_hex"])),
+            ('INNERGRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#E7E5E4")),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ]))
+        elements.append(hero_table)
+        elements.append(Spacer(1, 8))
+
+        # Section 1
+        elements.append(Paragraph("1. Macro Operational Baseline & Synthesis", ParagraphStyle('Sand_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        macro_text = summary_text or (
+            f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
+            f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
+            f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
+        )
+        elements.append(Paragraph(macro_text, ParagraphStyle('Sand_B', fontSize=8, leading=11, textColor=colors.HexColor("#1C1917"))))
+        elements.append(Spacer(1, 8))
+
+        # Section 2: Table
+        elements.append(Paragraph("2. Key Performance Indicators & Colliery Benchmark Leaderboard", ParagraphStyle('Sand_Sec2', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        rows = self._get_common_colliery_rows(metrics)
+        tbl = Table(rows, colWidths=[30, 165, 80, 45, 45, 60, 60, 55], repeatRows=1)
+        tbl.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), primary),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 7),
+            ('ALIGN', (0, 0), (0, -1), 'CENTER'),
+            ('ALIGN', (5, 0), (7, -1), 'RIGHT'),
+            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor(tpl["border_hex"])),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, light_bg]),
+            ('TOPPADDING', (0, 0), (-1, -1), 3),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+        ]))
+        elements.append(tbl)
+        elements.append(Spacer(1, 8))
+
+        # Section 3
+        elements.append(Paragraph("3. Supply Chain, Logistics & Dispatch Priorities", ParagraphStyle('Sand_Sec3', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
+        directives_data = [
+            [
+                Paragraph(
+                    "<b>• PRIORITY 1:</b> Accelerate First-Mile Connectivity (FMC) rail sidings to enhance pithead evacuation.<br/>"
+                    "<b>• PRIORITY 2:</b> Standardize continuous surface miner telemetry across active open-cast benches.<br/>"
+                    "<b>• PRIORITY 3:</b> Maintain mandatory 24-day normative buffer stocks across all critical thermal utilities.",
+                    ParagraphStyle('Sand_Dir', fontSize=7.5, leading=11, textColor=colors.HexColor("#1C1917"))
                 )
             ]
         ]
@@ -494,403 +989,6 @@ class DocumentGenerator:
             ('RIGHTPADDING', (0, 0), (-1, -1), 8),
         ]))
         elements.append(dir_tbl)
-
-    # -------------------------------------------------------------------------
-    # LAYOUT 2: TECHNICAL DEEP-DIVE (Deep Slate/Cyan, Descriptive Stats, IQR Grid)
-    # -------------------------------------------------------------------------
-    def _build_technical_deepdive_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
-        primary = colors.HexColor(tpl["primary_hex"])
-        accent = colors.HexColor(tpl["accent_hex"])
-        light_bg = colors.HexColor(tpl["light_bg_hex"])
-
-        # Technical Header
-        elements.append(Paragraph(f"<b>ENGINEERING AUDIT • {tpl['header_title']}</b>", ParagraphStyle('TD_M', fontName='Helvetica-Bold', fontSize=8, textColor=accent, spaceAfter=2)))
-        elements.append(Paragraph("Colliery Dispersion & Empirical Anomaly Audit", ParagraphStyle('TD_T', fontName='Helvetica-Bold', fontSize=15, leading=18, textColor=primary, spaceAfter=3)))
-        elements.append(Paragraph(f"Doc Hash: <b>{report_id}</b> | Engine: AST Math Engine v4.2 | Confidence: 99.98% | Samples: {metrics['count']} Collieries", ParagraphStyle('TD_S', fontSize=7.5, textColor=colors.HexColor("#64748B"), spaceAfter=6)))
-        elements.append(HRFlowable(width="100%", thickness=1.5, color=accent, spaceAfter=8))
-
-        # 1. Descriptive Statistics Grid
-        elements.append(Paragraph("1. Parametric Distribution & Descriptive Statistics", ParagraphStyle('TD_H1', fontName='Helvetica-Bold', fontSize=9.5, textColor=primary, spaceAfter=4)))
-        stat_data = [
-            ["Metric Parameter", "Sample Mean (μ)", "Median (Q2)", "Std Deviation (σ)", "Interquartile (IQR)", "Upper Fence (Q3+1.5IQR)", "Lower Fence"],
-            [
-                "Production (MT)",
-                f"{metrics['mean']:,.1f}",
-                f"{metrics['median']:,.1f}",
-                f"{metrics['std_dev']:,.1f}",
-                f"{metrics['iqr']:,.1f}",
-                f"{metrics['upper_fence']:,.1f}",
-                f"{metrics['lower_fence']:,.1f}"
-            ]
-        ]
-        stat_tbl = Table(stat_data, colWidths=[100, 75, 70, 75, 75, 80, 65])
-        stat_tbl.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), primary),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 7),
-            ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-            ('BACKGROUND', (0, 1), (-1, 1), light_bg),
-            ('BOX', (0, 0), (-1, -1), 0.5, colors.HexColor(tpl["border_hex"])),
-            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor("#CBD5E1")),
-            ('TOPPADDING', (0, 0), (-1, -1), 3),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
-        ]))
-        elements.append(stat_tbl)
-        elements.append(Spacer(1, 8))
-
-        # 2. IQR Anomaly & Boundary Detection Table
-        elements.append(Paragraph("2. Colliery Operational Anomaly Fences & Outlier Classification", ParagraphStyle('TD_H2', fontName='Helvetica-Bold', fontSize=9.5, textColor=primary, spaceAfter=4)))
-        anomaly_rows = [["Colliery Name", "Extraction (MT)", "Variance from Mean", "IQR Boundary Status", "Diagnostic Recommendation"]]
-        for c in metrics["collieries"][:6]:
-            p = c["production"]
-            if p >= metrics["upper_fence"]:
-                status = "[SURGE OUTLIER]"
-                rec = "Prioritize extra rakes & FMC sidings"
-            elif p <= metrics["lower_fence"] or p < metrics["mean"] * 0.3:
-                status = "[LOW / BOTTLENECK]"
-                rec = "Continuous miner overhaul required"
-            else:
-                status = "[NOMINAL]"
-                rec = "Operating within 1.5 IQR boundary"
-            variance_pct = ((p - metrics["mean"]) / metrics["mean"] * 100) if metrics["mean"] > 0 else 0.0
-            anomaly_rows.append([
-                c["name"][:22],
-                f"{p:,.1f}",
-                f"{variance_pct:+.1f}%",
-                status,
-                rec
-            ])
-        anom_tbl = Table(anomaly_rows, colWidths=[130, 75, 85, 95, 155])
-        anom_tbl.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#1E293B")),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 7),
-            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor("#CBD5E1")),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, light_bg]),
-            ('TOPPADDING', (0, 0), (-1, -1), 3),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
-        ]))
-        elements.append(anom_tbl)
-        elements.append(Spacer(1, 8))
-
-        # 3. Technical Synthesis & Mathematical Parity
-        elements.append(Paragraph("3. Deterministic AST Integrity Audit", ParagraphStyle('TD_H3', fontName='Helvetica-Bold', fontSize=9.5, textColor=primary, spaceAfter=4)))
-        synth_text = (
-            f"All {metrics['count']} colliery records underwent deterministic evaluation. "
-            f"Gross production evaluates exactly to {metrics['total_production']:,.2f} MT with 0.00 MT calculation error margin. "
-            f"Offtake ratio of {metrics['offtake_ratio']:.2f}% confirms sustainable stock depletion rates without dangerous pithead accumulation."
-        )
-        elements.append(Paragraph(synth_text, ParagraphStyle('TD_B', fontSize=7.5, leading=10.5, textColor=colors.HexColor("#334155"))))
-
-    # -------------------------------------------------------------------------
-    # LAYOUT 3: PARLIAMENTARY SCORECARD (Ashoka Green/Bronze, Legal Compliance)
-    # -------------------------------------------------------------------------
-    def _build_parliamentary_scorecard_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
-        primary = colors.HexColor(tpl["primary_hex"])
-        accent = colors.HexColor(tpl["accent_hex"])
-        light_bg = colors.HexColor(tpl["light_bg_hex"])
-
-        # Masthead
-        elements.append(Paragraph(f"<b>PARLIAMENTARY AFFAIRS • {tpl['header_title']}</b>", ParagraphStyle('P_M', fontName='Helvetica-Bold', fontSize=8, textColor=primary, spaceAfter=2)))
-        elements.append(Paragraph("Statutory Target Compliance & Public Accountability Scorecard", ParagraphStyle('P_T', fontName='Helvetica-Bold', fontSize=15, leading=18, textColor=primary, spaceAfter=3)))
-        elements.append(Paragraph(f"Session Reference: <b>{report_id}</b> | Mandate: MMDR Act 1957 Section 18 | Status: <b>LAID ON TABLE</b>", ParagraphStyle('P_S', fontSize=7.5, textColor=colors.HexColor("#475569"), spaceAfter=6)))
-        elements.append(HRFlowable(width="100%", thickness=1.5, color=primary, spaceAfter=8))
-
-        # 1. Statutory Compliance Statement
-        elements.append(Paragraph("1. Statutory Target Compliance Assurance", ParagraphStyle('P_H1', fontName='Helvetica-Bold', fontSize=9.5, textColor=primary, spaceAfter=4)))
-        stat_data = [
-            ["Statutory Metric", "Parliamentary Benchmark", "Actual Realization", "Fulfillment Margin", "Assurance Status"],
-            ["National Coal Output", f"{metrics['total_target']:,.1f} MT", f"{metrics['total_production']:,.1f} MT", f"{metrics['achievement_pct'] - 100:+.2f}%", "✓ COMPLIANT"],
-            ["Thermal Dispatch Mandate", f"{metrics['total_production'] * 0.90:,.1f} MT", f"{metrics['total_dispatch']:,.1f} MT", f"{metrics['offtake_ratio'] - 90:+.2f}%", "✓ SATISFIED"],
-            ["Monitored Colliery Assets", f"{metrics['count']} Mines", f"{metrics['count']} Mines", "0 Units Offline", "✓ 100% REPORTED"]
-        ]
-        stat_tbl = Table(stat_data, colWidths=[130, 110, 110, 95, 95])
-        stat_tbl.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), primary),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 7.5),
-            ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor(tpl["border_hex"])),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, light_bg]),
-            ('TEXTCOLOR', (4, 1), (4, -1), colors.HexColor("#166534")),
-            ('FONTNAME', (4, 1), (4, -1), 'Helvetica-Bold'),
-            ('TOPPADDING', (0, 0), (-1, -1), 3),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
-        ]))
-        elements.append(stat_tbl)
-        elements.append(Spacer(1, 8))
-
-        # 2. State-Wise Extraction & Allocation Matrix
-        elements.append(Paragraph("2. State-Wise Resource Extraction & Royalty Allocation Matrix", ParagraphStyle('P_H2', fontName='Helvetica-Bold', fontSize=9.5, textColor=primary, spaceAfter=4)))
-        state_rows = [["State / Basin", "Operating Mines", "Total Output (MT)", "Dispatch (MT)", "Estimated Royalty (₹ Cr)", "Status"]]
-        for st_name, st_vals in metrics["state_aggregates"].items():
-            est_royalty = st_vals["production"] * 480.0 / 100.0 # ~₹480 per tonne indicative royalty
-            state_rows.append([
-                st_name,
-                str(st_vals["count"]),
-                f"{st_vals['production']:,.1f}",
-                f"{st_vals['dispatch']:,.1f}",
-                f"₹ {est_royalty:,.0f} Cr",
-                "Allocated"
-            ])
-        st_tbl = Table(state_rows, colWidths=[120, 75, 95, 95, 95, 60])
-        st_tbl.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#14532D")),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 7),
-            ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor("#A7F3D0")),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, light_bg]),
-            ('TOPPADDING', (0, 0), (-1, -1), 3),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
-        ]))
-        elements.append(st_tbl)
-        elements.append(Spacer(1, 8))
-
-        # 3. Parliamentary Assurance Statement
-        elements.append(Paragraph("3. Statutory Assurance by Ministry Secretariat", ParagraphStyle('P_H3', fontName='Helvetica-Bold', fontSize=9.5, textColor=primary, spaceAfter=4)))
-        parl_text = summary_text or (
-            "It is hereby certified that the production and dispatch tallies enumerated above correspond accurately to physical pithead measurement records and statutory excise filings. "
-            "No state has recorded critical coal supply shortfall during this oversight period."
-        )
-        elements.append(Paragraph(parl_text, ParagraphStyle('P_B', fontSize=7.5, leading=10.5, textColor=colors.HexColor("#1F2937"))))
-
-    # -------------------------------------------------------------------------
-    # LAYOUT 4: ESG SUSTAINABLE (Forest Emerald, Ecological Restoration, Safety)
-    # -------------------------------------------------------------------------
-    def _build_esg_sustainable_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
-        primary = colors.HexColor(tpl["primary_hex"])
-        accent = colors.HexColor(tpl["accent_hex"])
-        light_bg = colors.HexColor(tpl["light_bg_hex"])
-
-        # ESG Header
-        elements.append(Paragraph(f"<b>ECOLOGICAL STEWARDSHIP • {tpl['header_title']}</b>", ParagraphStyle('ESG_M', fontName='Helvetica-Bold', fontSize=8, textColor=primary, spaceAfter=2)))
-        elements.append(Paragraph("ESG Sustainability & Ecological Transition Audit", ParagraphStyle('ESG_T', fontName='Helvetica-Bold', fontSize=15, leading=18, textColor=primary, spaceAfter=3)))
-        elements.append(Paragraph(f"Audit Framework: BRSR / GRI 304 | ID: <b>{report_id}</b> | Net-Zero Milestone: 2047 Target", ParagraphStyle('ESG_S', fontSize=7.5, textColor=colors.HexColor("#047857"), spaceAfter=6)))
-        elements.append(HRFlowable(width="100%", thickness=1.5, color=primary, spaceAfter=8))
-
-        # 1. ESG Performance Indicators
-        elements.append(Paragraph("1. Core Environmental, Social & Governance Indicators", ParagraphStyle('ESG_H1', fontName='Helvetica-Bold', fontSize=9.5, textColor=primary, spaceAfter=4)))
-        esg_kpis = [
-            ["Environmental Indicator", "Reported Measure", "Benchmarked Standard", "Environmental Impact"],
-            ["First-Mile Rail Offtake", f"{metrics['esg_rail_share_pct']}% Volume", ">= 80.0% FMC Goal", "Reduces road dust & diesel consumption"],
-            ["Backfilled Land Reclaimed", f"{metrics['esg_reclaimed_ha']} Hectares", "100% Backfilled Voids", "Restored to native forestry canopy"],
-            ["Mine Water Community Supply", "14.5 Million m³", "Zero Discharge Norm", "Supplied for local irrigation & drinking"],
-            ["Occupational Safety Index", str(metrics['esg_safety_rating']), "Zero Harm Standard", "Zero fatal occurrences across units"]
-        ]
-        esg_tbl = Table(esg_kpis, colWidths=[140, 110, 110, 180])
-        esg_tbl.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), primary),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 7.5),
-            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor("#6EE7B7")),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, light_bg]),
-            ('TOPPADDING', (0, 0), (-1, -1), 3),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
-        ]))
-        elements.append(esg_tbl)
-        elements.append(Spacer(1, 8))
-
-        # 2. Sustainable Mine Ranking (Top Units with ESG Compliance Tier)
-        elements.append(Paragraph("2. Colliery Sustainable Operation Grading (Top 6 Units)", ParagraphStyle('ESG_H2', fontName='Helvetica-Bold', fontSize=9.5, textColor=primary, spaceAfter=4)))
-        mine_rows = [["Colliery Name", "Extraction (MT)", "Evacuation Type", "Solar Capacity", "ESG Rating"]]
-        tiers = ["A+ (Exemplary)", "A (Compliant)", "A (Compliant)", "B+ (Satisfactory)", "B+ (Satisfactory)", "B (Under Review)"]
-        for idx, c in enumerate(metrics["collieries"][:6]):
-            mine_rows.append([
-                c["name"][:25],
-                f"{c['production']:,.1f}",
-                "Rail FMC Corridor" if idx < 4 else "Road / Rail Hybrid",
-                f"{15 + idx * 5} MW Solar",
-                tiers[idx]
-            ])
-        mine_tbl = Table(mine_rows, colWidths=[150, 95, 125, 90, 80])
-        mine_tbl.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#065F46")),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 7),
-            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor("#6EE7B7")),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, light_bg]),
-            ('TOPPADDING', (0, 0), (-1, -1), 3),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
-        ]))
-        elements.append(mine_tbl)
-        elements.append(Spacer(1, 8))
-
-        # 3. Green Transition Synthesis
-        elements.append(Paragraph("3. Net-Zero Transition & Biodiversity Stewardship", ParagraphStyle('ESG_H3', fontName='Helvetica-Bold', fontSize=9.5, textColor=primary, spaceAfter=4)))
-        esg_body = summary_text or (
-            f"During this cycle, {metrics['total_production']:,.2f} MT of domestic fuel was extracted under strict environmental compliance. "
-            f"Over {metrics['esg_reclaimed_ha']} hectares of mined-out land were transformed into bio-diverse ecological zones. "
-            "Solar power generation installations on overburden dumps contributed over 150 MW of clean captive power."
-        )
-        elements.append(Paragraph(esg_body, ParagraphStyle('ESG_B', fontSize=7.5, leading=10.5, textColor=colors.HexColor("#064E3B"))))
-
-    # -------------------------------------------------------------------------
-    # LAYOUT 5: CORPORATE MINIMALIST (Swiss Monochrome, Clean Grid, Modular Cards)
-    # -------------------------------------------------------------------------
-    def _build_corporate_minimalist_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
-        primary = colors.HexColor(tpl["primary_hex"])
-        border_color = colors.HexColor(tpl["border_hex"])
-        light_bg = colors.HexColor(tpl["light_bg_hex"])
-
-        # Minimalist Header
-        elements.append(Paragraph(f"COAL INDIA ENTERPRISE • {report_id}", ParagraphStyle('CM_M', fontName='Helvetica', fontSize=7.5, textColor=colors.HexColor("#71717A"), spaceAfter=2)))
-        elements.append(Paragraph("Quarterly Operational & Commercial Matrix", ParagraphStyle('CM_T', fontName='Helvetica-Bold', fontSize=15, leading=18, textColor=primary, spaceAfter=4)))
-        elements.append(HRFlowable(width="100%", thickness=0.75, color=primary, spaceAfter=8))
-
-        # Modular 2x2 Minimalist Card Grid
-        grid_data = [
-            [
-                Paragraph(f"<font size=7 color='#71717A'>TOTAL EXTRACTION</font><br/><b><font size=12>{metrics['total_production']:,.1f} MT</font></b><br/><font size=7 color='#166534'>+{metrics['achievement_pct'] - 100:+.1f}% vs Target</font>", ParagraphStyle('C1', leading=13)),
-                Paragraph(f"<font size=7 color='#71717A'>DISPATCH REALIZATION</font><br/><b><font size=12>{metrics['total_dispatch']:,.1f} MT</font></b><br/><font size=7 color='#166534'>{metrics['offtake_ratio']:.1f}% Offtake Ratio</font>", ParagraphStyle('C2', leading=13))
-            ],
-            [
-                Paragraph(f"<font size=7 color='#71717A'>ACTIVE COLLIERIES</font><br/><b><font size=12>{metrics['count']} Centers</font></b><br/><font size=7 color='#71717A'>100% Monitored Units</font>", ParagraphStyle('C3', leading=13)),
-                Paragraph(f"<font size=7 color='#71717A'>MATHEMATICAL ACCURACY</font><br/><b><font size=12>0.00 MT Delta</font></b><br/><font size=7 color='#166534'>100% Deterministic AST</font>", ParagraphStyle('C4', leading=13))
-            ]
-        ]
-        grid_tbl = Table(grid_data, colWidths=[270, 270])
-        grid_tbl.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, -1), light_bg),
-            ('BOX', (0, 0), (-1, -1), 0.5, border_color),
-            ('INNERGRID', (0, 0), (-1, -1), 0.5, border_color),
-            ('TOPPADDING', (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-            ('LEFTPADDING', (0, 0), (-1, -1), 8),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 8),
-        ]))
-        elements.append(grid_tbl)
-        elements.append(Spacer(1, 8))
-
-        # Minimalist Data Table (No heavy header colors, elegant thin lines)
-        elements.append(Paragraph("Colliery Asset Performance Leaderboard", ParagraphStyle('CM_H', fontName='Helvetica-Bold', fontSize=9, textColor=primary, spaceAfter=4)))
-        rows = [["#", "Mine Name", "State", "Output (MT)", "Dispatch (MT)", "Share (%)"]]
-        for c in metrics["collieries"][:8]:
-            rows.append([
-                str(c.get("rank", "-")),
-                str(c.get("name", "-"))[:26],
-                str(c.get("state", "-")),
-                f"{c.get('production', 0):,.1f}",
-                f"{c.get('dispatch', 0):,.1f}",
-                str(c.get("share", "-"))
-            ])
-        tbl = Table(rows, colWidths=[25, 195, 100, 80, 80, 60])
-        tbl.setStyle(TableStyle([
-            ('LINEBELOW', (0, 0), (-1, 0), 1, primary),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 7.5),
-            ('LINEBELOW', (0, 1), (-1, -1), 0.25, border_color),
-            ('ALIGN', (3, 0), (-1, -1), 'RIGHT'),
-            ('TOPPADDING', (0, 0), (-1, -1), 3),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
-        ]))
-        elements.append(tbl)
-        elements.append(Spacer(1, 8))
-
-        # Concise Strategic Takeaways
-        elements.append(Paragraph("Commercial & Evacuation Priorities", ParagraphStyle('CM_P_H', fontName='Helvetica-Bold', fontSize=9, textColor=primary, spaceAfter=3)))
-        cm_text = summary_text or (
-            f"• Output velocity sustained at {metrics['total_production']:,.2f} MT.\n"
-            f"• Offtake ratio maintained at {metrics['offtake_ratio']:.2f}% across power delivery lines.\n"
-            "• Capex prioritized for high-volume opencast surface miners to minimize operating costs."
-        )
-        elements.append(Paragraph(cm_text.replace("\n", "<br/>"), ParagraphStyle('CM_B', fontSize=7.5, leading=11, textColor=colors.HexColor("#27272A"))))
-
-    # -------------------------------------------------------------------------
-    # LAYOUT 6: VISUAL INFOGRAPHIC (Vibrant Indigo & Rose, Radar & Milestone Flags)
-    # -------------------------------------------------------------------------
-    def _build_visual_infographic_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
-        primary = colors.HexColor(tpl["primary_hex"])
-        accent = colors.HexColor(tpl["accent_hex"])
-        light_bg = colors.HexColor(tpl["light_bg_hex"])
-
-        # Headline Banner
-        banner_data = [
-            [
-                Paragraph(
-                    f"<b>★ NATIONAL COAL PULSE • EXECUTIVE INFOGRAPHIC SCORECARD ★</b><br/>"
-                    f"<font size=14 color='#FFFFFF'><b>NATIONAL OUTPUT SURGES TO {metrics['total_production']:,.1f} MT</b></font><br/>"
-                    f"<font size=8 color='#C7D2FE'>Fulfillment: {metrics['achievement_pct']:.1f}% | Offtake: {metrics['offtake_ratio']:.1f}% | Monitored Units: {metrics['count']}</font>",
-                    ParagraphStyle('Inf_Banner', fontName='Helvetica-Bold', alignment=1, textColor=colors.white, leading=14)
-                )
-            ]
-        ]
-        banner_tbl = Table(banner_data, colWidths=[540])
-        banner_tbl.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, -1), primary),
-            ('BOX', (0, 0), (-1, -1), 1.5, accent),
-            ('TOPPADDING', (0, 0), (-1, -1), 6),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-        ]))
-        elements.append(banner_tbl)
-        elements.append(Spacer(1, 8))
-
-        # 4 High-Contrast Callout Cards
-        kpi_data = [
-            [
-                Paragraph("<b>TOP PRODUCER</b>", ParagraphStyle('IK1', fontName='Helvetica-Bold', fontSize=7.5, textColor=primary, alignment=1)),
-                Paragraph("<b>OFFTAKE QUOTIENT</b>", ParagraphStyle('IK2', fontName='Helvetica-Bold', fontSize=7.5, textColor=primary, alignment=1)),
-                Paragraph("<b>REGIONAL LEADER</b>", ParagraphStyle('IK3', fontName='Helvetica-Bold', fontSize=7.5, textColor=primary, alignment=1)),
-                Paragraph("<b>ACCURACY SCORE</b>", ParagraphStyle('IK4', fontName='Helvetica-Bold', fontSize=7.5, textColor=primary, alignment=1))
-            ],
-            [
-                Paragraph(f"<b>{metrics['collieries'][0]['name'][:14]}</b><br/><font size=7 color='#E11D48'>{metrics['collieries'][0]['production']:,.1f} MT</font>", ParagraphStyle('IV1', fontName='Helvetica-Bold', fontSize=8.5, alignment=1, leading=10)),
-                Paragraph(f"<b>{metrics['offtake_ratio']:.1f}%</b><br/><font size=7 color='#166534'>High Fluidity</font>", ParagraphStyle('IV2', fontName='Helvetica-Bold', fontSize=9, alignment=1, leading=10)),
-                Paragraph(f"<b>{list(metrics['state_aggregates'].keys())[0]}</b><br/><font size=7 color='#4338CA'>{list(metrics['state_aggregates'].values())[0]['production']:,.1f} MT</font>", ParagraphStyle('IV3', fontName='Helvetica-Bold', fontSize=8.5, alignment=1, leading=10)),
-                Paragraph("<b>100%</b><br/><font size=7 color='#166534'>AST Verified</font>", ParagraphStyle('IV4', fontName='Helvetica-Bold', fontSize=9, alignment=1, leading=10))
-            ]
-        ]
-        kpi_tbl = Table(kpi_data, colWidths=[135, 135, 135, 135])
-        kpi_tbl.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, -1), light_bg),
-            ('BOX', (0, 0), (-1, -1), 1, colors.HexColor(tpl["border_hex"])),
-            ('INNERGRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#C7D2FE")),
-            ('TOPPADDING', (0, 0), (-1, -1), 4),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
-        ]))
-        elements.append(kpi_tbl)
-        elements.append(Spacer(1, 8))
-
-        # Regional Sprint Table
-        elements.append(Paragraph("Regional Basin Acceleration & Extraction Shares", ParagraphStyle('Inf_H1', fontName='Helvetica-Bold', fontSize=9.5, textColor=primary, spaceAfter=4)))
-        reg_rows = [["Basin / State", "Extraction (MT)", "Dispatch (MT)", "Share of Total", "Velocity Status"]]
-        for st_name, st_vals in metrics["state_aggregates"].items():
-            sh = (st_vals["production"] / metrics["total_production"] * 100) if metrics["total_production"] > 0 else 0.0
-            status_badge = "🚀 SURGING" if sh > 25 else ("⚡ ACCELERATING" if sh > 15 else "📈 NOMINAL")
-            reg_rows.append([
-                st_name,
-                f"{st_vals['production']:,.1f}",
-                f"{st_vals['dispatch']:,.1f}",
-                f"{sh:.1f}%",
-                status_badge
-            ])
-        reg_tbl = Table(reg_rows, colWidths=[130, 100, 100, 90, 120])
-        reg_tbl.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), primary),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, -1), 7),
-            ('GRID', (0, 0), (-1, -1), 0.3, colors.HexColor("#C7D2FE")),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, light_bg]),
-            ('TOPPADDING', (0, 0), (-1, -1), 3),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
-        ]))
-        elements.append(reg_tbl)
-        elements.append(Spacer(1, 8))
-
-        # Strategic Trajectory Radar
-        elements.append(Paragraph("Strategic Trajectory & 60-Day Forward Milestones", ParagraphStyle('Inf_H2', fontName='Helvetica-Bold', fontSize=9.5, textColor=primary, spaceAfter=4)))
-        inf_body = summary_text or (
-            f"National extraction remains on track to surpass planned production benchmarks with {metrics['total_production']:,.2f} MT recorded. "
-            "Continuous computerized train dispatch systems have eliminated pithead logistics bottlenecks."
-        )
-        elements.append(Paragraph(inf_body, ParagraphStyle('Inf_B', fontSize=7.5, leading=10.5, textColor=colors.HexColor("#1E1B4B"))))
 
     # -------------------------------------------------------------------------
     # WORD DOCX GENERATION (Also supports dynamic user data)

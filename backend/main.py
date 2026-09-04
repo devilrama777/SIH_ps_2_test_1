@@ -430,53 +430,25 @@ def fill_template_content(template_id: str, req: Optional[TemplateFillRequest] =
         if curr_content:
             sections.append({"title": curr_title, "content": "\n\n".join(curr_content)})
 
-    # If sections are empty, synthesize deterministic template-specific sections with active dataset numbers
+    # Unconditionally enforce identical, deterministic dataset synthesis across all graphic templates
     if not sections:
         top_name = metrics["collieries"][0]["name"] if metrics["collieries"] else "Primary Colliery"
         top_prod = metrics["collieries"][0]["production"] if metrics["collieries"] else 0.0
 
-        if tpl_key == "executive_brief":
-            sections = [
-                {"title": "1. Sovereign Directive & Macro Overview", "content": f"National extraction recorded {metrics['total_production']:,.2f} MT across {metrics['count']} monitored production assets. Target benchmark fulfillment reached {metrics['achievement_pct']:.2f}%, sustaining critical utility stock buffers above mandated norms."},
-                {"title": "2. Strategic KPI Benchmark", "content": f"Total pithead dispatch realized {metrics['total_dispatch']:,.2f} MT, reflecting a robust {metrics['offtake_ratio']:.2f}% offtake efficiency. Coastal import reliance decreased substantially through disciplined domestic expansion."},
-                {"title": "3. Coalfield Performance Highlights", "content": f"{top_name} delivered the single largest operational yield with {top_prod:,.2f} MT. Surface miner mechanization and automated rake loading ensured unbroken continuity."},
-                {"title": "4. Ministerial Action Directives", "content": "1. Accelerate FMC rail siding commissioning across high-volume extraction corridors.\n2. Expand continuous miner deployments across monitored underground units.\n3. Enforce real-time telemetry stock audits across pithead dumps."}
-            ]
-        elif tpl_key == "technical_deepdive":
-            sections = [
-                {"title": "1. Statistical Distribution & Dispersion", "content": f"Parametric distribution across {metrics['count']} monitored installations: Mean μ = {metrics['mean']:,.2f} MT | Std Dev σ = {metrics['std_dev']:,.2f} MT | Median Q2 = {metrics['median']:,.2f} MT | IQR = {metrics['iqr']:,.2f} MT."},
-                {"title": "2. IQR Anomaly & Outlier Identification", "content": f"Q1 boundary benchmarked at {metrics['q1']:,.2f} MT; Q3 boundary at {metrics['q3']:,.2f} MT. Upper IQR fence established at {metrics['upper_fence']:,.2f} MT. Units exceeding this boundary are designated as SURGE OUTLIERS with priority rail wagon placement."},
-                {"title": "3. Extraction Methodology Comparison", "content": f"Opencast operations account for the primary share of {metrics['total_production']:,.1f} MT output. Stripping ratios and bench stability parameters remain within engineered tolerances."},
-                {"title": "4. Engineering & Recovery Recommendations", "content": "Implement advanced dewatering conduit overhauls and expand 40-tonne articulated dump truck fleets to eliminate wet-weather pit-bottom haulage bottlenecks."}
-            ]
-        elif tpl_key == "parliamentary_scorecard":
-            sections = [
-                {"title": "1. Statutory Compliance Statement", "content": f"All production records totaling {metrics['total_production']:,.2f} MT and dispatch figures of {metrics['total_dispatch']:,.2f} MT have been audited under Section 18 of the MMDR Act 1957 and parliamentary disclosures."},
-                {"title": "2. State-Wise Fulfillment Matrix", "content": "State allocation and royalty tallies calculated across active mining basins with exact mathematical parity against pithead ledgers."},
-                {"title": "3. Dispatch Assurance to Power Utilities", "content": f"Aggregate dispatch to power sector exceeded {metrics['total_dispatch']:,.1f} MT, assuring continuous baseload thermal power generation without critical fuel supply disruptions."},
-                {"title": "4. Audit Findings & Parliamentary Assurances", "content": "Deterministic AST verification confirms 100% calculation integrity (0.00 MT variance). All state mineral royalty disbursements processed in accordance with statutory guidelines."}
-            ]
-        elif tpl_key == "esg_sustainable":
-            sections = [
-                {"title": "1. Green Transition & First-Mile Connectivity", "content": f"{metrics['esg_rail_share_pct']}% of total production evacuated via covered conveyor belts and First-Mile Connectivity rail sidings, significantly curtailing diesel particulate emissions."},
-                {"title": "2. Ecological Restoration & Land Reclamation", "content": f"Over {metrics['esg_reclaimed_ha']} hectares of mined-out voids successfully bio-reclaimed with native afforestation canopy and eco-parks."},
-                {"title": "3. Zero-Harm Occupational Safety Audit", "content": f"Occupational Safety Audit Status: {metrics['esg_safety_rating']}. Continuous digital methane monitoring and real-time slope telemetry active across all units."},
-                {"title": "4. Sustainable Mining Roadmap", "content": "150 MW rooftop and overburden dump solar installations energized, providing clean captive power for ancillary coal handling plants."}
-            ]
-        elif tpl_key == "corporate_minimalist":
-            sections = [
-                {"title": "1. Executive Dashboard & Core Metrics", "content": f"• Volume Extracted: {metrics['total_production']:,.2f} MT\n• Net Dispatches: {metrics['total_dispatch']:,.2f} MT ({metrics['offtake_ratio']:.2f}% Offtake)\n• Target Realization: {metrics['achievement_pct']:.2f}%\n• Monitored Asset Base: {metrics['count']} Collieries"},
-                {"title": "2. Asset Performance Matrix", "content": f"Tier-1 colliery {top_name} logged {top_prod:,.2f} MT output. Capital expenditure prioritizes automated continuous haulage."},
-                {"title": "3. Supply Chain & Dispatch Bottlenecks", "content": "Average rake turnaround compressed to 3.8 hours across primary siding loops. Stockyard buffer balanced at safe operating thresholds."},
-                {"title": "4. Commercial Strategy & Priorities", "content": "• Optimize pithead blending to maximize grade quality.\n• Expand commercial e-auction tranches.\n• Target sustained quarterly production acceleration."}
-            ]
-        else: # visual_infographic
-            sections = [
-                {"title": "1. Macro Headline & National Record Milestones", "content": f"NATIONAL EXTRACTION LOGS {metrics['total_production']:,.1f} MT — SECTOR ACHIEVES {metrics['achievement_pct']:.1f}% TARGET FULFILLMENT\nRecord {metrics['total_dispatch']:,.1f} MT dispatched to power utilities with zero critical disruptions."},
-                {"title": "2. High-Impact Metric Radar", "content": f"★ {top_prod:,.0f} MT: Highest Single-Unit Extraction ({top_name})\n★ {metrics['offtake_ratio']:.1f}%: Evacuation & Offtake Fluidity\n★ {metrics['count']} Centers: Total Monitored Operational Footprint\n★ 100%: Deterministic Mathematical AST Verification Score"},
-                {"title": "3. Basin Sprint & Regional Surge", "content": f"Regional mining basins generated {metrics['total_production']:,.1f} MT cumulative volume with synchronized train dispatch."},
-                {"title": "4. Strategic Radar & Future Trajectory", "content": "Forward projections forecast sustained production momentum powered by digitized rail dispatch scheduling and continuous mechanized extraction."}
-            ]
+        sections = [
+            {
+                "title": "1. Macro Operational Baseline & Synthesis",
+                "content": f"National coal extraction recorded {metrics['total_production']:,.2f} MT across {metrics['count']} monitored production assets. Target benchmark fulfillment reached {metrics['achievement_pct']:.2f}%, sustaining critical utility stock buffers above mandated norms. Total pithead dispatch reached {metrics['total_dispatch']:,.2f} MT with a robust {metrics['offtake_ratio']:.2f}% offtake efficiency."
+            },
+            {
+                "title": "2. Key Performance Indicators & Benchmark Analytics",
+                "content": f"Top producing installations sustained strong operational capacity, led by {top_name} with {top_prod:,.2f} MT. Parametric distribution across {metrics['count']} units reveals a sample mean of {metrics['mean']:,.2f} MT, median of {metrics['median']:,.2f} MT, and upper IQR fence at {metrics['upper_fence']:,.2f} MT. Units operating at or above this threshold have been prioritized with automated rake evacuation."
+            },
+            {
+                "title": "3. Supply Chain, Logistics & Dispatch Priorities",
+                "content": "• PRIORITY 1: Accelerate First-Mile Connectivity (FMC) rail sidings to enhance pithead evacuation and eliminate accumulation.\n• PRIORITY 2: Standardize continuous surface miner telemetry and digital monitoring across active open-cast extraction benches.\n• PRIORITY 3: Maintain mandatory 24-day normative fuel buffer stocks across all critical thermal power utilities."
+            }
+        ]
 
     # Re-compile the template-specific documents immediately with active dataset metrics
     combined_summary = "\n\n".join(f"## {s['title']}\n{s['content']}" for s in sections)
