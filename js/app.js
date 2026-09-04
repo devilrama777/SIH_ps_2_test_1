@@ -80,6 +80,9 @@ const App = {
     if (this.activeTab === "dashboard") {
       setTimeout(() => this.renderDashboardCharts(), 50);
     }
+
+    // Update sidebar navigation buttons to match current theme
+    this.switchTab(this.activeTab || "dashboard");
   },
 
   startHeaderClock: function() {
@@ -87,8 +90,16 @@ const App = {
       const el = document.getElementById("header-clock");
       if (!el) return;
       const now = new Date();
-      const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-      el.innerText = `📅 ${now.toLocaleDateString('en-IN', options)}`;
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = now.toLocaleString('en-US', { month: 'short' });
+      const year = now.getFullYear();
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const h12 = hours % 12 || 12;
+      const hh = String(h12).padStart(2, '0');
+      el.innerText = `📅 ${day} ${month} ${year}, ${hh}:${minutes}:${seconds} ${ampm}`;
     };
     updateClock();
     setInterval(updateClock, 1000);
@@ -381,9 +392,9 @@ const App = {
         type: "navigation",
         category: "Navigation & Actions",
         icon: "⚡",
-        title: "New Report / Ingest Dataset",
+        title: "Report Generator / Ingest Dataset",
         subtitle: "Upload raw colliery CSV, TSV, or PDF and trigger AI analysis",
-        keywords: "new report upload dataset csv pdf ingest analyze",
+        keywords: "report generator new report upload dataset csv pdf ingest analyze",
         action: () => {
           App.switchTab('datasets');
         }
@@ -392,7 +403,7 @@ const App = {
         type: "navigation",
         category: "Navigation & Actions",
         icon: "📊",
-        title: "Executive Overview Dashboard",
+        title: "Dashboard",
         subtitle: "National summary, production charts, and strategic radar",
         keywords: "dashboard executive overview charts graphs statistics",
         action: () => {
@@ -621,12 +632,12 @@ const App = {
       if (tabBtn) {
         if (t === tabId) {
           tabBtn.className = isDark
-            ? "py-3.5 text-sm font-semibold border-b-2 border-cyan-400 text-cyan-300 transition flex items-center space-x-2 shrink-0"
-            : "py-3.5 text-sm font-semibold border-b-2 border-blue-700 text-blue-800 transition flex items-center space-x-2 shrink-0";
+            ? "w-full py-3 px-3.5 text-sm font-semibold rounded-xl bg-cyan-500/15 text-cyan-300 border-l-4 border-cyan-400 shadow-xs transition flex items-center space-x-3 text-left"
+            : "w-full py-3 px-3.5 text-sm font-semibold rounded-xl bg-blue-50 text-blue-800 border-l-4 border-blue-700 shadow-xs transition flex items-center space-x-3 text-left";
         } else {
           tabBtn.className = isDark
-            ? "py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2 shrink-0"
-            : "py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition flex items-center space-x-2 shrink-0";
+            ? "w-full py-3 px-3.5 text-sm font-medium rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border-l-4 border-transparent transition flex items-center space-x-3 text-left"
+            : "w-full py-3 px-3.5 text-sm font-medium rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border-l-4 border-transparent transition flex items-center space-x-3 text-left";
         }
       }
       if (tabView) {
