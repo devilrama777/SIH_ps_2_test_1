@@ -54,11 +54,21 @@ class LlamaClient:
         markdown_content: str,
         file_type: str,
         custom_command: Optional[str] = None,
-        model: Optional[str] = None
+        model: Optional[str] = None,
+        bypass_media: bool = False
     ) -> Dict[str, Any]:
-        """Runs LLaMA 3.1 inference on the converted Markdown content."""
+        """Runs LLaMA 3.1 inference on the converted Markdown content (bypassing visual/audio media to Gemma 4)."""
         target_model = model or self.default_model
         system_prompt = self.load_system_prompt(file_type, custom_command)
+
+        if bypass_media:
+            system_prompt += (
+                "\n\n### MULTIMODAL DIRECTIVE (STRICT BYPASS TO GEMMA 4):\n"
+                "This document contains embedded images, diagrams, video, or audio files. "
+                "Do NOT attempt to summarize, hallucinate, describe, or fabricate any visual or audio assets. "
+                "All image and audio files are directly isolated and passed to Gemma 4 to add into our publication templates. "
+                "Analyze ONLY authentic textual tables, extraction metrics, and arithmetic relationships.\n"
+            )
 
         payload = {
             "model": target_model,

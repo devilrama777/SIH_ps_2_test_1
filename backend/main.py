@@ -158,7 +158,8 @@ async def run_full_pipeline(
     custom_calculations_json: Optional[str] = Form(None),
     custom_report_command: Optional[str] = Form(None),
     llama_model: Optional[str] = Form(None),
-    gemma_model: Optional[str] = Form(None)
+    gemma_model: Optional[str] = Form(None),
+    route_media_to_gemma: bool = Form(True)
 ):
     """Executes the full end-to-end multi-stage pipeline on an uploaded file."""
     # 1. Save uploaded file
@@ -183,7 +184,8 @@ async def run_full_pipeline(
             custom_calculations=custom_calcs,
             custom_report_cmd=custom_report_command,
             llama_model_override=llama_model,
-            gemma_model_override=gemma_model
+            gemma_model_override=gemma_model,
+            route_multimedia_to_gemma=route_media_to_gemma
         )
         return pipeline_output
     except Exception as e:
@@ -198,7 +200,8 @@ async def run_pipeline_stream(
     custom_calculations_json: Optional[str] = Form(None),
     custom_report_command: Optional[str] = Form(None),
     llama_model: Optional[str] = Form(None),
-    gemma_model: Optional[str] = Form(None)
+    gemma_model: Optional[str] = Form(None),
+    route_media_to_gemma: bool = Form(True)
 ):
     """Executes the pipeline yielding live Server-Sent Events (SSE) progress milestones."""
     if not file and not raw_csv_text:
@@ -229,7 +232,8 @@ async def run_pipeline_stream(
                 custom_calculations=custom_calcs,
                 custom_report_cmd=custom_report_command,
                 llama_model_override=llama_model,
-                gemma_model_override=gemma_model
+                gemma_model_override=gemma_model,
+                route_multimedia_to_gemma=route_media_to_gemma
             ):
                 yield f"data: {json.dumps(event)}\n\n"
         except Exception as err:
@@ -535,6 +539,16 @@ def fill_template_content(template_id: str, req: Optional[TemplateFillRequest] =
             }
         ]
 
+    # Check if active media assets exist from PDF extraction
+    active_images = []
+    active_media_file = config.OUTPUTS_DIR / "active_media_assets.json"
+    if active_media_file.exists():
+        try:
+            m_data = json.loads(active_media_file.read_text(encoding="utf-8"))
+            active_images = m_data.get("images", [])
+        except Exception:
+            active_images = []
+
     # Re-compile the template-specific documents immediately with active dataset metrics
     combined_summary = "\n\n".join(f"## {s['title']}\n{s['content']}" for s in sections)
     report_id = f"REP-2026-{uuid.uuid4().hex[:4].upper()}"
@@ -542,7 +556,8 @@ def fill_template_content(template_id: str, req: Optional[TemplateFillRequest] =
         template_name=tpl_key,
         report_id=report_id,
         summary_text=combined_summary,
-        user_records=metrics["collieries"]
+        user_records=metrics["collieries"],
+        images=active_images
     )
 
     # Persist report to Generated Report History Hub
@@ -570,6 +585,7 @@ def fill_template_content(template_id: str, req: Optional[TemplateFillRequest] =
         "icon": tpl["icon"],
         "badge": tpl["badge"],
         "sections": sections,
+        "images": active_images,
         "kpis": [
             {"label": "National Extraction", "value": f"{metrics['total_production']:,.2f} MT", "badge": f"{metrics['achievement_pct']:.2f}% Target"},
             {"label": "Thermal Dispatch", "value": f"{metrics['total_dispatch']:,.2f} MT", "badge": f"{metrics['offtake_ratio']:.2f}% Offtake"},

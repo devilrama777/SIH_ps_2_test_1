@@ -255,6 +255,10 @@
           <span>📈</span>
           <span>Coalfield Analytics</span>
         </button>
+        <button onclick="App.switchTab('trend')" id="tab-trend" class="py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center space-x-2 shrink-0">
+          <span>📉</span>
+          <span>Trends & Rankings</span>
+        </button>
         <button onclick="App.switchTab('reports')" id="tab-reports" class="py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2 shrink-0">
           <span>📄</span>
           <span>Report Studio & Export</span>
@@ -384,39 +388,6 @@
               <span>⛏️ Jayant Colliery (NCL): 9,410 MT [Normal]</span>
               <span>⛏️ Rajmahal OCP (ECL): 7,120 MT [Target Met]</span>
             </div>
-          </div>
-        </div>
-
-        <!-- TOP COLLIERIES LEAGUE TABLE -->
-        <!-- TOP COLLIERIES LEAGUE TABLE (HIGH-CONTRAST DARK THEME) -->
-        <div class="bg-slate-900 rounded-2xl border border-slate-700/80 p-6 shadow-md">
-          <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
-            <div>
-              <h3 class="text-base font-bold text-white font-heading">Top Colliery Production Rankings</h3>
-              <p class="text-xs text-slate-400">Highest yielding operational units ranked by month-to-date extraction</p>
-            </div>
-            <span class="inline-flex items-center space-x-1.5 text-xs font-mono font-bold text-emerald-400 bg-emerald-500/15 px-3.5 py-1 rounded-full border border-emerald-500/30 shadow-xs">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Verified Production Records</span>
-            </span>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-              <thead class="text-xs uppercase text-slate-300 font-bold border-b border-slate-700/80 bg-slate-950/70 tracking-wider">
-                <tr>
-                  <th class="py-3 px-3.5 text-slate-300">Rank</th>
-                  <th class="py-3 px-3.5 text-slate-200">Colliery Name</th>
-                  <th class="py-3 px-3.5 text-slate-300">State Basin</th>
-                  <th class="py-3 px-3.5 text-slate-300">Subsidiary</th>
-                  <th class="py-3 px-3.5 text-right text-slate-200">Production (MT)</th>
-                  <th class="py-3 px-3.5 text-right text-slate-200">Target Fulfillment</th>
-                  <th class="py-3 px-3.5 text-right text-cyan-300">National Share</th>
-                </tr>
-              </thead>
-              <tbody id="rankings-tbody" class="divide-y divide-slate-800 text-slate-200 text-xs">
-                <!-- Dynamically populated from js/app.js -->
-              </tbody>
-            </table>
           </div>
         </div>
 
@@ -1188,8 +1159,128 @@
       </div>
 
 
+      <!-- ======================================================== -->
+      <!-- TAB 4: COLLIERY PRODUCTION & DISPATCH TRENDS             -->
+      <!-- ======================================================== -->
+      <div id="view-trend" class="space-y-6 hidden">
+        <!-- Banner Title -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-extrabold text-slate-900 font-heading">Colliery Production & Dispatch Trends</h2>
+            <p class="text-sm text-slate-500 mt-0.5">Historical extraction trajectories, monthly off-take fulfillment curves, and verified colliery rankings</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <span class="inline-flex items-center space-x-1.5 text-xs font-mono font-bold text-emerald-400 bg-emerald-500/15 px-3.5 py-1.5 rounded-full border border-emerald-500/30 shadow-xs">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Live Colliery Analytics Feed</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 3 TREND SUMMARY KPI METRICS -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <!-- Trend KPI 1 -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover-card border-t-4 border-t-cyan-500">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase tracking-wider">
+              <span>Top Yielding Mine</span>
+              <span class="p-1.5 bg-cyan-50 text-cyan-700 rounded-lg text-sm">🥇</span>
+            </div>
+            <div class="text-xl font-black text-slate-900 mt-2 font-heading">Gevra Expansion Mine</div>
+            <div class="flex items-center space-x-2 text-xs font-bold mt-2">
+              <span class="text-cyan-600 font-mono">15,265.48 MT</span>
+              <span class="text-slate-400 font-normal">• 11.41% National Share</span>
+            </div>
+          </div>
+
+          <!-- Trend KPI 2 -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover-card border-t-4 border-t-emerald-500">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase tracking-wider">
+              <span>Peak Target Realization</span>
+              <span class="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-sm">🎯</span>
+            </div>
+            <div class="text-xl font-black text-slate-900 mt-2 font-heading">Kusmunda Colliery</div>
+            <div class="flex items-center space-x-2 text-xs font-bold mt-2">
+              <span class="text-emerald-600 font-mono">98.87% Fulfilled</span>
+              <span class="text-slate-400 font-normal">• 13,842 / 14,000 MT</span>
+            </div>
+          </div>
+
+          <!-- Trend KPI 3 -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover-card border-t-4 border-t-indigo-500">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase tracking-wider">
+              <span>MoM Dispatch Velocity</span>
+              <span class="p-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-sm">⚡</span>
+            </div>
+            <div class="text-xl font-black text-slate-900 mt-2 font-heading">+6.8% Trajectory</div>
+            <div class="flex items-center space-x-2 text-xs font-bold mt-2">
+              <span class="text-indigo-600 font-mono">127,814.01 MT Offtake</span>
+              <span class="text-slate-400 font-normal">• High Reliability</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 TREND CHARTS -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Chart 1: 6-Month Top 5 Mines Extraction Trajectory -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
+            <div class="pb-4 border-b border-slate-100 mb-4">
+              <h3 class="text-base font-bold text-slate-900 font-heading">Top Collieries Extraction Trajectory</h3>
+              <p class="text-xs text-slate-500">6-Month monthly extraction trends across top 5 high-output collieries (in '000 MT)</p>
+            </div>
+            <div class="h-64 w-full relative">
+              <canvas id="chart-top-collieries-trend"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Production vs Power Dispatch Offtake Trajectory -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
+            <div class="pb-4 border-b border-slate-100 mb-4">
+              <h3 class="text-base font-bold text-slate-900 font-heading">Extraction vs Power Dispatch Trajectory</h3>
+              <p class="text-xs text-slate-500">Comparison of actual extraction against thermal power plant dispatch quota</p>
+            </div>
+            <div class="h-64 w-full relative">
+              <canvas id="chart-dispatch-gap-trend"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOP COLLIERIES LEAGUE TABLE (MOVED HERE) -->
+        <div class="bg-slate-900 rounded-2xl border border-slate-700/80 p-6 shadow-md">
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+            <div>
+              <h3 class="text-base font-bold text-white font-heading">Top Colliery Production Rankings</h3>
+              <p class="text-xs text-slate-400">Highest yielding operational units ranked by month-to-date extraction</p>
+            </div>
+            <span class="inline-flex items-center space-x-1.5 text-xs font-mono font-bold text-emerald-400 bg-emerald-500/15 px-3.5 py-1 rounded-full border border-emerald-500/30 shadow-xs">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Verified Production Records</span>
+            </span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="text-xs uppercase text-slate-300 font-bold border-b border-slate-700/80 bg-slate-950/70 tracking-wider">
+                <tr>
+                  <th class="py-3 px-3.5 text-slate-300">Rank</th>
+                  <th class="py-3 px-3.5 text-slate-200">Colliery Name</th>
+                  <th class="py-3 px-3.5 text-slate-300">State Basin</th>
+                  <th class="py-3 px-3.5 text-slate-300">Subsidiary</th>
+                  <th class="py-3 px-3.5 text-right text-slate-200">Production (MT)</th>
+                  <th class="py-3 px-3.5 text-right text-slate-200">Target Fulfillment</th>
+                  <th class="py-3 px-3.5 text-right text-cyan-300">National Share</th>
+                </tr>
+              </thead>
+              <tbody id="rankings-tbody" class="divide-y divide-slate-800 text-slate-200 text-xs">
+                <!-- Dynamically populated from js/app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+
       <!-- ========================================== -->
-      <!-- TAB 4: EXECUTIVE REPORT STUDIO & HISTORY   -->
+      <!-- TAB 5: EXECUTIVE REPORT STUDIO & HISTORY   -->
       <!-- ========================================== -->
       <div id="view-reports" class="space-y-6 hidden">
         <!-- Section Masthead -->

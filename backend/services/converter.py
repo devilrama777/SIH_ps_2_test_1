@@ -34,17 +34,61 @@ class MarkdownConverter:
         return "\n".join(md_lines) + "\n\n"
 
     @classmethod
-    def convert_pdf_to_markdown(cls, file_path: Path) -> Dict[str, Any]:
-        """Converts a PDF file into structured Markdown with extracted tables and text."""
+    def convert_pdf_to_markdown(cls, file_path: Path, output_media_dir: Optional[Path] = None) -> Dict[str, Any]:
+        """Converts a PDF file into structured Markdown with extracted tables, text, and isolated multimodal media."""
         markdown_sections: List[str] = []
         total_pages = 0
         total_tables = 0
+        extracted_images: List[Dict[str, Any]] = []
+        extracted_audio: List[Dict[str, Any]] = []
 
-        # Try extracting with pdfplumber for best layout & table fidelity
+        # 1. Extract embedded visual images and audio attachments
+        try:
+            reader = pypdf.PdfReader(str(file_path))
+            media_dir = output_media_dir or (file_path.parent / "extracted_media")
+            media_dir.mkdir(parents=True, exist_ok=True)
+
+            for page_idx, page in enumerate(reader.pages, start=1):
+                try:
+                    for img_idx, img_file in enumerate(page.images, start=1):
+                        img_filename = f"p{page_idx}_img{img_idx}_{img_file.name}"
+                        img_path = media_dir / img_filename
+                        with open(img_path, "wb") as f:
+                            f.write(img_file.data)
+                        extracted_images.append({
+                            "page": page_idx,
+                            "index": img_idx,
+                            "name": img_filename,
+                            "path": str(img_path),
+                            "size_bytes": len(img_file.data)
+                        })
+                except Exception:
+                    pass
+
+            # Extract any embedded audio attachments
+            if hasattr(reader, "attachments"):
+                for name, data in reader.attachments.items():
+                    if any(name.lower().endswith(ext) for ext in [".mp3", ".wav", ".aac", ".ogg", ".m4a", ".mp4", ".avi"]):
+                        media_path = media_dir / name
+                        media_path.write_bytes(data[0] if isinstance(data, list) else data)
+                        extracted_audio.append({
+                            "name": name,
+                            "path": str(media_path),
+                            "type": "audio" if not any(name.lower().endswith(ext) for ext in [".mp4", ".avi"]) else "video"
+                        })
+        except Exception:
+            pass
+
+        # 2. Extract layout, text, and tables with pdfplumber
         with pdfplumber.open(file_path) as pdf:
             total_pages = len(pdf.pages)
             markdown_sections.append(f"# PDF Document Content: {file_path.name}\n")
-            markdown_sections.append(f"**Total Pages:** {total_pages}\n\n---\n")
+            markdown_sections.append(f"**Total Pages:** {total_pages}\n")
+            if extracted_images:
+                markdown_sections.append(f"**Extracted Images / Figures:** {len(extracted_images)} images detected (isolated for Gemma 4 synthesis)\n")
+            if extracted_audio:
+                markdown_sections.append(f"**Extracted Media / Audio:** {len(extracted_audio)} media files detected (routed to Gemma 4)\n")
+            markdown_sections.append("\n---\n")
 
             for page_num, page in enumerate(pdf.pages, start=1):
                 markdown_sections.append(f"## Page {page_num}\n")
@@ -71,10 +115,15 @@ class MarkdownConverter:
         return {
             "markdown": full_md,
             "file_type": "pdf",
+            "extracted_images": extracted_images,
+            "extracted_audio": extracted_audio,
+            "has_multimedia": (len(extracted_images) > 0 or len(extracted_audio) > 0),
             "metadata": {
                 "filename": file_path.name,
                 "total_pages": total_pages,
                 "total_tables_extracted": total_tables,
+                "total_images_extracted": len(extracted_images),
+                "total_audio_extracted": len(extracted_audio),
                 "char_count": len(full_md)
             }
         }
@@ -144,12 +193,16 @@ class MarkdownConverter:
         }
 
     @classmethod
-    def convert(cls, file_path: Path) -> Dict[str, Any]:
+    def convert(cls, file_path: Path, output_media_dir: Optional[Path] = None) -> Dict[str, Any]:
         """Auto-detects file extension and converts to Markdown."""
         suffix = file_path.suffix.lower()
         if suffix == ".pdf":
-            return cls.convert_pdf_to_markdown(file_path)
+            return cls.convert_pdf_to_markdown(file_path, output_media_dir=output_media_dir)
         elif suffix in [".csv", ".tsv", ".txt"]:
-            return cls.convert_csv_to_markdown(file_path)
+            res = cls.convert_csv_to_markdown(file_path)
+            res["extracted_images"] = []
+            res["extracted_audio"] = []
+            res["has_multimedia"] = False
+            return res
         else:
             raise ValueError(f"Unsupported file format: '{suffix}'. Supported: .pdf, .csv")

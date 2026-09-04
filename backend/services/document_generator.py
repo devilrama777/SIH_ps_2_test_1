@@ -2,9 +2,11 @@ import datetime
 import json
 import math
 import os
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 import pandas as pd
+from PIL import Image as PILImage
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
@@ -14,10 +16,69 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, HRFlowable
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, HRFlowable, Image as RLImage
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 from backend import config
+
+
+def _sanitize_text_for_pdf(text: Optional[str]) -> str:
+    """
+    Cleans raw Markdown and keyboard typing artifacts for 100% clean ReportLab PDF rendering:
+    1. Replaces Indian Rupee symbol ('₹', '\\u20b9') with 'Rs. ' to eliminate Helvetica black spots / tofu boxes.
+    2. Preserves currency symbols like '$' without XML escaping collisions.
+    3. Converts Markdown headers ('#', '##', '###') into clean bold text without literal '#' marks.
+    4. Converts '**bold**' to '<b>bold</b>'.
+    5. Converts Markdown bullet points ('*', '-') into clean '- ' items without raw asterisks.
+    6. Strips all stray typing keyboard noise (raw '#', '*', '**').
+    7. Formats newlines as '<br/>'.
+    """
+    if not text:
+        return ""
+
+    # Replace Indian Rupee symbol with 'Rs. ' to prevent Helvetica tofu / black box spots
+    s = text.replace("\u20b9", "Rs. ").replace("₹", "Rs. ")
+    
+    # Replace non-breaking or strange unicode bullet characters
+    s = s.replace("\u2022", "- ").replace("\u2013", "-").replace("\u2014", "-")
+    
+    # Safely escape ampersands not already part of an XML entity
+    s = re.sub(r'&(?!(amp|lt|gt|quot|apos);)', '&amp;', s)
+    
+    # Convert **bold** markdown to <b>bold</b> tags first
+    s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
+
+    lines = []
+    for raw_line in s.splitlines():
+        line = raw_line.strip()
+        if not line:
+            lines.append("")
+            continue
+
+        # Convert markdown headers: ### Title, ## Title, # Title
+        m_head = re.match(r"^#{1,6}\s*(.*)$", line)
+        if m_head:
+            clean_head = re.sub(r"\s*#+$", "", m_head.group(1).strip())
+            lines.append(f"<b>{clean_head}</b>")
+            continue
+
+        # Convert bullet lines: * item or - item
+        m_bullet = re.match(r"^[\*\-]\s+(.*)$", line)
+        if m_bullet:
+            lines.append(f"- {m_bullet.group(1).strip()}")
+            continue
+
+        lines.append(line)
+
+    s = "<br/>".join(lines)
+    
+    # Remove any remaining stray asterisks or hashes from keyboard typing noise
+    s = re.sub(r"#+", "", s)
+    s = s.replace("*", "")  # strip any remaining stray typing asterisks
+
+    # Clean multiple consecutive line breaks
+    s = re.sub(r"(<br/>\s*){3,}", "<br/><br/>", s)
+    return s.strip()
 
 
 # Canonical Baseline Colliery Registry (Used strictly for initial dashboard telemetry before user uploads data)
@@ -337,12 +398,46 @@ class DocumentGenerator:
         self.output_dir = output_dir or config.REPORTS_DIR
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
+    @staticmethod
+    def _create_scaled_image(img_path: str, max_width: float = 480, max_height: float = 120) -> Optional[RLImage]:
+        """Loads an image and scales it preserving aspect ratio for ReportLab PDF."""
+        try:
+            p = Path(img_path)
+            if not p.exists():
+                return None
+            with PILImage.open(p) as im:
+                orig_w, orig_h = im.size
+                if orig_w == 0 or orig_h == 0:
+                    return None
+                ratio = min(max_width / orig_w, max_height / orig_h)
+                target_w = orig_w * ratio
+                target_h = orig_h * ratio
+                return RLImage(str(p), width=target_w, height=target_h)
+        except Exception:
+            return None
+
+    def _append_media_section_pdf(self, elements, images: Optional[List[str]], primary_color, border_hex: str = "#E2E8F0"):
+        """Embeds authentic extracted visual assets from the user PDF directly into the template."""
+        if not images:
+            return
+        valid_imgs = [p for p in images if Path(p).exists()]
+        if not valid_imgs:
+            return
+        elements.append(Paragraph("<b>Photographic & Geospatial Evidence (Gemma 4 Multimodal Synthesis)</b>", ParagraphStyle('MediaSec', fontName='Helvetica-Bold', fontSize=8.5, textColor=primary_color, spaceAfter=3)))
+        for idx, img_p in enumerate(valid_imgs[:2], start=1):
+            rl_img = self._create_scaled_image(img_p, max_width=480, max_height=110)
+            if rl_img:
+                elements.append(rl_img)
+                elements.append(Paragraph(f"<i>Figure {idx}: Extracted from document • Geospatial & excavation telemetry asset</i>", ParagraphStyle('FigCap', fontName='Helvetica-Oblique', fontSize=6.5, textColor=colors.HexColor("#64748B"), spaceAfter=4)))
+        elements.append(Spacer(1, 4))
+
     def generate_pdf_report(
         self,
         template_name: str = "bento_grid",
         report_id: str = "REP-2026-B56D",
         summary_text: Optional[str] = None,
-        user_records: Optional[List[Dict[str, Any]]] = None
+        user_records: Optional[List[Dict[str, Any]]] = None,
+        images: Optional[List[str]] = None
     ) -> Path:
         """Generates a high-resolution 300 DPI PDF report with ReportLab using template-specific layouts."""
         tpl_key = template_name.lower().replace(" ", "_")
@@ -370,19 +465,19 @@ class DocumentGenerator:
 
         # Dispatch to distinct graphic layout builder for each Gamma template (with identical data)
         if tpl_key in ("bento_grid", "executive_brief"):
-            self._build_bento_grid_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+            self._build_bento_grid_pdf(elements, styles, tpl, metrics, summary_text, report_id, images=images)
         elif tpl_key in ("editorial_canvas", "corporate_minimalist"):
-            self._build_editorial_canvas_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+            self._build_editorial_canvas_pdf(elements, styles, tpl, metrics, summary_text, report_id, images=images)
         elif tpl_key in ("obsidian_deck", "technical_deepdive"):
-            self._build_obsidian_deck_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+            self._build_obsidian_deck_pdf(elements, styles, tpl, metrics, summary_text, report_id, images=images)
         elif tpl_key in ("aurora_gradient", "visual_infographic"):
-            self._build_aurora_gradient_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+            self._build_aurora_gradient_pdf(elements, styles, tpl, metrics, summary_text, report_id, images=images)
         elif tpl_key in ("nordic_ocean", "parliamentary_scorecard"):
-            self._build_nordic_ocean_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+            self._build_nordic_ocean_pdf(elements, styles, tpl, metrics, summary_text, report_id, images=images)
         elif tpl_key in ("warm_sandstone", "esg_sustainable"):
-            self._build_warm_sandstone_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+            self._build_warm_sandstone_pdf(elements, styles, tpl, metrics, summary_text, report_id, images=images)
         else:
-            self._build_bento_grid_pdf(elements, styles, tpl, metrics, summary_text, report_id)
+            self._build_bento_grid_pdf(elements, styles, tpl, metrics, summary_text, report_id, images=images)
 
         doc.build(elements)
 
@@ -416,7 +511,7 @@ class DocumentGenerator:
     # -------------------------------------------------------------------------
     # LAYOUT 1: BENTO MODULAR GRID (Gamma Bento Tech)
     # -------------------------------------------------------------------------
-    def _build_bento_grid_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+    def _build_bento_grid_pdf(self, elements, styles, tpl, metrics, summary_text, report_id, images=None):
         primary = colors.HexColor(tpl["primary_hex"])
         accent = colors.HexColor(tpl["accent_hex"])
         light_bg = colors.HexColor(tpl["light_bg_hex"])
@@ -459,15 +554,20 @@ class DocumentGenerator:
         elements.append(hero_table)
         elements.append(Spacer(1, 8))
 
-        # Section 1
+        # Section 1: Sanitized Macro Operational Synthesis
         elements.append(Paragraph("1. Macro Operational Baseline & Synthesis", ParagraphStyle('Bento_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
-        macro_text = summary_text or (
+        default_macro = (
             f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
             f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
             f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
         )
+        macro_text = _sanitize_text_for_pdf(summary_text) if (summary_text and summary_text.strip()) else default_macro
         elements.append(Paragraph(macro_text, ParagraphStyle('Bento_Body', fontSize=8, leading=11, textColor=colors.HexColor("#1E293B"))))
-        elements.append(Spacer(1, 8))
+        elements.append(Spacer(1, 6))
+
+        # Embedded Multimodal Assets (Gemma 4 Integrated)
+        if images:
+            self._append_media_section_pdf(elements, images, primary, tpl.get("border_hex", "#E2E8F0"))
 
         # Section 2: Colliery Table
         elements.append(Paragraph("2. Key Performance Indicators & Colliery Benchmark Leaderboard", ParagraphStyle('Bento_Sec2', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
@@ -514,7 +614,7 @@ class DocumentGenerator:
     # -------------------------------------------------------------------------
     # LAYOUT 2: CLEAN EDITORIAL CANVAS (Gamma Minimalist Paper)
     # -------------------------------------------------------------------------
-    def _build_editorial_canvas_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+    def _build_editorial_canvas_pdf(self, elements, styles, tpl, metrics, summary_text, report_id, images=None):
         primary = colors.HexColor(tpl["primary_hex"])
         accent = colors.HexColor(tpl["accent_hex"])
 
@@ -548,14 +648,20 @@ class DocumentGenerator:
         elements.append(stat_tbl)
         elements.append(Spacer(1, 8))
 
-        # Section 1
+        # Section 1: Sanitized Editorial Synthesis
         elements.append(Paragraph("§1. Macro Operational Baseline & Synthesis", ParagraphStyle('Ed_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
-        macro_text = summary_text or (
+        default_macro = (
             f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
             f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
             f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
         )
+        macro_text = _sanitize_text_for_pdf(summary_text) if (summary_text and summary_text.strip()) else default_macro
         elements.append(Paragraph(macro_text, ParagraphStyle('Ed_B', fontSize=8, leading=11.5, textColor=colors.HexColor("#1E293B"))))
+        elements.append(Spacer(1, 6))
+
+        # Embedded Multimodal Assets (Gemma 4 Integrated)
+        if images:
+            self._append_media_section_pdf(elements, images, primary, tpl.get("border_hex", "#0F172A"))
         elements.append(Spacer(1, 8))
 
         # Section 2: Minimalist Table
@@ -600,7 +706,7 @@ class DocumentGenerator:
     # -------------------------------------------------------------------------
     # LAYOUT 3: OBSIDIAN DARK DECK (Gamma Midnight Tech)
     # -------------------------------------------------------------------------
-    def _build_obsidian_deck_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+    def _build_obsidian_deck_pdf(self, elements, styles, tpl, metrics, summary_text, report_id, images=None):
         primary = colors.HexColor(tpl["primary_hex"])
         accent = colors.HexColor(tpl["accent_hex"])
         dark_bg = colors.HexColor("#0B0F19")
@@ -646,12 +752,18 @@ class DocumentGenerator:
 
         # Section 1
         elements.append(Paragraph("◈ 1. Macro Operational Baseline & Synthesis", ParagraphStyle('Obs_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=colors.HexColor("#0F172A"), spaceAfter=4)))
-        macro_text = summary_text or (
+        default_macro = (
             f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
             f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
             f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
         )
+        macro_text = _sanitize_text_for_pdf(summary_text) if (summary_text and summary_text.strip()) else default_macro
         elements.append(Paragraph(macro_text, ParagraphStyle('Obs_B', fontSize=8, leading=11, textColor=colors.HexColor("#1E293B"))))
+        elements.append(Spacer(1, 6))
+
+        # Multimodal Figures
+        if images:
+            self._append_media_section_pdf(elements, images, primary, tpl.get("border_hex", "#38BDF8"))
         elements.append(Spacer(1, 8))
 
         # Section 2: Table
@@ -699,7 +811,7 @@ class DocumentGenerator:
     # -------------------------------------------------------------------------
     # LAYOUT 4: AURORA VIBRANT GRADIENT (Gamma Aurora Modern)
     # -------------------------------------------------------------------------
-    def _build_aurora_gradient_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+    def _build_aurora_gradient_pdf(self, elements, styles, tpl, metrics, summary_text, report_id, images=None):
         primary = colors.HexColor(tpl["primary_hex"])
         accent = colors.HexColor(tpl["accent_hex"])
         light_bg = colors.HexColor(tpl["light_bg_hex"])
@@ -744,12 +856,18 @@ class DocumentGenerator:
 
         # Section 1
         elements.append(Paragraph("★ 1. Macro Operational Baseline & Synthesis", ParagraphStyle('Aur_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
-        macro_text = summary_text or (
+        default_macro = (
             f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
             f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
             f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
         )
+        macro_text = _sanitize_text_for_pdf(summary_text) if (summary_text and summary_text.strip()) else default_macro
         elements.append(Paragraph(macro_text, ParagraphStyle('Aur_B', fontSize=8, leading=11, textColor=colors.HexColor("#1E293B"))))
+        elements.append(Spacer(1, 6))
+
+        # Multimodal Figures
+        if images:
+            self._append_media_section_pdf(elements, images, primary, tpl.get("border_hex", "#A855F7"))
         elements.append(Spacer(1, 8))
 
         # Section 2: Table
@@ -797,7 +915,7 @@ class DocumentGenerator:
     # -------------------------------------------------------------------------
     # LAYOUT 5: NORDIC OCEAN SLATE (Gamma Deep Ocean)
     # -------------------------------------------------------------------------
-    def _build_nordic_ocean_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+    def _build_nordic_ocean_pdf(self, elements, styles, tpl, metrics, summary_text, report_id, images=None):
         primary = colors.HexColor(tpl["primary_hex"])
         accent = colors.HexColor(tpl["accent_hex"])
         light_bg = colors.HexColor(tpl["light_bg_hex"])
@@ -842,12 +960,18 @@ class DocumentGenerator:
 
         # Section 1
         elements.append(Paragraph("1. Macro Operational Baseline & Synthesis", ParagraphStyle('Nord_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
-        macro_text = summary_text or (
+        default_macro = (
             f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
             f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
             f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
         )
+        macro_text = _sanitize_text_for_pdf(summary_text) if (summary_text and summary_text.strip()) else default_macro
         elements.append(Paragraph(macro_text, ParagraphStyle('Nord_B', fontSize=8, leading=11, textColor=colors.HexColor("#1E293B"))))
+        elements.append(Spacer(1, 6))
+
+        # Multimodal Figures
+        if images:
+            self._append_media_section_pdf(elements, images, primary, tpl.get("border_hex", "#0284C7"))
         elements.append(Spacer(1, 8))
 
         # Section 2: Table
@@ -895,7 +1019,7 @@ class DocumentGenerator:
     # -------------------------------------------------------------------------
     # LAYOUT 6: WARM SANDSTONE EXECUTIVE (Gamma Warm Sand)
     # -------------------------------------------------------------------------
-    def _build_warm_sandstone_pdf(self, elements, styles, tpl, metrics, summary_text, report_id):
+    def _build_warm_sandstone_pdf(self, elements, styles, tpl, metrics, summary_text, report_id, images=None):
         primary = colors.HexColor(tpl["primary_hex"])
         accent = colors.HexColor(tpl["accent_hex"])
         light_bg = colors.HexColor(tpl["light_bg_hex"])
@@ -940,12 +1064,18 @@ class DocumentGenerator:
 
         # Section 1
         elements.append(Paragraph("1. Macro Operational Baseline & Synthesis", ParagraphStyle('Sand_Sec1', fontName='Helvetica-Bold', fontSize=10, textColor=primary, spaceAfter=4)))
-        macro_text = summary_text or (
+        default_macro = (
             f"National coal output sustained strong operational capacity with {metrics['total_production']:,.2f} MT extracted across {metrics['count']} primary mining installations. "
             f"Fulfillment against targeted benchmark achieved {metrics['achievement_pct']:.2f}%, sustaining power utility stockpiles at optimal levels. "
             f"Pithead dispatch efficiency remained robust at {metrics['offtake_ratio']:.2f}%, substantially mitigating coastal coal import requirements."
         )
+        macro_text = _sanitize_text_for_pdf(summary_text) if (summary_text and summary_text.strip()) else default_macro
         elements.append(Paragraph(macro_text, ParagraphStyle('Sand_B', fontSize=8, leading=11, textColor=colors.HexColor("#1C1917"))))
+        elements.append(Spacer(1, 6))
+
+        # Multimodal Figures
+        if images:
+            self._append_media_section_pdf(elements, images, primary, tpl.get("border_hex", "#D97706"))
         elements.append(Spacer(1, 8))
 
         # Section 2: Table
@@ -998,7 +1128,8 @@ class DocumentGenerator:
         template_name: str = "executive_brief",
         report_id: str = "REP-2026-B56D",
         summary_text: Optional[str] = None,
-        user_records: Optional[List[Dict[str, Any]]] = None
+        user_records: Optional[List[Dict[str, Any]]] = None,
+        images: Optional[List[str]] = None
     ) -> Path:
         """Generates an executive Word DOCX briefing document reflecting active dataset metrics."""
         tpl_key = template_name.lower().replace(" ", "_")
@@ -1053,13 +1184,25 @@ class DocumentGenerator:
                     row_cells[col_idx].paragraphs[0].runs[0].font.bold = True
 
         doc.add_heading("2. Executive Analytical Synthesis", level=1)
-        doc.add_paragraph(summary_text or (
+        clean_summary = _sanitize_text_for_pdf(summary_text).replace("<br/>", "\n").replace("<b>", "").replace("</b>", "") if summary_text else (
             f"Official synthesis compiled under the {tpl['name']} specification. "
             f"National coal production continues sustained expansion across active subsidiary basins. "
             f"Aggregate extraction logged {metrics['total_production']:,.2f} MT against a planned benchmark of {metrics['total_target']:,.2f} MT."
-        ))
+        )
+        doc.add_paragraph(clean_summary)
 
-        doc.add_heading("3. Colliery Production Leaderboard", level=1)
+        # Embedded figures if available
+        if images:
+            valid_imgs = [p for p in images if Path(p).exists()]
+            if valid_imgs:
+                doc.add_heading("3. Multimodal Photographic Evidence (Gemma 4)", level=1)
+                for img_p in valid_imgs[:2]:
+                    try:
+                        doc.add_picture(img_p, width=Inches(5.0))
+                    except Exception:
+                        pass
+
+        doc.add_heading("4. Colliery Production Leaderboard", level=1)
         t = doc.add_table(rows=1, cols=7)
         t.alignment = WD_TABLE_ALIGNMENT.CENTER
         hdr_cells = t.rows[0].cells
@@ -1078,7 +1221,7 @@ class DocumentGenerator:
             row_cells[5].text = f"{c.get('dispatch', 0):,.2f}"
             row_cells[6].text = str(c.get("share", "-"))
 
-        doc.add_heading("4. Mathematical Verification & Audit", level=1)
+        doc.add_heading("5. Mathematical Verification & Audit", level=1)
         doc.add_paragraph(
             "All quantitative calculations and ratios in this document have been evaluated using the AST Python engine. "
             f"Zero LLM hallucination detected. Summation delta: 0.00 MT across all {metrics['count']} monitored mines."
@@ -1185,11 +1328,12 @@ class DocumentGenerator:
         template_name: str = "executive_brief",
         report_id: str = "REP-2026-B56D",
         summary_text: Optional[str] = None,
-        user_records: Optional[List[Dict[str, Any]]] = None
+        user_records: Optional[List[Dict[str, Any]]] = None,
+        images: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         """Compiles PDF, DOCX, and XLSX in one call and returns file metadata."""
-        pdf_file = self.generate_pdf_report(template_name, report_id, summary_text, user_records)
-        docx_file = self.generate_docx_report(template_name, report_id, summary_text, user_records)
+        pdf_file = self.generate_pdf_report(template_name, report_id, summary_text, user_records, images=images)
+        docx_file = self.generate_docx_report(template_name, report_id, summary_text, user_records, images=images)
         xlsx_file = self.generate_excel_workbook(template_name, report_id, user_records)
 
         return {

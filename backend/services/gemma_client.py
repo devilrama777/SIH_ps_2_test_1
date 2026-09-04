@@ -37,9 +37,11 @@ class GemmaClient:
         llama_analysis: str,
         math_audit_markdown: str,
         custom_instructions: Optional[str] = None,
-        model_override: Optional[str] = None
+        model_override: Optional[str] = None,
+        extracted_images: Optional[list] = None,
+        extracted_audio: Optional[list] = None
     ) -> Dict[str, Any]:
-        """Synthesizes the analytical extraction and math checks into a systematic, polished report."""
+        """Synthesizes the analytical extraction, math checks, and isolated multimodal media into a systematic, polished report."""
         target_model = model_override or self.get_effective_model()
 
         # Load system report prompt
@@ -51,14 +53,28 @@ class GemmaClient:
         if custom_instructions and custom_instructions.strip():
             system_prompt += f"\n\n### ADDITIONAL REPORTING DIRECTIVES:\n{custom_instructions.strip()}\n"
 
+        media_section = ""
+        if extracted_images:
+            media_section += f"\n\n---\n\n# STAGE 3 ISOLATED MULTIMODAL MEDIA ASSETS ({len(extracted_images)} Visual Images/Figures Extracted):\n"
+            for idx, img in enumerate(extracted_images, start=1):
+                media_section += f"- **Figure {idx}:** `{img.get('name', 'figure.png')}` (Source Page {img.get('page', 1)})\n"
+            media_section += "\n*MULTIMODAL DIRECTIVE:* LLaMA 3.1 was bypassed for visual/audio interpretation. You (Gemma 4) must integrate these visual figures into the report templates under Photographic & Geospatial Evidence.\n"
+
+        if extracted_audio:
+            media_section += f"\n\n# AUDIO / TELEMETRY RECORDINGS ({len(extracted_audio)} Media Assets Extracted):\n"
+            for idx, aud in enumerate(extracted_audio, start=1):
+                media_section += f"- **Audio Stream {idx}:** `{aud.get('name', 'audio.wav')}`\n"
+            media_section += "\n*AUDIO DIRECTIVE:* Reference acoustic telemetry and dispatch communication logs in the final executive directives.\n"
+
         user_content = (
-            "# STAGE 1 FINDINGS (FROM LLAMA 3.1 REASONING ENGINE):\n\n"
+            "# STAGE 1 FINDINGS (FROM LLAMA 3.1 REASONING ENGINE - PURE TEXT & TABLES):\n\n"
             f"{llama_analysis}\n\n"
             "---\n\n"
             "# STAGE 2 VERIFIED QUANTITATIVE & MATHEMATICAL AUDIT:\n\n"
-            f"{math_audit_markdown}\n\n"
+            f"{math_audit_markdown}"
+            f"{media_section}\n\n"
             "---\n\n"
-            "Please generate the complete, high-quality, systematic final report in clean Markdown."
+            "Please generate the complete, high-quality, systematic final report in clean Markdown incorporating verified metrics and multimodal media figures into our templates."
         )
 
         payload = {
