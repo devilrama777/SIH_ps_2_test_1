@@ -102,6 +102,71 @@ h1, h2, h3, h4, .font-heading {
   background-color: var(--surface-card-elevated) !important;
 }
 
+/* ==========================================================================
+   DOCUMENT PREVIEW CANVAS (A4 LIGHT PAPER PREVIEW ISOLATION)
+   Prevents dark theme white-text overrides from washing out the light template canvas
+   ========================================================================== */
+#a4-document-paper,
+.a4-document-canvas {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+#a4-document-paper h1,
+#a4-document-paper h2,
+#a4-document-paper h3,
+#a4-document-paper h4 {
+  color: #0F172A !important;
+}
+
+#a4-document-paper .text-slate-900,
+#a4-document-paper .text-slate-800,
+#a4-document-paper .text-slate-700 {
+  color: #0F172A !important;
+}
+
+#a4-document-paper .text-slate-600,
+#a4-document-paper .text-slate-500 {
+  color: #334155 !important;
+}
+
+#a4-document-paper .text-slate-400 {
+  color: #64748B !important;
+}
+
+#a4-document-paper .bg-white {
+  background-color: #FFFFFF !important;
+}
+
+#a4-document-paper .bg-slate-50 {
+  background-color: #F8FAFC !important;
+}
+
+#a4-document-paper .bg-slate-100 {
+  background-color: #F1F5F9 !important;
+}
+
+#a4-document-paper .border-slate-100,
+#a4-document-paper .border-slate-200 {
+  border-color: #E2E8F0 !important;
+}
+
+#a4-document-paper p,
+#a4-document-paper li,
+#a4-document-paper td,
+#a4-document-paper th {
+  color: #0F172A !important;
+}
+
+#a4-document-paper table thead th {
+  color: #334155 !important;
+  background-color: #F1F5F9 !important;
+}
+
+#a4-document-paper table tbody tr:hover {
+  background-color: #F8FAFC !important;
+}
+
 /* Card Hover Elevation in Dark Mode */
 .hover-card {
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);

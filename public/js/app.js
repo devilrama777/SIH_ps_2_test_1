@@ -142,15 +142,15 @@ const App = {
   },
 
   switchTab: function(tabId) {
-    const tabs = ["dashboard", "datasets", "analytics", "reports", "system"];
+    const tabs = ["dashboard", "datasets", "analytics", "reports"];
     tabs.forEach(t => {
       const tabBtn = document.getElementById(`tab-${t}`);
       const tabView = document.getElementById(`view-${t}`);
       if (tabBtn) {
         if (t === tabId) {
-          tabBtn.className = "py-3.5 text-sm font-semibold border-b-2 border-primary text-primary transition flex items-center space-x-2 shrink-0";
+          tabBtn.className = "py-3.5 text-sm font-semibold border-b-2 border-cyan-400 text-cyan-300 transition flex items-center space-x-2 shrink-0";
         } else {
-          tabBtn.className = "py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center space-x-2 shrink-0";
+          tabBtn.className = "py-3.5 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2 shrink-0";
         }
       }
       if (tabView) {
@@ -834,9 +834,9 @@ const App = {
         // Sovereign Executive & Parliamentary Standard
         kpiGrid.className = "grid grid-cols-2 sm:grid-cols-4 gap-3";
         kpiGrid.innerHTML = data.kpis.map(k => `
-          <div class="p-3 rounded-xl border text-center" style="background-color: ${data.light_bg_hex || '#F8FAFC'}; border-color: ${data.border_hex || '#E2E8F0'};">
-            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">${k.label}</div>
-            <div class="text-base sm:text-lg font-black font-mono text-slate-900 mt-1">${k.value}</div>
+          <div class="p-3 rounded-xl border text-center shadow-xs" style="background-color: ${data.light_bg_hex || '#F8FAFC'}; border-color: ${data.border_hex || '#E2E8F0'};">
+            <div class="text-[10px] font-bold uppercase tracking-wider" style="color: #64748B !important;">${k.label}</div>
+            <div class="text-base sm:text-lg font-black font-mono mt-1" style="color: #0F172A !important;">${k.value}</div>
             <div class="text-[10px] font-bold mt-0.5" style="color: ${data.primary_hex || '#1E3A8A'};">${k.badge}</div>
           </div>
         `).join("");
@@ -849,9 +849,9 @@ const App = {
       data.sections.forEach((sec, idx) => {
         let bodyContent = sec.content
           .replace(/\n\n/g, '<br/><br/>')
-          .replace(/• (.*)/g, '<li class="ml-4 list-disc py-0.5">$1</li>')
-          .replace(/(\d+\.) (.*)/g, '<li class="ml-4 list-decimal py-0.5">$2</li>')
-          .replace(/★ (.*)/g, '<div class="flex items-center space-x-2 py-0.5 font-bold text-indigo-900"><span>★</span><span>$1</span></div>');
+          .replace(/• (.*)/g, '<li class="ml-4 list-disc py-0.5" style="color: #0F172A !important;">$1</li>')
+          .replace(/(\d+\.) (.*)/g, '<li class="ml-4 list-decimal py-0.5" style="color: #0F172A !important;">$2</li>')
+          .replace(/★ (.*)/g, '<div class="flex items-center space-x-2 py-0.5 font-bold" style="color: #1E3A8A !important;"><span>★</span><span style="color: #0F172A !important;">$1</span></div>');
 
         // Layout-specific styling touches
         let cardBorder = data.border_hex || '#E2E8F0';
@@ -864,12 +864,12 @@ const App = {
         }
 
         secHtml += `
-          <div class="space-y-1.5 p-4 rounded-xl border" style="background-color: ${cardBg}; border-color: ${cardBorder};">
+          <div class="space-y-1.5 p-4 rounded-xl border shadow-xs" style="background-color: ${cardBg}; border-color: ${cardBorder};">
             <h3 class="text-xs sm:text-sm font-extrabold font-heading uppercase tracking-wide flex items-center space-x-2" style="color: ${data.primary_hex || '#1E3A8A'};">
               <span>§${idx + 1}</span>
               <span>${sec.title}</span>
             </h3>
-            <div class="text-xs text-slate-800 leading-relaxed font-sans pt-1">
+            <div class="text-xs font-semibold leading-relaxed font-sans pt-1" style="color: #0F172A !important;">
               ${bodyContent}
             </div>
           </div>
@@ -882,7 +882,7 @@ const App = {
     const collieryRecords = data.collieries_preview || (typeof MOCK_COLLIERIES !== "undefined" ? MOCK_COLLIERIES.slice(0, 8) : []);
     if (tbody) {
       if (templateId === "technical_deepdive") {
-        if (tableTitle) tableTitle.innerText = "Empirical IQR Anomaly & Colliery Outlier Classification";
+        if (tableTitle) { tableTitle.innerText = "Empirical IQR Anomaly & Colliery Outlier Classification"; tableTitle.style.color = "#0F172A"; }
         if (tableThead) {
           tableThead.innerHTML = `
             <tr class="bg-slate-900 text-cyan-300 font-mono text-[10px]">
@@ -901,17 +901,17 @@ const App = {
           if (i >= 6) { badgeClass = "bg-purple-100 text-purple-900 border border-purple-300 font-bold"; badgeText = "[BOTTLENECK / LOW]"; }
 
           return `
-            <tr class="hover:bg-slate-50 border-b border-slate-100 font-mono text-[11px]">
-              <td class="py-1.5 px-2.5 text-center text-slate-500">${c.rank || i+1}</td>
-              <td class="py-1.5 px-2.5 font-bold text-slate-900">${c.name}</td>
-              <td class="py-1.5 px-2.5 text-slate-600">${c.state}</td>
-              <td class="py-1.5 px-2.5 text-right font-bold text-cyan-900">${(c.production || 0).toLocaleString()}</td>
+            <tr class="hover:bg-slate-50 border-b border-slate-200 font-mono text-[11px]">
+              <td class="py-1.5 px-2.5 text-center font-bold" style="color: #475569 !important;">${c.rank || i+1}</td>
+              <td class="py-1.5 px-2.5 font-bold" style="color: #0F172A !important;">${c.name}</td>
+              <td class="py-1.5 px-2.5" style="color: #334155 !important;">${c.state}</td>
+              <td class="py-1.5 px-2.5 text-right font-bold" style="color: #0F172A !important;">${(c.production || 0).toLocaleString()}</td>
               <td class="py-1.5 px-2.5 text-center"><span class="px-2 py-0.5 rounded text-[10px] ${badgeClass}">${badgeText}</span></td>
             </tr>
           `;
         }).join("");
       } else if (templateId === "parliamentary_scorecard") {
-        if (tableTitle) tableTitle.innerText = "State-Wise Allocation & Mineral Royalty Matrix (Statutory)";
+        if (tableTitle) { tableTitle.innerText = "State-Wise Allocation & Mineral Royalty Matrix (Statutory)"; tableTitle.style.color = "#0F172A"; }
         if (tableThead) {
           tableThead.innerHTML = `
             <tr class="bg-emerald-900 text-emerald-100 text-[10px]">
@@ -925,17 +925,17 @@ const App = {
           `;
         }
         tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
-          <tr class="hover:bg-slate-50 border-b border-slate-100 text-[11px]">
-            <td class="py-1.5 px-2.5 text-center text-slate-500">${c.rank || i+1}</td>
-            <td class="py-1.5 px-2.5 font-bold text-slate-900">${c.name}</td>
-            <td class="py-1.5 px-2.5 text-emerald-800 font-medium">${c.state}</td>
-            <td class="py-1.5 px-2.5 text-right font-mono font-bold text-slate-900">${(c.production || 0).toLocaleString()}</td>
-            <td class="py-1.5 px-2.5 text-right font-mono text-slate-600">${(c.dispatch || 0).toLocaleString()}</td>
+          <tr class="hover:bg-slate-50 border-b border-slate-200 text-[11px]">
+            <td class="py-1.5 px-2.5 text-center font-bold" style="color: #475569 !important;">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold" style="color: #0F172A !important;">${c.name}</td>
+            <td class="py-1.5 px-2.5 font-medium" style="color: #065F46 !important;">${c.state}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono font-bold" style="color: #0F172A !important;">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono" style="color: #334155 !important;">${(c.dispatch || 0).toLocaleString()}</td>
             <td class="py-1.5 px-2.5 text-center"><span class="text-emerald-700 font-bold text-[10px]">✓ Verified</span></td>
           </tr>
         `).join("");
       } else if (templateId === "esg_sustainable") {
-        if (tableTitle) tableTitle.innerText = "Colliery Ecological Stewardship & Sustainable Mine Tiering";
+        if (tableTitle) { tableTitle.innerText = "Colliery Ecological Stewardship & Sustainable Mine Tiering"; tableTitle.style.color = "#0F172A"; }
         if (tableThead) {
           tableThead.innerHTML = `
             <tr class="bg-green-900 text-green-100 text-[10px]">
@@ -949,17 +949,17 @@ const App = {
         }
         const tiers = ["A+ (Exemplary)", "A (Compliant)", "A (Compliant)", "B+ (Satisfactory)", "B+ (Satisfactory)", "B (Satisfactory)", "B (Compliant)", "B (Compliant)"];
         tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
-          <tr class="hover:bg-slate-50 border-b border-slate-100 text-[11px]">
-            <td class="py-1.5 px-2.5 text-center text-slate-500">${c.rank || i+1}</td>
-            <td class="py-1.5 px-2.5 font-bold text-slate-900">${c.name}</td>
-            <td class="py-1.5 px-2.5 text-right font-mono font-bold text-slate-900">${(c.production || 0).toLocaleString()}</td>
-            <td class="py-1.5 px-2.5 text-slate-600">${i < 4 ? 'Rail FMC Corridor' : 'Rail / Road Hybrid'}</td>
+          <tr class="hover:bg-slate-50 border-b border-slate-200 text-[11px]">
+            <td class="py-1.5 px-2.5 text-center font-bold" style="color: #475569 !important;">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold" style="color: #0F172A !important;">${c.name}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono font-bold" style="color: #0F172A !important;">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5" style="color: #334155 !important;">${i < 4 ? 'Rail FMC Corridor' : 'Rail / Road Hybrid'}</td>
             <td class="py-1.5 px-2.5 text-center"><span class="px-2 py-0.5 rounded bg-green-100 text-green-900 font-bold text-[10px]">${tiers[i] || 'Compliant'}</span></td>
           </tr>
         `).join("");
       } else {
         // Standard Colliery Production Table
-        if (tableTitle) tableTitle.innerText = "Top Colliery Production & Dispatch Rankings";
+        if (tableTitle) { tableTitle.innerText = "Top Colliery Production & Dispatch Rankings"; tableTitle.style.color = "#0F172A"; }
         if (tableThead) {
           tableThead.innerHTML = `
             <tr class="bg-slate-100 text-slate-700 text-[10px]">
@@ -974,13 +974,13 @@ const App = {
           `;
         }
         tbody.innerHTML = collieryRecords.slice(0, 8).map((c, i) => `
-          <tr class="hover:bg-slate-50 border-b border-slate-100 text-[11px]">
-            <td class="py-1.5 px-2.5 text-center text-slate-500 font-bold">${c.rank || i+1}</td>
-            <td class="py-1.5 px-2.5 font-bold text-slate-900">${c.name}</td>
-            <td class="py-1.5 px-2.5 text-slate-600">${c.state}</td>
-            <td class="py-1.5 px-2.5 text-slate-500">${c.company}</td>
-            <td class="py-1.5 px-2.5 text-right font-mono font-bold text-slate-900">${(c.production || 0).toLocaleString()}</td>
-            <td class="py-1.5 px-2.5 text-right font-mono text-slate-600">${(c.dispatch || 0).toLocaleString()}</td>
+          <tr class="hover:bg-slate-50 border-b border-slate-200 text-[11px]">
+            <td class="py-1.5 px-2.5 text-center font-bold" style="color: #475569 !important;">${c.rank || i+1}</td>
+            <td class="py-1.5 px-2.5 font-bold" style="color: #0F172A !important;">${c.name}</td>
+            <td class="py-1.5 px-2.5" style="color: #334155 !important;">${c.state}</td>
+            <td class="py-1.5 px-2.5" style="color: #475569 !important;">${c.company}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono font-bold" style="color: #0F172A !important;">${(c.production || 0).toLocaleString()}</td>
+            <td class="py-1.5 px-2.5 text-right font-mono" style="color: #334155 !important;">${(c.dispatch || 0).toLocaleString()}</td>
             <td class="py-1.5 px-2.5 text-right font-mono font-bold text-emerald-600">${c.share || '-'}</td>
           </tr>
         `).join("");
