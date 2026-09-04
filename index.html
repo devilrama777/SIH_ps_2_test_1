@@ -1011,129 +1011,123 @@
       <div id="view-analytics" class="space-y-6 hidden">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 class="text-2xl font-extrabold text-slate-900 font-heading">Coalfield Analytics & Statistical Distribution</h2>
-            <p class="text-sm text-slate-500 mt-0.5">Colliery variance, distribution fences, and regional production dispersion</p>
+            <h2 class="text-2xl font-extrabold text-white font-heading">Coalfield Analytics & Statistical Distribution</h2>
+            <p class="text-sm text-slate-400 mt-0.5">Colliery variance, distribution fences, and regional production dispersion</p>
           </div>
-          <button onclick="App.runCppAnalytics()" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-xl text-xs font-bold shadow-sm transition">
+          <button onclick="App.runCppAnalytics()" class="px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-900/40 transition">
             🔄 Re-compute Statistical Distribution
           </button>
         </div>
 
         <!-- 3 Metric Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
-            <div class="font-bold text-slate-800 font-heading flex items-center justify-between">
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-700/80 shadow-md space-y-3">
+            <div class="font-bold text-white font-heading flex items-center justify-between">
               <span>Statistical Distribution</span>
-              <span class="text-blue-600 text-xs">Descriptive</span>
+              <span class="text-cyan-400 text-xs font-bold">Descriptive</span>
             </div>
-            <div class="space-y-2 text-xs text-slate-600 mono pt-2">
-              <div class="flex justify-between py-1 border-b border-slate-100"><span>Mean Output:</span><strong class="text-slate-900">7,431.5 MT</strong></div>
-              <div class="flex justify-between py-1 border-b border-slate-100"><span>Standard Deviation:</span><strong class="text-slate-900">4,620.1 MT</strong></div>
-              <div class="flex justify-between py-1 border-b border-slate-100"><span>Median Production:</span><strong class="text-slate-900">8,215.3 MT</strong></div>
-              <div class="flex justify-between py-1"><span>IQR Spread:</span><strong class="text-slate-900">5,840.4 MT</strong></div>
+            <div class="space-y-2 text-xs text-slate-300 mono pt-2">
+              <div class="flex justify-between py-1 border-b border-slate-800"><span>Mean Output:</span><strong class="text-white">7,431.5 MT</strong></div>
+              <div class="flex justify-between py-1 border-b border-slate-800"><span>Standard Deviation:</span><strong class="text-white">4,620.1 MT</strong></div>
+              <div class="flex justify-between py-1 border-b border-slate-800"><span>Median Production:</span><strong class="text-white">8,215.3 MT</strong></div>
+              <div class="flex justify-between py-1"><span>IQR Spread:</span><strong class="text-white">5,840.4 MT</strong></div>
             </div>
           </div>
 
-          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
-            <div class="font-bold text-slate-800 font-heading flex items-center justify-between">
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-700/80 shadow-md space-y-3">
+            <div class="font-bold text-white font-heading flex items-center justify-between">
               <span>Quartile Fences</span>
-              <span class="text-emerald-600 text-xs">Bounds</span>
+              <span class="text-emerald-400 text-xs font-bold">Bounds</span>
             </div>
-            <div class="space-y-2 text-xs text-slate-600 mono pt-2">
-              <div class="flex justify-between py-1 border-b border-slate-100"><span>Q1 (25th Percentile):</span><strong class="text-slate-900">4,980.1 MT</strong></div>
-              <div class="flex justify-between py-1 border-b border-slate-100"><span>Q3 (75th Percentile):</span><strong class="text-slate-900">10,820.5 MT</strong></div>
-              <div class="flex justify-between py-1 border-b border-slate-100"><span>Lower Outlier Threshold:</span><strong class="text-slate-900">966.2 MT</strong></div>
-              <div class="flex justify-between py-1"><span>Upper Peak Threshold:</span><strong class="text-slate-900">15,265.5 MT</strong></div>
+            <div class="space-y-2 text-xs text-slate-300 mono pt-2">
+              <div class="flex justify-between py-1 border-b border-slate-800"><span>Q1 (25th Percentile):</span><strong class="text-white">4,980.1 MT</strong></div>
+              <div class="flex justify-between py-1 border-b border-slate-800"><span>Q3 (75th Percentile):</span><strong class="text-white">10,820.5 MT</strong></div>
+              <div class="flex justify-between py-1 border-b border-slate-800"><span>Lower Outlier Threshold:</span><strong class="text-white">966.2 MT</strong></div>
+              <div class="flex justify-between py-1"><span>Upper Peak Threshold:</span><strong class="text-white">15,265.5 MT</strong></div>
             </div>
           </div>
 
-          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
-            <div class="font-bold text-slate-800 font-heading flex items-center justify-between">
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-700/80 shadow-md space-y-3">
+            <div class="font-bold text-white font-heading flex items-center justify-between">
               <span>Dispatch Ratio & Offtake</span>
-              <span class="text-amber-600 text-xs">Efficiency</span>
+              <span class="text-amber-400 text-xs font-bold">Efficiency</span>
             </div>
-            <div class="space-y-2 text-xs text-slate-600 mono pt-2">
-              <div class="flex justify-between py-1 border-b border-slate-100"><span>National Dispatch Sum:</span><strong class="text-slate-900">127,814.0 MT</strong></div>
-              <div class="flex justify-between py-1 border-b border-slate-100"><span>Overall Offtake Ratio:</span><strong class="text-emerald-700">95.55%</strong></div>
-              <div class="flex justify-between py-1 border-b border-slate-100"><span>Thermal Target Sum:</span><strong class="text-slate-900">138,967.7 MT</strong></div>
-              <div class="flex justify-between py-1"><span>Net Variance Delta:</span><strong class="text-blue-700">-5,200.4 MT</strong></div>
+            <div class="space-y-2 text-xs text-slate-300 mono pt-2">
+              <div class="flex justify-between py-1 border-b border-slate-800"><span>National Dispatch Sum:</span><strong class="text-white">127,814.0 MT</strong></div>
+              <div class="flex justify-between py-1 border-b border-slate-800"><span>Overall Offtake Ratio:</span><strong class="text-emerald-400">95.55%</strong></div>
+              <div class="flex justify-between py-1 border-b border-slate-800"><span>Thermal Target Sum:</span><strong class="text-white">138,967.7 MT</strong></div>
+              <div class="flex justify-between py-1"><span>Net Variance Delta:</span><strong class="text-cyan-400">-5,200.4 MT</strong></div>
             </div>
           </div>
         </div>
 
         <!-- State-Wise Production Breakdown -->
-        <div class="bg-slate-900/90 rounded-2xl border border-slate-700/80 p-6 shadow-md space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="text-base font-bold text-slate-100 font-heading tracking-wide">State-Wise Coal Extraction Breakdown</h3>
-            <span class="text-xs text-slate-400 font-mono">National Aggregate: 133,767.3 MT</span>
-          </div>
-          <div class="space-y-4 pt-2">
-            <!-- Chhattisgarh (SECL) -->
+        <div class="bg-slate-900 rounded-2xl border border-slate-700/80 p-6 shadow-md space-y-4">
+          <h3 class="text-base font-bold text-white font-heading">State-Wise Coal Extraction Breakdown</h3>
+          <div class="space-y-3 pt-2">
             <div>
-              <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                <span class="text-slate-200">Chhattisgarh (SECL)</span>
-                <span class="text-cyan-300 font-mono font-bold">41,298.1 MT (30.8%)</span>
+              <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
+                <span>Chhattisgarh (SECL)</span>
+                <span>41,298.1 MT (30.8%)</span>
               </div>
-              <div class="w-full bg-slate-800/90 rounded-full h-2.5 overflow-hidden border border-slate-700/60">
-                <div class="h-2.5 rounded-full transition-all duration-500" style="width: 30.8%; background: linear-gradient(90deg, #1D4ED8, #38BDF8); box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);"></div>
+              <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                <div class="bg-blue-600 h-2.5 rounded-full" style="width: 30.8%"></div>
               </div>
             </div>
-            <!-- Odisha (MCL) -->
             <div>
-              <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                <span class="text-slate-200">Odisha (MCL)</span>
-                <span class="text-emerald-400 font-mono font-bold">31,610.4 MT (23.6%)</span>
+              <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
+                <span>Odisha (MCL)</span>
+                <span>31,610.4 MT (23.6%)</span>
               </div>
-              <div class="w-full bg-slate-800/90 rounded-full h-2.5 overflow-hidden border border-slate-700/60">
-                <div class="h-2.5 rounded-full transition-all duration-500" style="width: 23.6%; background: linear-gradient(90deg, #059669, #34D399); box-shadow: 0 0 10px rgba(52, 211, 153, 0.45);"></div>
+              <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 23.6%"></div>
               </div>
             </div>
-            <!-- Madhya Pradesh (NCL) -->
             <div>
-              <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                <span class="text-slate-200">Madhya Pradesh (NCL)</span>
-                <span class="text-indigo-300 font-mono font-bold">34,762.1 MT (26.0%)</span>
+              <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
+                <span>Madhya Pradesh (NCL)</span>
+                <span>34,762.1 MT (26.0%)</span>
               </div>
-              <div class="w-full bg-slate-800/90 rounded-full h-2.5 overflow-hidden border border-slate-700/60">
-                <div class="h-2.5 rounded-full transition-all duration-500" style="width: 26.0%; background: linear-gradient(90deg, #4F46E5, #818CF8); box-shadow: 0 0 10px rgba(129, 140, 248, 0.4);"></div>
+              <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                <div class="bg-indigo-500 h-2.5 rounded-full" style="width: 26.0%"></div>
               </div>
             </div>
-            <!-- Jharkhand (CCL, BCCL, ECL) -->
             <div>
-              <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                <span class="text-slate-200">Jharkhand (CCL, BCCL, ECL)</span>
-                <span class="text-amber-400 font-mono font-bold">20,911.5 MT (15.6%)</span>
+              <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
+                <span>Jharkhand (CCL, BCCL, ECL)</span>
+                <span>20,911.5 MT (15.6%)</span>
               </div>
-              <div class="w-full bg-slate-800/90 rounded-full h-2.5 overflow-hidden border border-slate-700/60">
-                <div class="h-2.5 rounded-full transition-all duration-500" style="width: 15.6%; background: linear-gradient(90deg, #D97706, #FBBF24); box-shadow: 0 0 10px rgba(251, 191, 36, 0.4);"></div>
+              <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                <div class="bg-amber-500 h-2.5 rounded-full" style="width: 15.6%"></div>
               </div>
             </div>
-            <!-- West Bengal (ECL) -->
             <div>
-              <div class="flex justify-between items-center text-xs font-bold mb-1.5">
-                <span class="text-slate-200">West Bengal (ECL)</span>
-                <span class="text-purple-300 font-mono font-bold">5,185.2 MT (4.0%)</span>
+              <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
+                <span>West Bengal (ECL)</span>
+                <span>5,185.2 MT (4.0%)</span>
               </div>
-              <div class="w-full bg-slate-800/90 rounded-full h-2.5 overflow-hidden border border-slate-700/60">
-                <div class="h-2.5 rounded-full transition-all duration-500" style="width: 4.0%; background: linear-gradient(90deg, #9333EA, #C084FC); box-shadow: 0 0 10px rgba(192, 132, 252, 0.45);"></div>
+              <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                <div class="bg-cyan-500 h-2.5 rounded-full" style="width: 4.0%"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-                 <!-- ========================================== -->
+
+
+      <!-- ========================================== -->
       <!-- TAB 4: EXECUTIVE REPORT STUDIO & HISTORY   -->
       <!-- ========================================== -->
       <div id="view-reports" class="space-y-6 hidden">
         <!-- Section Masthead -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-blue-50 text-blue-900 border border-blue-200 rounded-full text-xs font-bold mb-1">
+            <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-blue-950 text-cyan-300 border border-blue-700/60 rounded-full text-xs font-bold mb-1">
               <span>📚</span>
               <span>Audit Session Archive • MOC-7890</span>
             </div>
-            <h2 class="text-2xl font-extrabold text-slate-900 font-heading">Generated Report History & Export Hub</h2>
-            <p class="text-sm text-slate-500 mt-0.5">Searchable intelligence repository of all compiled publication dossiers and raw verified datasets.</p>
+            <h2 class="text-2xl font-extrabold text-white font-heading">Generated Report History & Export Hub</h2>
+            <p class="text-sm text-slate-400 mt-0.5">Searchable intelligence repository of all compiled publication dossiers and raw verified datasets.</p>
           </div>
           <div class="flex items-center space-x-3">
             <a href="/api/reports/download/csv" download="Cleaned_Coal_Dataset_2026.csv"
@@ -1150,7 +1144,7 @@
         </div>
 
         <!-- Interactive Word Search & Filter Bar -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4">
+        <div class="bg-slate-900 rounded-2xl border border-slate-700/80 p-5 shadow-md space-y-4">
           <div class="flex flex-col md:flex-row gap-3">
             <div class="relative flex-1">
               <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">
@@ -1158,19 +1152,19 @@
               </div>
               <input type="text" id="report-search-input" oninput="App.filterReportHistory(event)"
                 placeholder="Search report titles, headings, topics, collieries, or keywords (e.g., Gevra, Target, Statutory, ESG)..."
-                class="block w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition" />
+                class="block w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition" />
             </div>
             <div class="flex items-center space-x-2 shrink-0">
-              <span class="text-xs font-bold text-slate-500">Filter:</span>
+              <span class="text-xs font-bold text-slate-400">Filter:</span>
               <button onclick="App.setHistoryCategoryFilter('all')" id="hist-filter-all" class="hist-filter-btn px-3 py-1.5 bg-blue-700 text-white rounded-lg text-xs font-bold transition">All Reports</button>
-              <button onclick="App.setHistoryCategoryFilter('executive')" id="hist-filter-executive" class="hist-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg text-xs font-bold transition">Executive</button>
-              <button onclick="App.setHistoryCategoryFilter('technical')" id="hist-filter-technical" class="hist-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg text-xs font-bold transition">Technical</button>
-              <button onclick="App.setHistoryCategoryFilter('parliamentary')" id="hist-filter-parliamentary" class="hist-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg text-xs font-bold transition">Parliamentary</button>
+              <button onclick="App.setHistoryCategoryFilter('executive')" id="hist-filter-executive" class="hist-filter-btn px-3 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 rounded-lg text-xs font-bold transition">Executive</button>
+              <button onclick="App.setHistoryCategoryFilter('technical')" id="hist-filter-technical" class="hist-filter-btn px-3 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 rounded-lg text-xs font-bold transition">Technical</button>
+              <button onclick="App.setHistoryCategoryFilter('parliamentary')" id="hist-filter-parliamentary" class="hist-filter-btn px-3 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 rounded-lg text-xs font-bold transition">Parliamentary</button>
             </div>
           </div>
-          <div class="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">
+          <div class="flex items-center justify-between text-xs text-slate-400 pt-1 border-t border-slate-800">
             <div class="flex items-center space-x-2">
-              <span id="report-history-counter" class="font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">Loading History...</span>
+              <span id="report-history-counter" class="font-bold text-cyan-300 bg-blue-950 px-2.5 py-0.5 rounded-full border border-cyan-500/40">Loading History...</span>
               <span>• Template styling applies strictly to PDF reports & preview canvas</span>
             </div>
             <span class="font-mono text-slate-400">Auditor: MOC-7890</span>
@@ -1189,58 +1183,58 @@
       <!-- ======================================================== -->
       <div id="view-system" class="space-y-6 hidden">
         <div>
-          <h2 class="text-2xl font-extrabold text-slate-900 font-heading">National Coal Infrastructure & Subsidiary Directory</h2>
-          <p class="text-sm text-slate-500 mt-0.5">Overview of public sector coal enterprises, regional mining commands, and 2026 national production targets.</p>
+          <h2 class="text-2xl font-extrabold text-white font-heading">National Coal Infrastructure & Subsidiary Directory</h2>
+          <p class="text-sm text-slate-400 mt-0.5">Overview of public sector coal enterprises, regional mining commands, and 2026 national production targets.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover-card">
-            <div class="text-xs font-bold text-blue-700 uppercase">SECL</div>
-            <div class="text-base font-extrabold text-slate-900 mt-1">South Eastern Coalfields</div>
-            <p class="text-xs text-slate-500 mt-1">HQ: Bilaspur, Chhattisgarh</p>
-            <div class="mt-3 text-xs font-semibold text-slate-700">Primary Basins: Korba, Mand-Raigarh</div>
-            <div class="mt-2 text-xs font-bold text-emerald-600">Capacity: 180+ MT/yr</div>
+          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-700/80 shadow-md hover-card">
+            <div class="text-xs font-bold text-cyan-400 uppercase tracking-wider">SECL</div>
+            <div class="text-base font-extrabold text-white mt-1">South Eastern Coalfields</div>
+            <p class="text-xs text-slate-400 mt-1">HQ: Bilaspur, Chhattisgarh</p>
+            <div class="mt-3 text-xs font-semibold text-slate-300">Primary Basins: Korba, Mand-Raigarh</div>
+            <div class="mt-2 text-xs font-bold text-emerald-400">Capacity: 180+ MT/yr</div>
           </div>
 
-          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover-card">
-            <div class="text-xs font-bold text-blue-700 uppercase">MCL</div>
-            <div class="text-base font-extrabold text-slate-900 mt-1">Mahanadi Coalfields</div>
-            <p class="text-xs text-slate-500 mt-1">HQ: Sambalpur, Odisha</p>
-            <div class="mt-3 text-xs font-semibold text-slate-700">Primary Basins: Talcher, Ib Valley</div>
-            <div class="mt-2 text-xs font-bold text-emerald-600">Capacity: 175+ MT/yr</div>
+          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-700/80 shadow-md hover-card">
+            <div class="text-xs font-bold text-cyan-400 uppercase tracking-wider">MCL</div>
+            <div class="text-base font-extrabold text-white mt-1">Mahanadi Coalfields</div>
+            <p class="text-xs text-slate-400 mt-1">HQ: Sambalpur, Odisha</p>
+            <div class="mt-3 text-xs font-semibold text-slate-300">Primary Basins: Talcher, Ib Valley</div>
+            <div class="mt-2 text-xs font-bold text-emerald-400">Capacity: 175+ MT/yr</div>
           </div>
 
-          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover-card">
-            <div class="text-xs font-bold text-blue-700 uppercase">NCL</div>
-            <div class="text-base font-extrabold text-slate-900 mt-1">Northern Coalfields</div>
-            <p class="text-xs text-slate-500 mt-1">HQ: Singrauli, Madhya Pradesh</p>
-            <div class="mt-3 text-xs font-semibold text-slate-700">Primary Basin: Singrauli Belt</div>
-            <div class="mt-2 text-xs font-bold text-emerald-600">Capacity: 130+ MT/yr</div>
+          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-700/80 shadow-md hover-card">
+            <div class="text-xs font-bold text-cyan-400 uppercase tracking-wider">NCL</div>
+            <div class="text-base font-extrabold text-white mt-1">Northern Coalfields</div>
+            <p class="text-xs text-slate-400 mt-1">HQ: Singrauli, Madhya Pradesh</p>
+            <div class="mt-3 text-xs font-semibold text-slate-300">Primary Basin: Singrauli Belt</div>
+            <div class="mt-2 text-xs font-bold text-emerald-400">Capacity: 130+ MT/yr</div>
           </div>
 
-          <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover-card">
-            <div class="text-xs font-bold text-blue-700 uppercase">CCL & BCCL</div>
-            <div class="text-base font-extrabold text-slate-900 mt-1">Central & Bharat Coking</div>
-            <p class="text-xs text-slate-500 mt-1">HQ: Ranchi & Dhanbad, Jharkhand</p>
-            <div class="mt-3 text-xs font-semibold text-slate-700">Primary Basins: Jharia, Bokaro, Karanpura</div>
-            <div class="mt-2 text-xs font-bold text-emerald-600">Capacity: 120+ MT/yr</div>
+          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-700/80 shadow-md hover-card">
+            <div class="text-xs font-bold text-cyan-400 uppercase tracking-wider">CCL & BCCL</div>
+            <div class="text-base font-extrabold text-white mt-1">Central & Bharat Coking</div>
+            <p class="text-xs text-slate-400 mt-1">HQ: Ranchi & Dhanbad, Jharkhand</p>
+            <div class="mt-3 text-xs font-semibold text-slate-300">Primary Basins: Jharia, Bokaro, Karanpura</div>
+            <div class="mt-2 text-xs font-bold text-emerald-400">Capacity: 120+ MT/yr</div>
           </div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4">
-          <h3 class="text-base font-bold text-slate-900 font-heading">National Coal Strategy 2026 Objectives</h3>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-600">
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
-              <div class="font-bold text-slate-900 text-sm">1.5 Billion Tonne National Target</div>
-              <p>Achieving total domestic thermal coal self-reliance with zero preventable coal imports by late 2026.</p>
+        <div class="bg-slate-900 rounded-2xl border border-slate-700/80 p-6 shadow-md space-y-4">
+          <h3 class="text-base font-bold text-white font-heading">National Coal Strategy 2026 Objectives</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-300">
+            <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
+              <div class="font-bold text-white text-sm">1.5 Billion Tonne National Target</div>
+              <p class="text-slate-400">Achieving total domestic thermal coal self-reliance with zero preventable coal imports by late 2026.</p>
             </div>
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
-              <div class="font-bold text-slate-900 text-sm">First-Mile Evacuation</div>
-              <p>Rapid mechanized railway loading hoppers and conveyor transport to eliminate road pollution and freight bottleneck.</p>
+            <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
+              <div class="font-bold text-white text-sm">First-Mile Evacuation</div>
+              <p class="text-slate-400">Rapid mechanized railway loading hoppers and conveyor transport to eliminate road pollution and freight bottleneck.</p>
             </div>
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1">
-              <div class="font-bold text-slate-900 text-sm">Commercial Auction Blocks</div>
-              <p>Expanding transparent auctioning of private commercial coal seams to boost regional economic growth.</p>
+            <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
+              <div class="font-bold text-white text-sm">Commercial Auction Blocks</div>
+              <p class="text-slate-400">Expanding transparent auctioning of private commercial coal seams to boost regional economic growth.</p>
             </div>
           </div>
         </div>

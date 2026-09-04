@@ -171,10 +171,10 @@ const App = {
     if (!tbody || typeof MOCK_COLLIERIES === "undefined") return;
 
     tbody.innerHTML = MOCK_COLLIERIES.slice(0, 7).map(c => {
-      let medal = `<span class="px-2 py-0.5 bg-slate-800 text-slate-400 border border-slate-700 font-bold rounded-md font-mono text-xs">#${c.rank}</span>`;
-      if (c.rank === 1) medal = `<span class="px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold rounded-md font-mono text-xs">🥇 #1</span>`;
-      if (c.rank === 2) medal = `<span class="px-2 py-0.5 bg-slate-700/60 text-slate-200 border border-slate-600 font-bold rounded-md font-mono text-xs">🥈 #2</span>`;
-      if (c.rank === 3) medal = `<span class="px-2 py-0.5 bg-amber-700/30 text-amber-200 border border-amber-600/40 font-bold rounded-md font-mono text-xs">🥉 #3</span>`;
+      let medal = `<span class="px-2 py-0.5 bg-slate-800 text-slate-300 border border-slate-700 font-bold rounded-md font-mono text-xs">${c.rank}</span>`;
+      if (c.rank === 1) medal = `<span class="px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold rounded-md font-mono text-xs">🥇 1</span>`;
+      if (c.rank === 2) medal = `<span class="px-2 py-0.5 bg-slate-700/60 text-slate-200 border border-slate-600 font-bold rounded-md font-mono text-xs">🥈 2</span>`;
+      if (c.rank === 3) medal = `<span class="px-2 py-0.5 bg-amber-700/30 text-amber-200 border border-amber-600/40 font-bold rounded-md font-mono text-xs">🥉 3</span>`;
 
       const pct = Math.min(100, Math.round((c.production / c.target) * 100));
 
@@ -186,10 +186,13 @@ const App = {
           <td class="py-3 px-3.5"><span class="px-2.5 py-0.5 bg-blue-950 text-cyan-300 border border-cyan-500/40 rounded-full text-[11px] font-bold font-mono">${c.company}</span></td>
           <td class="py-3 px-3.5 text-right font-bold text-white mono text-sm">${c.production.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
           <td class="py-3 px-3.5 text-right">
-            <div class="flex items-center justify-end space-x-2.5">
-              <span class="text-xs font-bold text-emerald-400 mono">${pct}%</span>
-              <div class="w-16 bg-slate-800 border border-slate-700 rounded-full h-2 overflow-hidden">
-                <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-2 rounded-full" style="width: ${pct}%"></div>
+            <div class="flex flex-col items-end space-y-1">
+              <div class="flex items-center space-x-2">
+                <span class="text-xs font-bold font-mono text-emerald-400">${pct}%</span>
+                <span class="text-[11px] text-slate-400 font-mono">(${c.production.toLocaleString('en-IN', {maximumFractionDigits: 0})} / ${c.target.toLocaleString('en-IN', {maximumFractionDigits: 0})} MT)</span>
+              </div>
+              <div class="w-32 bg-slate-800 border border-slate-700 rounded-full h-2.5 overflow-hidden shadow-inner">
+                <div class="bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 h-2.5 rounded-full shadow-xs" style="width: ${pct}%"></div>
               </div>
             </div>
           </td>
@@ -912,7 +915,7 @@ const App = {
         if (tableThead) {
           tableThead.innerHTML = `
             <tr class="bg-emerald-900 text-emerald-100 text-[10px]">
-              <th class="py-2 px-2.5 text-center">#</th>
+              <th class="py-2 px-2.5 text-center">Rank</th>
               <th class="py-2 px-2.5">Mining Asset</th>
               <th class="py-2 px-2.5">State Jurisdiction</th>
               <th class="py-2 px-2.5 text-right">Output (MT)</th>
