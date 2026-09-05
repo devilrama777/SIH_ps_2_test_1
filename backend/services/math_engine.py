@@ -1,76 +1,64 @@
-import ast
-import operator
+import math
 import re
 from typing import Any, Dict, List, Optional, Union
-
-
-# Safe arithmetic operators mapping
-SAFE_OPERATORS = {
-    ast.Add: operator.add,
-    ast.Sub: operator.sub,
-    ast.Mult: operator.mul,
-    ast.Div: operator.truediv,
-    ast.FloorDiv: operator.floordiv,
-    ast.Mod: operator.mod,
-    ast.Pow: operator.pow,
-    ast.USub: operator.neg,
-    ast.UAdd: operator.pos,
-}
+import numpy as np
+import pandas as pd
 
 
 def safe_eval_expr(expr_str: str, context: Optional[Dict[str, float]] = None) -> Union[int, float]:
-    """Safely evaluates arithmetic expressions with optional variable substitution."""
+    """Safely evaluates arithmetic expressions using mathematical parsing."""
     cleaned = expr_str.replace(",", "").replace("$", "").replace("%", "").strip()
-    node = ast.parse(cleaned, mode="eval")
+    # If variables exist, substitute from context
     ctx = context or {}
+    for var_name, var_val in ctx.items():
+        cleaned = re.sub(rf"\b{var_name}\b", str(var_val), cleaned)
 
-    def _eval(current_node):
-        if isinstance(current_node, ast.Expression):
-            return _eval(current_node.body)
-        elif isinstance(current_node, ast.Constant):
-            if isinstance(current_node.value, (int, float)):
-                return current_node.value
-            raise ValueError(f"Unsupported constant type: {type(current_node.value)}")
-        elif isinstance(current_node, ast.Name):
-            var_name = current_node.id
-            if var_name in ctx:
-                return ctx[var_name]
-            # If not in context, it's a symbolic variable
-            raise NameError(f"Variable '{var_name}' identified (symbolic relationship)")
-        elif isinstance(current_node, ast.BinOp):
-            op_type = type(current_node.op)
-            if op_type not in SAFE_OPERATORS:
-                raise ValueError(f"Unsupported operator: {op_type}")
-            left = _eval(current_node.left)
-            right = _eval(current_node.right)
-            return SAFE_OPERATORS[op_type](left, right)
-        elif isinstance(current_node, ast.UnaryOp):
-            op_type = type(current_node.op)
-            if op_type not in SAFE_OPERATORS:
-                raise ValueError(f"Unsupported unary operator: {op_type}")
-            operand = _eval(current_node.operand)
-            return SAFE_OPERATORS[op_type](operand)
-        else:
-            raise ValueError(f"Unsupported expression node: {type(current_node)}")
+    # Check for unauthorized characters
+    if not re.match(r"^[\d\.\s\+\-\*\/\(\)\^\%]+$", cleaned):
+        if re.search(r"[a-zA-Z_]", cleaned):
+            raise NameError("Symbolic variables detected in mathematical relationship.")
+        raise ValueError(f"Invalid characters in mathematical expression: '{expr_str}'")
 
-    return _eval(node)
+    expr_eval = cleaned.replace("^", "**")
+    # Evaluate with restricted globals/locals for absolute safety
+    val = eval(expr_eval, {"__builtins__": None, "math": math}, {})
+    if isinstance(val, (int, float)):
+        return float(val)
+    raise ValueError("Expression did not resolve to a numeric value.")
 
 
 class MathEngine:
-    """Deterministic mathematical calculation and verification engine."""
+    """Deterministic mathematical calculation and verification engine using Pandas & NumPy."""
+
+    @staticmethod
+    def audit_dataframe(df: pd.DataFrame, target_col: str = "production", dispatch_col: str = "dispatch") -> Dict[str, Any]:
+        """Performs vectorized mathematical reconciliation across colliery tabular records."""
+        if df.empty:
+            return {"valid": True, "total_production": 0.0, "total_dispatch": 0.0, "offtake_ratio": 0.0}
+
+        numeric_cols = df.select_dtypes(include=[np.number]).columns
+        p_col = target_col if target_col in df.columns else (numeric_cols[0] if len(numeric_cols) > 0 else None)
+        d_col = dispatch_col if dispatch_col in df.columns else (numeric_cols[1] if len(numeric_cols) > 1 else None)
+
+        tot_p = float(df[p_col].sum()) if p_col else 0.0
+        tot_d = float(df[d_col].sum()) if d_col else 0.0
+        offtake = round((tot_d / tot_p * 100.0), 2) if tot_p > 0 else 0.0
+
+        return {
+            "record_count": len(df),
+            "total_production": round(tot_p, 2),
+            "total_dispatch": round(tot_d, 2),
+            "offtake_ratio": offtake,
+            "variance": round(tot_p - tot_d, 2),
+            "valid": True
+        }
 
     @staticmethod
     def extract_math_flags(text: str) -> List[Dict[str, str]]:
         """Extracts [MATH_CHECK: description | formula: expr] patterns from text."""
         pattern = r"\[MATH_CHECK:\s*([^\|]+?)\s*\|\s*formula:\s*([^\]]+)\]"
         matches = re.findall(pattern, text, re.IGNORECASE)
-        flags = []
-        for desc, formula in matches:
-            flags.append({
-                "description": desc.strip(),
-                "formula": formula.strip()
-            })
-        return flags
+        return [{"description": d.strip(), "formula": f.strip()} for d, f in matches]
 
     @classmethod
     def verify_expression(
@@ -88,7 +76,6 @@ class MathEngine:
                 "calculated": round(float(calculated_val), 4),
                 "valid": True
             }
-
             if expected_val is not None:
                 delta = abs(calculated_val - expected_val)
                 passed = delta <= tolerance
@@ -97,23 +84,11 @@ class MathEngine:
                 result["status"] = "VERIFIED" if passed else "DISCREPANCY_DETECTED"
             else:
                 result["status"] = "COMPUTED"
-
             return result
         except NameError:
-            # Symbolic formula / algebraic relationship
-            return {
-                "formula": formula_str,
-                "calculated": "Symbolic Formula",
-                "valid": True,
-                "status": "FORMULA_RELATIONSHIP"
-            }
+            return {"formula": formula_str, "calculated": "Symbolic Formula", "valid": True, "status": "FORMULA_RELATIONSHIP"}
         except Exception as err:
-            return {
-                "formula": formula_str,
-                "error": str(err),
-                "valid": False,
-                "status": "ERROR"
-            }
+            return {"formula": formula_str, "error": str(err), "valid": False, "status": "ERROR"}
 
     @classmethod
     def process_math_checks(
@@ -121,16 +96,13 @@ class MathEngine:
         analysis_text: str,
         custom_calculations: Optional[List[Dict[str, Any]]] = None
     ) -> Dict[str, Any]:
-        """Runs verification on all flagged math checks and optional user-provided calculations."""
+        """Runs verification on flagged math checks and custom calculations."""
         extracted_flags = cls.extract_math_flags(analysis_text)
         results = []
 
-        # Process extracted flags
         for item in extracted_flags:
             formula = item["formula"]
             expected = None
-
-            # If formula contains an equals sign (e.g. '100 + 50 = 150')
             if "=" in formula:
                 parts = formula.split("=")
                 formula_part = parts[0].strip()
@@ -141,11 +113,9 @@ class MathEngine:
                     eval_res = cls.verify_expression(formula_part)
             else:
                 eval_res = cls.verify_expression(formula)
-
             eval_res["description"] = item["description"]
             results.append(eval_res)
 
-        # Process user-defined custom calculations
         if custom_calculations:
             for calc in custom_calculations:
                 label = calc.get("label", "Custom Calculation")
@@ -156,13 +126,10 @@ class MathEngine:
                     eval_res["description"] = label
                     results.append(eval_res)
 
-        # Generate Markdown audit section
-        md_table = cls._generate_markdown_audit_table(results)
-
         return {
             "total_checks": len(results),
             "results": results,
-            "audit_markdown": md_table
+            "audit_markdown": cls._generate_markdown_audit_table(results)
         }
 
     @staticmethod
@@ -176,7 +143,6 @@ class MathEngine:
             "| Description | Formula / Expression | Expected | Calculated | Status |",
             "| :--- | :--- | :--- | :--- | :--- |"
         ]
-
         for r in results:
             desc = r.get("description", "N/A")
             formula = f"`{r.get('formula', '')}`"

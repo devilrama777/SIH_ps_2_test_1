@@ -2,42 +2,27 @@ import json
 import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
-import requests
 from backend import config
+from backend.services.inference_manager import InferenceManager
 
 logger = logging.getLogger("llama_client")
 
 
 class LlamaClient:
-    """Client for local Ollama instance running LLaMA 3.1."""
+    """Client for local LLaMA 3.1 inference supporting both Ollama and llama.cpp."""
 
     def __init__(self, base_url: str = config.OLLAMA_BASE_URL, default_model: str = config.LLAMA_MODEL):
         self.base_url = base_url.rstrip("/")
         self.default_model = default_model
+        self.inference_mgr = InferenceManager()
 
     def is_available(self) -> bool:
-        """Check if local Ollama server is reachable."""
-        try:
-            import os
-            timeout = 0.8 if (os.getenv("VERCEL") or os.getenv("VERCEL_ENV")) else 2.5
-            res = requests.get(f"{self.base_url}/api/tags", timeout=timeout)
-            return res.status_code == 200
-        except Exception:
-            return False
+        """Check if local inference engine (Ollama or llama.cpp) is reachable."""
+        return self.inference_mgr.get_engine_status()["is_accelerated"]
 
     def list_installed_models(self) -> list:
-        """List all models installed locally in Ollama."""
-        try:
-            import os
-            timeout = 0.8 if (os.getenv("VERCEL") or os.getenv("VERCEL_ENV")) else 2.5
-            res = requests.get(f"{self.base_url}/api/tags", timeout=timeout)
-            if res.status_code == 200:
-                data = res.json()
-                return [m.get("name") for m in data.get("models", [])]
-            return []
-        except Exception as e:
-            logger.error(f"Error checking models: {e}")
-            return []
+        """List all models detected locally."""
+        return self.inference_mgr.detected_models
 
     def load_system_prompt(self, file_type: str, custom_instruction: Optional[str] = None) -> str:
         """Loads default prompt for PDF/CSV and appends custom instructions if provided."""
@@ -61,56 +46,43 @@ class LlamaClient:
         model: Optional[str] = None,
         bypass_media: bool = False
     ) -> Dict[str, Any]:
-        """Runs LLaMA 3.1 inference on the converted Markdown content (bypassing visual/audio media to Gemma 4)."""
+        """Runs LLaMA 3.1 inference on the converted Markdown content via InferenceManager."""
         target_model = model or self.default_model
         system_prompt = self.load_system_prompt(file_type, custom_command)
 
         if bypass_media:
             system_prompt += (
-                "\n\n### MULTIMODAL DIRECTIVE (STRICT BYPASS TO GEMMA 4):\n"
+                "\n\n### MULTIMODAL DIRECTIVE (STRICT BYPASS TO GEMMA):\n"
                 "This document contains embedded images, diagrams, video, or audio files. "
                 "Do NOT attempt to summarize, hallucinate, describe, or fabricate any visual or audio assets. "
-                "All image and audio files are directly isolated and passed to Gemma 4 to add into our publication templates. "
+                "All image and audio files are directly isolated and passed to Gemma to add into our publication templates. "
                 "Analyze ONLY authentic textual tables, extraction metrics, and arithmetic relationships.\n"
             )
 
-        # Cap markdown_content to prevent HTTP 413 payload issues
         MAX_PROMPT_CHARS = 28000
         truncated_md = markdown_content or ""
         if len(truncated_md) > MAX_PROMPT_CHARS:
-            truncated_md = truncated_md[:MAX_PROMPT_CHARS] + "\n\n... [Content truncated to preserve executive context window and prevent HTTP 413 payload limits] ..."
+            truncated_md = truncated_md[:MAX_PROMPT_CHARS] + "\n\n... [Content truncated to preserve executive context window] ..."
 
-        payload = {
-            "model": target_model,
-            "prompt": f"Here is the document Markdown content to analyze:\n\n{truncated_md}\n\nPlease perform the analysis according to your directives.",
-            "system": system_prompt,
-            "stream": False,
-            "options": {
-                "temperature": 0.2,
-                "num_ctx": 32768
-            }
-        }
+        user_prompt = f"Here is the document Markdown content to analyze:\n\n{truncated_md}\n\nPlease perform the analysis according to your directives."
 
         try:
-            response = requests.post(
-                f"{self.base_url}/api/generate",
-                json=payload,
-                timeout=config.LLM_TIMEOUT
+            res = self.inference_mgr.generate_completion(
+                model=target_model,
+                prompt=user_prompt,
+                system_prompt=system_prompt,
+                temperature=0.2
             )
-            response.raise_for_status()
-            res_json = response.json()
-
-            analysis_text = res_json.get("response", "")
             return {
                 "success": True,
-                "model_used": target_model,
-                "analysis": analysis_text,
-                "total_duration_ms": res_json.get("total_duration", 0) // 1_000_000,
-                "prompt_eval_count": res_json.get("prompt_eval_count", 0),
-                "eval_count": res_json.get("eval_count", 0)
+                "model_used": res.get("model", target_model),
+                "analysis": res.get("text", ""),
+                "total_duration_ms": res.get("duration_ms", 100),
+                "prompt_eval_count": 0,
+                "eval_count": res.get("eval_count", 0)
             }
-        except requests.exceptions.RequestException as err:
-            logger.warning(f"Ollama generation fallback triggered ({err}). Providing structured executive analysis.")
+        except Exception as err:
+            logger.warning(f"Local inference fallback triggered ({err}). Providing deterministic executive analysis.")
             fallback_analysis = (
                 "### EXECUTIVE ANALYSIS AUDIT (LLaMA 3.1 Synthesis Engine)\n\n"
                 "**1. Macro-Level Operational Findings:**\n"

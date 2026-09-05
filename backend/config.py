@@ -3,6 +3,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 BACKEND_DIR = Path(__file__).resolve().parent
+PROMPTS_DIR = BACKEND_DIR / "prompts"
 
 if os.getenv("VERCEL") == "1" or os.getenv("VERCEL_ENV"):
     WORK_DIR = Path("/tmp")
@@ -18,21 +19,18 @@ else:
     REPORTED_DATA_DIR = BASE_DIR / "reported_data"
     PROCESSED_OUTPUT_DIR = BASE_DIR / "processed_output"
 
-STATIC_REPORTS_DIR = BASE_DIR / "outputs" / "reports"
-PUBLIC_REPORTS_DIR = BASE_DIR / "public" / "reports"
+STATIC_REPORTS_DIR = OUTPUTS_DIR / "reports"
+DEFAULT_DATA_DIR = BASE_DIR / "default_data_backup"
 
-for d in (UPLOADS_DIR, OUTPUTS_DIR, REPORTS_DIR, REPORTED_DATA_DIR, PROCESSED_OUTPUT_DIR):
-    try:
-        d.mkdir(parents=True, exist_ok=True)
-    except OSError:
-        pass
+for d in (UPLOADS_DIR, OUTPUTS_DIR, REPORTS_DIR, REPORTED_DATA_DIR, PROCESSED_OUTPUT_DIR, STATIC_REPORTS_DIR):
+    d.mkdir(parents=True, exist_ok=True)
 
 # Note: On serverless (Vercel), reports are served via public/reports CDN or on-demand to avoid cold start delays
 
 # Ollama & Model configurations
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 LLAMA_MODEL = os.getenv("LLAMA_MODEL", "llama3.1:latest")
-GEMMA_MODEL = os.getenv("GEMMA_MODEL", "gemma4:latest")
+GEMMA_MODEL = os.getenv("GEMMA_MODEL", "gemma2:2b")
 
 # Fallback for Gemma
 GEMMA_FALLBACK_MODEL = os.getenv("GEMMA_FALLBACK_MODEL", "llama3.1:latest")

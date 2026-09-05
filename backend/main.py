@@ -13,6 +13,7 @@ from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
 from backend import config
+from backend.services.archive_service import HistoricalArchiveService
 from backend.services.converter import MarkdownConverter
 from backend.services.document_generator import DocumentGenerator, TEMPLATE_CONFIGS, get_active_dataset_metrics
 from backend.services.gemma_client import GemmaClient
@@ -36,12 +37,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from backend.services.inference_manager import InferenceManager
+
 pipeline_service = DocumentPipeline()
 converter_service = MarkdownConverter()
 llama_client = LlamaClient()
 math_engine = MathEngine()
 gemma_client = GemmaClient()
 document_generator = DocumentGenerator()
+archive_service = HistoricalArchiveService()
+inference_mgr = InferenceManager()
 
 
 # Pydantic Request Models
@@ -730,6 +735,67 @@ def generate_report_package(req: Optional[ReportPackageRequest] = None):
     return result
 
 
+@app.get("/api/archive/history")
+def get_historical_archive_data():
+    """Retrieves 5-year longitudinal historical coal production and subsidiary benchmarks."""
+    return archive_service.generate_archive_intelligence_summary()
+
+
+@app.post("/api/reports/generate-comprehensive-docx")
+async def generate_comprehensive_docx(
+    template: str = Form("executive_brief"),
+    report_id: Optional[str] = Form(None),
+    summary_text: Optional[str] = Form(None),
+    include_historical_archive: bool = Form(True),
+    files: List[UploadFile] = File(default=[])
+):
+    """Compiles data from multiple sources (scanned PDFs, spreadsheets, images) into a comprehensive Word DOCX report."""
+    rep_id = report_id or f"DOCX-{uuid.uuid4().hex[:6].upper()}"
+    saved_file_paths = []
+    sources_summary = []
+    candidate_images = []
+
+    # Save and profile uploaded multi-source files
+    for upload in files:
+        if not upload.filename:
+            continue
+        save_p = config.UPLOADS_DIR / f"{uuid.uuid4().hex[:8]}_{upload.filename}"
+        with open(save_p, "wb") as buf:
+            shutil.copyfileobj(upload.file, buf)
+        saved_file_paths.append(save_p)
+
+        # Profile document
+        try:
+            res = converter_service.convert(save_p)
+            sources_summary.append({
+                "filename": upload.filename,
+                "type": res.get("file_type", "document"),
+                "metadata": res.get("metadata", {})
+            })
+            if res.get("file_type") == "image":
+                candidate_images.append(str(save_p))
+            elif res.get("extracted_images"):
+                candidate_images.extend([img["path"] for img in res["extracted_images"]])
+        except Exception:
+            pass
+
+    docx_path = document_generator.generate_docx_report(
+        template_name=template,
+        report_id=rep_id,
+        summary_text=summary_text,
+        images=candidate_images if candidate_images else None,
+        sources_summary=sources_summary if sources_summary else None,
+        include_historical_archive=include_historical_archive
+    )
+
+    return FileResponse(
+        path=docx_path,
+        filename=f"Ministry_of_Coal_Comprehensive_Report_{rep_id}.docx",
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": f'attachment; filename="Ministry_of_Coal_Comprehensive_Report_{rep_id}.docx"'}
+    )
+
+
 @app.get("/api/reports/download/{fmt}")
 def download_report_format(fmt: str, template: Optional[str] = None):
     """Downloads the generated report in the requested format (pdf, docx, xlsx, csv) for the selected template."""
@@ -748,10 +814,6 @@ def download_report_format(fmt: str, template: Optional[str] = None):
     default_fname, media_type = mapping[fmt]
 
     TEMPLATE_ALIASES = {
-        "executive_brief": "bento_grid",
-        "corporate_minimalist": "editorial_canvas",
-        "technical_deepdive": "obsidian_deck",
-        "visual_infographic": "aurora_gradient",
         "parliamentary_scorecard": "nordic_ocean",
         "esg_sustainable": "warm_sandstone",
     }
@@ -759,8 +821,7 @@ def download_report_format(fmt: str, template: Optional[str] = None):
     tpl_key = TEMPLATE_ALIASES.get(raw_key, raw_key)
     target_fname = f"Ministry_of_Coal_{tpl_key}_2026.{fmt}" if template else default_fname
 
-    # Search candidates in priority order: REPORTS_DIR, PUBLIC_REPORTS_DIR, STATIC_REPORTS_DIR
-    search_dirs = [config.REPORTS_DIR, getattr(config, "PUBLIC_REPORTS_DIR", None), getattr(config, "STATIC_REPORTS_DIR", None)]
+    search_dirs = [config.REPORTS_DIR, config.STATIC_REPORTS_DIR]
     search_dirs = [d for d in search_dirs if d is not None and d.exists()]
 
     for d in search_dirs:
@@ -871,8 +932,62 @@ def run_dataset_audit():
 
 
 
+class OpenFileRequest(BaseModel):
+    filename: Optional[str] = None
+    format: Optional[str] = "docx"
 
-# Mount static directory for frontend UI
+
+@app.get("/api/inference/status")
+def get_inference_status():
+    """Returns local inference engine status, active models, and connectivity mode."""
+    return inference_mgr.get_engine_status()
+
+
+@app.post("/api/desktop/open-file")
+def desktop_open_file(req: Optional[OpenFileRequest] = None):
+    """Opens generated report in the operating system default app (Microsoft Word / PDF viewer)."""
+    fmt = (req.format if req else "docx") or "docx"
+    fname = (req.filename if req else None) or f"Ministry_of_Coal_Report_2026.{fmt}"
+    target_p = config.REPORTS_DIR / fname
+    if not target_p.exists():
+        target_p = config.OUTPUTS_DIR / "reports" / fname
+    if not target_p.exists():
+        if fmt == "docx":
+            target_p = document_generator.generate_docx_report()
+        elif fmt == "pdf":
+            target_p = document_generator.generate_pdf_report()
+        elif fmt == "xlsx":
+            target_p = document_generator.generate_excel_workbook()
+
+    import platform
+    import subprocess
+    sys_name = platform.system()
+    if sys_name == "Darwin":
+        subprocess.Popen(["open", str(target_p)])
+    elif sys_name == "Windows":
+        os.startfile(str(target_p))
+    else:
+        subprocess.Popen(["xdg-open", str(target_p)])
+
+    return {"success": True, "opened_file": str(target_p)}
+
+
+@app.post("/api/desktop/reveal-folder")
+def desktop_reveal_folder():
+    """Opens reports output directory directly in macOS Finder or Windows File Explorer."""
+    import platform
+    import subprocess
+    folder_p = config.REPORTS_DIR
+    folder_p.mkdir(parents=True, exist_ok=True)
+    sys_name = platform.system()
+    if sys_name == "Darwin":
+        subprocess.Popen(["open", str(folder_p)])
+    elif sys_name == "Windows":
+        subprocess.Popen(["explorer", str(folder_p)])
+    else:
+        subprocess.Popen(["xdg-open", str(folder_p)])
+    return {"success": True, "folder": str(folder_p)}
+
 static_dir = Path(__file__).resolve().parent / "static"
 if static_dir.exists():
     from starlette.staticfiles import StaticFiles

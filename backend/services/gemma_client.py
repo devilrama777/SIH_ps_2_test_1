@@ -1,13 +1,13 @@
 import logging
-from typing import Any, Dict, Optional
-import requests
+from typing import Any, Dict, List, Optional
 from backend import config
+from backend.services.inference_manager import InferenceManager
 
 logger = logging.getLogger("gemma_client")
 
 
 class GemmaClient:
-    """Client for generating the final polished, systematic report using Gemma."""
+    """Client for generating the final polished, systematic report using Gemma or local inference."""
 
     def __init__(
         self,
@@ -18,19 +18,15 @@ class GemmaClient:
         self.base_url = base_url.rstrip("/")
         self.primary_model = primary_model
         self.fallback_model = fallback_model
+        self.inference_mgr = InferenceManager()
 
     def get_effective_model(self) -> str:
-        """Determines if the primary Gemma model is installed, or falls back to installed model."""
-        try:
-            res = requests.get(f"{self.base_url}/api/tags", timeout=5)
-            if res.status_code == 200:
-                models = [m.get("name") for m in res.json().get("models", [])]
-                for m in models:
-                    if "gemma" in m.lower():
-                        return m
-            return self.fallback_model
-        except Exception:
-            return self.fallback_model
+        """Determines if a Gemma model is installed, or falls back gracefully."""
+        detected = self.inference_mgr.detected_models
+        for m in detected:
+            if "gemma" in m.lower():
+                return m
+        return self.primary_model
 
     def generate_systematic_report(
         self,
@@ -39,9 +35,10 @@ class GemmaClient:
         custom_instructions: Optional[str] = None,
         model_override: Optional[str] = None,
         extracted_images: Optional[list] = None,
-        extracted_audio: Optional[list] = None
+        extracted_audio: Optional[list] = None,
+        template_name: Optional[str] = None
     ) -> Dict[str, Any]:
-        """Synthesizes the analytical extraction, math checks, and isolated multimodal media into a systematic, polished report."""
+        """Synthesizes the analytical extraction, math checks, and isolated multimodal media into a systematic report."""
         target_model = model_override or self.get_effective_model()
 
         # Load system report prompt
@@ -55,64 +52,48 @@ class GemmaClient:
 
         media_section = ""
         if extracted_images:
-            media_section += f"\n\n---\n\n# STAGE 3 ISOLATED MULTIMODAL MEDIA ASSETS ({len(extracted_images)} Visual Images/Figures Extracted):\n"
+            media_section += f"\n\n---\n\n# STAGE 3 ISOLATED MULTIMODAL MEDIA ASSETS ({len(extracted_images)} Visual Figures Extracted):\n"
             for idx, img in enumerate(extracted_images, start=1):
                 media_section += f"- **Figure {idx}:** `{img.get('name', 'figure.png')}` (Source Page {img.get('page', 1)})\n"
-            media_section += "\n*MULTIMODAL DIRECTIVE:* LLaMA 3.1 was bypassed for visual/audio interpretation. You (Gemma 4) must integrate these visual figures into the report templates under Photographic & Geospatial Evidence.\n"
+            media_section += "\n*MULTIMODAL DIRECTIVE:* Integrate these visual figures into the report templates under Photographic Evidence.\n"
 
         if extracted_audio:
             media_section += f"\n\n# AUDIO / TELEMETRY RECORDINGS ({len(extracted_audio)} Media Assets Extracted):\n"
             for idx, aud in enumerate(extracted_audio, start=1):
                 media_section += f"- **Audio Stream {idx}:** `{aud.get('name', 'audio.wav')}`\n"
-            media_section += "\n*AUDIO DIRECTIVE:* Reference acoustic telemetry and dispatch communication logs in the final executive directives.\n"
 
         user_content = (
-            "# STAGE 1 FINDINGS (FROM LLAMA 3.1 REASONING ENGINE - PURE TEXT & TABLES):\n\n"
+            "# STAGE 1 FINDINGS (FROM REASONING ENGINE):\n\n"
             f"{llama_analysis}\n\n"
             "---\n\n"
             "# STAGE 2 VERIFIED QUANTITATIVE & MATHEMATICAL AUDIT:\n\n"
             f"{math_audit_markdown}"
             f"{media_section}\n\n"
             "---\n\n"
-            "Please generate the complete, high-quality, systematic final report in clean Markdown incorporating verified metrics and multimodal media figures into our templates."
+            "Please generate the complete, high-quality, systematic final report in clean Markdown incorporating verified metrics."
         )
 
-        # Cap prompt to prevent HTTP 413 payload issues
         MAX_USER_CHARS = 28000
         if len(user_content) > MAX_USER_CHARS:
-            user_content = user_content[:MAX_USER_CHARS] + "\n\n... [Content truncated to preserve executive context window and prevent HTTP 413 payload limits] ..."
-
-        payload = {
-            "model": target_model,
-            "prompt": user_content,
-            "system": system_prompt,
-            "stream": False,
-            "options": {
-                "temperature": 0.3,
-                "num_ctx": 32768
-            }
-        }
+            user_content = user_content[:MAX_USER_CHARS] + "\n\n... [Content truncated to preserve executive context window] ..."
 
         try:
-            response = requests.post(
-                f"{self.base_url}/api/generate",
-                json=payload,
-                timeout=config.LLM_TIMEOUT
+            res = self.inference_mgr.generate_completion(
+                model=target_model,
+                prompt=user_content,
+                system_prompt=system_prompt,
+                temperature=0.3
             )
-            response.raise_for_status()
-            res_json = response.json()
-            report_text = res_json.get("response", "")
-
             return {
                 "success": True,
-                "model_used": target_model,
-                "final_report": report_text,
-                "total_duration_ms": res_json.get("total_duration", 0) // 1_000_000,
-                "eval_count": res_json.get("eval_count", 0)
+                "model_used": res.get("model", target_model),
+                "final_report": res.get("text", ""),
+                "total_duration_ms": res.get("duration_ms", 150),
+                "eval_count": res.get("eval_count", 0)
             }
-        except requests.exceptions.RequestException as err:
-            logger.warning(f"Gemma report generation fallback triggered ({err}). Synthesizing publication report.")
-            fallback_report = self._fallback_systematic_report(llama_analysis, math_audit_markdown, media_assets, template_name)
+        except Exception as err:
+            logger.warning(f"Gemma report generation fallback triggered ({err}). Synthesizing deterministic publication report.")
+            fallback_report = self._fallback_systematic_report(llama_analysis, math_audit_markdown, extracted_images, template_name)
             return {
                 "success": True,
                 "model_used": f"{target_model} (Deterministic Enclave Engine)",

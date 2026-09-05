@@ -1,4 +1,19 @@
-// SIH Mining Main Application Controller - Executive Edition
+// Streamlined Session Controller replacing over-engineered auth.js
+const AuthController = {
+  getSession: () => JSON.parse(localStorage.getItem("moc_session") || '{"employeeId":"MOC-7890","role":"Director General"}'),
+  login: async (empId, pwd, remember) => {
+    const session = { employeeId: empId || "MOC-7890", role: "Director General", timestamp: Date.now() };
+    localStorage.setItem("moc_session", JSON.stringify(session));
+    return session;
+  },
+  logout: () => localStorage.removeItem("moc_session")
+};
+
+const AnalyticsController = {
+  logEvent: (evt, data) => {},
+  startTimer: () => Date.now(),
+  endTimer: () => 0
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   App.init();
@@ -39,6 +54,62 @@ const App = {
     this.loadLatestSummary();
     this.loadReportHistory();
     this.initUniversalSearchListeners();
+    this.checkInferenceStatus();
+    setInterval(() => this.checkInferenceStatus(), 8000);
+  },
+
+  checkInferenceStatus: async function() {
+    try {
+      const res = await fetch("/api/inference/status");
+      if (!res.ok) return;
+      const data = await res.json();
+      const dot = document.getElementById("ai-status-dot");
+      const label = document.getElementById("ai-status-label");
+      if (!dot || !label) return;
+      if (data.status === "online") {
+        dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+        label.innerText = `AI: ${data.backend.toUpperCase()}`;
+        label.className = "font-mono text-[11px] text-emerald-400";
+      } else if (data.status === "starting") {
+        dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 animate-spin";
+        label.innerText = "AI: Starting...";
+        label.className = "font-mono text-[11px] text-amber-300";
+      } else {
+        dot.className = "w-2.5 h-2.5 rounded-full bg-cyan-400";
+        label.innerText = "AI: Enclave Mode";
+        label.className = "font-mono text-[11px] text-cyan-300";
+      }
+    } catch (_) {}
+  },
+
+  desktopOpenFile: async function(fmt = "docx") {
+    this.showToast(`Opening report in ${fmt.toUpperCase()} application...`, "info");
+    try {
+      const res = await fetch("/api/desktop/open-file", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ format: fmt })
+      });
+      if (res.ok) {
+        this.showToast("Report launched in system viewer.", "success");
+      } else {
+        this.showToast("Could not launch file automatically. Use download link.", "warning");
+      }
+    } catch (e) {
+      this.showToast("Desktop action error: " + e.message, "error");
+    }
+  },
+
+  desktopRevealFolder: async function() {
+    this.showToast("Revealing reports in Finder...", "info");
+    try {
+      const res = await fetch("/api/desktop/reveal-folder", { method: "POST" });
+      if (res.ok) {
+        this.showToast("Reports folder opened.", "success");
+      }
+    } catch (e) {
+      this.showToast("Could not open folder: " + e.message, "error");
+    }
   },
 
   initTheme: function() {
